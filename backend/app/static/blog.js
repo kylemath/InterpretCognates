@@ -294,7 +294,7 @@ function renderSimilarityHeatmap(data) {
     type: "heatmap",
     z: matrix, x: labels, y: labels,
     colorscale: [[0, "#f7f7f7"], [0.25, "#c9b4d8"], [0.5, "#8c6bb1"], [0.75, "#6a3d9a"], [1, "#2d004b"]],
-    zmin: 0.3, zmax: 1.0,
+    zmin: 0, zmax: 1,
     hovertemplate: "%{x} ↔ %{y}: %{z:.3f}<extra></extra>",
   }], baseLayout({
     height: 600,
@@ -1885,6 +1885,44 @@ function renderCategorySummary(swadesh, corpus) {
   }), PLOTLY_CFG);
 }
 
+function renderCategorySummaryAllItems(swadesh, corpus) {
+  const el = document.getElementById("categorySummaryAllItems");
+  if (!el) return;
+  if (!swadesh) { el.innerHTML = "<p>No data</p>"; return; }
+
+  const ranking = swadesh.convergence_ranking_corrected || swadesh.convergence_ranking_raw;
+  if (!ranking || !ranking.length) { el.innerHTML = "<p>No data</p>"; return; }
+
+  const orthoScores = corpus ? computeOrthoScoresBlog(corpus) : {};
+  const phoneticScores = corpus ? computePhoneticScoresBlog(corpus) : {};
+
+  const bar = (value, color) => {
+    const pct = Math.max(0, Math.min(1, value)) * 100;
+    return `<div class="all-items-bar-wrap"><div class="all-items-bar" style="width:${pct}%;background:${color}"></div></div>`;
+  };
+
+  let html = '<div class="all-items-header"><span>Concept</span><span>Embedding</span><span>Orthographic</span><span>Phonetic</span></div>';
+  ranking.forEach(r => {
+    const cat = SWADESH_CATEGORY[r.concept] || "Other";
+    const clr = CATEGORY_COLORS_BLOG[cat] || ACCENT;
+    const ortho = orthoScores[r.concept] != null ? orthoScores[r.concept] : null;
+    const phon = phoneticScores[r.concept] != null ? phoneticScores[r.concept] : null;
+    html += `<div class="all-items-row">
+      <span class="all-items-concept">${escapeHtml(r.concept)}</span>
+      ${bar(r.mean_similarity, clr)}
+      ${ortho != null ? bar(ortho, "#cbd5e1") : "<span class=\"all-items-na\">—</span>"}
+      ${phon != null ? bar(phon, "#a5b4fc") : "<span class=\"all-items-na\">—</span>"}
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+function escapeHtml(s) {
+  const div = document.createElement("div");
+  div.textContent = s;
+  return div.innerHTML;
+}
+
 function renderIsotropyTest(swadesh) {
   const statsEl = document.getElementById("isotropyStats");
   const scatterEl = document.getElementById("isotropyScatter");
@@ -2964,7 +3002,7 @@ async function runExplorer() {
       type: "heatmap",
       z: data.similarity_matrix, x: labels, y: labels,
       colorscale: [[0, "#f7f7f7"], [0.25, "#c9b4d8"], [0.5, "#8c6bb1"], [0.75, "#6a3d9a"], [1, "#2d004b"]],
-      zmin: 0.3, zmax: 1.0,
+      zmin: 0, zmax: 1,
     }], baseLayout({
       height: 450,
       margin: { l: 90, r: 20, t: 10, b: 90 },
@@ -3039,6 +3077,7 @@ async function init() {
   // Section 4: Swadesh Convergence
   safeRender("convergence", () => renderConvergenceScatter(swadesh, corpus));
   safeRender("categorySummary", () => renderCategorySummary(swadesh, corpus));
+  safeRender("categorySummaryAllItems", () => renderCategorySummaryAllItems(swadesh, corpus));
   safeRender("varianceDecomp", () => renderVarianceDecomposition(swadesh, corpus));
 
   // Section 5: Phylogenetic

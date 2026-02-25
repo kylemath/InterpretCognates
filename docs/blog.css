@@ -709,6 +709,58 @@ body {
 /* ── Category summary chart ───────────────────────────────── */
 .chart-medium { min-height: 380px; }
 
+/* Figure 3c: scrollable list of every tested item (inlaid in main window) */
+.figure-3c-scroll {
+  margin-top: 20px;
+  max-height: 420px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+}
+.figure-3c-scroll .all-items-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 120px 1fr 1fr 1fr;
+  gap: 8px 12px;
+  padding: 10px 14px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+}
+.figure-3c-scroll .all-items-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 1fr 1fr;
+  gap: 8px 12px;
+  align-items: center;
+  padding: 6px 14px;
+  font-size: 0.88rem;
+  border-bottom: 1px solid var(--border);
+  min-height: 36px;
+}
+.figure-3c-scroll .all-items-row:nth-child(even) { background: rgba(0,0,0,0.02); }
+.figure-3c-scroll .all-items-row:hover { background: var(--accent-light); }
+.figure-3c-scroll .all-items-concept { font-weight: 500; color: var(--fg); }
+.figure-3c-scroll .all-items-bar-wrap {
+  height: 18px;
+  background: var(--bg-code);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.figure-3c-scroll .all-items-bar {
+  height: 100%;
+  border-radius: 4px;
+  min-width: 2px;
+}
+.figure-3c-scroll .all-items-na { color: var(--fg-dim); font-size: 0.85em; }
+
 /* ── Concept map selector ─────────────────────────────────── */
 .map-controls {
   display: flex;

@@ -29,7 +29,8 @@ Our key findings are as follows:
     Semantic difference vectors between concept pairs (e.g., \emph{fire}--\emph{water}) are highly consistent across languages, with a mean cosine similarity of $\OffsetMeanConsistency{}$ across \OffsetNumPairs{} pairs, suggesting that relational structure is preserved cross-lingually.
 \end{enumerate}
 
-Two additional experiments examine Swadesh-list concept stability rankings and the geometry of universal color term embeddings, providing converging evidence that NLLB-200 encodes cross-linguistically stable semantic structure.
+Two additional experiments---Swadesh convergence ranking and universal color term geometry---provide converging evidence.
+A comparison against modern loanword-heavy vocabulary reveals that high embedding convergence can reflect orthographic borrowing rather than semantic universality, underscoring the importance of the external validation experiments.
 
-All experiments are implemented in the open-source \textsc{InterpretCognates} toolkit, which provides a fully reproducible pipeline from raw NLLB-200 embeddings to statistical tests and figures.
-Code and data are available at the accompanying repository.
+All experiments are implemented in the open-source \textsc{InterpretCognates} toolkit, which provides a fully reproducible pipeline from pre-computed embeddings to statistical tests and figures.
+Code and data are available at \url{https://github.com/kylemath/InterpretCognates}.

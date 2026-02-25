@@ -1,6 +1,8 @@
 \section{Results}
 \label{sec:results}
 
+We organize our six experiments along a progression from broad distributional patterns (which concepts converge across languages?) through external validation (do these patterns match phylogenetic and colexification benchmarks?) to geometric tests of cognitive hypotheses (is conceptual structure factored from language identity, and is relational structure preserved cross-lingually?).
+
 \subsection{Swadesh Core Vocabulary Convergence}
 
 Across the \NumConcepts{} Swadesh items embedded in \NumLanguages{} languages, the mean cross-lingual convergence score---defined as the average pairwise cosine similarity over all language pairs for a given concept---is \SwadeshMean{} ($\sigma = \SwadeshStd{}$), with individual concepts ranging from \SwadeshMin{} to \SwadeshMax{}.
@@ -8,7 +10,7 @@ Figure~\ref{fig:swadesh} presents the full ranking.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=\columnwidth]{figures/fig_swadesh_ranking.pdf}
+  \includegraphics[width=\columnwidth,height=0.85\textheight,keepaspectratio]{figures/fig_swadesh_ranking.pdf}
   \caption{Swadesh 100-item convergence ranking. Each bar shows the mean pairwise cosine similarity for a concept across all \NumLanguages{} language pairs. Concepts at the top of the ranking are represented most consistently across languages in the NLLB-200 encoder space.}
   \label{fig:swadesh}
 \end{figure}
@@ -17,6 +19,26 @@ The highest-ranked concept is \textit{\SwadeshTopConcept{}}, while the lowest is
 The distribution reveals a clear pattern: concepts that are concrete, perceptually grounded, and monosemous (e.g., body parts, celestial objects, kinship terms) tend to cluster near the top, whereas concepts that are abstract or polysemous tend to occupy the bottom ranks.
 Several of the lowest-scoring items---such as \textit{bark} (tree covering vs.\ the sound a dog makes) and \textit{lie} (recline vs.\ falsehood)---are well-known cases of systematic polysemy in English that do not transfer to other languages, resulting in dispersed cross-lingual representations.
 This ordering is broadly consistent with the intuition behind the Swadesh list itself: the most culturally stable meanings \citep{swadesh1952} are also those that the model encodes most uniformly.
+
+\subsection{Swadesh vs.\ Non-Swadesh Vocabulary}
+
+To test whether the Swadesh convergence pattern reflects cultural stability rather than incidental properties of the vocabulary, we compared convergence scores for \SwadeshCompNumSwadesh{} Swadesh concepts against \SwadeshCompNumNonSwadesh{} non-Swadesh concepts drawn from culturally specific, modern, and abstract vocabulary (e.g., \textit{government}, \textit{university}, \textit{airport}, \textit{democracy}).
+
+Counter to the na\"ive prediction that culturally universal concepts should converge more, the non-Swadesh vocabulary exhibits \textit{higher} mean convergence ($\mu = \NonSwadeshCompMean{}$) than Swadesh items ($\mu = \SwadeshCompMean{}$), with a Mann-Whitney $U = \SwadeshCompU{}$ and $p = \SwadeshCompP{}$ (Cohen's $d = \SwadeshCompCohenD{}$).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/fig_swadesh_comparison.pdf}
+  \caption{Convergence distributions for Swadesh core vocabulary ($n = \SwadeshCompNumSwadesh{}$) and non-Swadesh modern vocabulary ($n = \SwadeshCompNumNonSwadesh{}$). Contrary to the cultural stability prediction, non-Swadesh concepts show higher mean convergence, driven by loanword orthographic similarity.}
+  \label{fig:swadesh_comp}
+\end{figure}
+
+This reversal is informative rather than damaging to the broader argument.
+Modern abstract vocabulary is disproportionately composed of loanwords: terms like \textit{democracy}, \textit{university}, and \textit{telephone} share surface forms across dozens of languages precisely because they were culturally borrowed rather than independently coined.
+High embedding convergence for these items therefore reflects orthographic and phonological similarity---the model recognizes shared subword tokens---rather than deep semantic universality.
+By contrast, Swadesh items denote universal concepts with \textit{diverse} surface forms across unrelated language families: the word for ``water'' differs radically between English, Mandarin, Arabic, and Swahili, yet must converge in the model's semantic space if conceptual structure is truly universal.
+The moderate convergence of Swadesh items is thus the more remarkable finding, as it emerges despite surface-form diversity.
+This distinction between borrowing-driven convergence and semantically-driven convergence motivates our remaining experiments, which use external benchmarks to validate that the Swadesh convergence signal reflects genuine conceptual structure.
 
 \subsection{Phylogenetic Distance Correlation}
 

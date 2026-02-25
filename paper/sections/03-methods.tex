@@ -12,7 +12,8 @@ We embed all \NumConcepts{} Swadesh items across \NumLanguages{} of the language
 To obtain contextual embeddings rather than decontextualized token representations, we place each target word in a fixed carrier sentence of the form \textit{``I saw a \{word\} near the river''}, translated into each target language.
 We then extract the encoder hidden states corresponding only to the target word's subword tokens, discarding activations from the carrier context.
 When a word is split into multiple subword tokens by the SentencePiece tokenizer, we mean-pool their activations to produce a single vector per concept--language pair.
-All pre-computed embeddings are stored as JSON files to ensure full reproducibility.
+We note that this carrier sentence is English-derived and imposes structural assumptions (SVO order, articles, spatial prepositions) that are not typologically universal; we assess this confound in Section~5.
+All pre-computed embeddings are stored as JSON files to ensure full reproducibility of the analysis-to-figure pipeline.
 
 \subsection{Embedding Extraction and Correction}
 

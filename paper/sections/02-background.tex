@@ -1,0 +1,52 @@
+\section{Background}
+
+Our work draws on two largely separate literatures: the geometry of multilingual neural representations and the cognitive science of how multilinguals organize meaning.
+We review each in turn, highlighting the specific hypotheses that motivate our experiments.
+
+\subsection{Multilingual Representation Geometry}
+
+A central question in multilingual NLP is whether shared encoder models learn language-neutral representations or merely co-locate language-specific subspaces.
+\citet{pires2019} provided early evidence for the former, demonstrating that multilingual BERT \citep{devlin2019} supports zero-shot cross-lingual transfer on NER and POS tagging even between typologically distant languages, suggesting the emergence of shared syntactic abstractions.
+Subsequent work has refined this picture considerably.
+
+\citet{chang2022} decomposed the representation space of XLM-R \citep{conneau2020} into language-sensitive and language-neutral axes using a probe trained to predict language identity.
+They found that removing the top language-sensitive principal components improves cross-lingual alignment on semantic tasks, implying that language identity is encoded in a low-dimensional subspace largely orthogonal to semantic content.
+This finding motivates our mean-centering procedure (Experiment~5), which isolates the language-neutral component by subtracting per-language centroids.
+
+The geometry of multilingual encoders is complicated by anisotropy---the tendency of learned representations to cluster in a narrow cone rather than occupying the full available volume.
+\citet{rajaee2022} showed that multilingual BERT embeddings are highly anisotropic and that this degrades cross-lingual similarity estimates.
+\citet{mu2018} proposed All-but-the-Top, a post-processing method that removes the mean and top principal components from word embeddings to improve isotropy.
+Our mean-centering approach can be viewed as a per-language variant of this correction, adapted to the multilingual setting where the dominant direction of anisotropy differs across languages.
+
+At a finer grain, \citet{voita2019} demonstrated that individual attention heads in Transformer models specialize for distinct linguistic functions, including positional, syntactic, and rare-token tracking.
+\citet{foroutan2022} extended this line of work to the multilingual case, identifying language-neutral sub-networks within multilingual Transformers that activate consistently across languages for equivalent inputs.
+These findings suggest that universality is not merely a global property of the representation space but is also reflected in modular internal structure.
+
+Taken together, this literature establishes that multilingual Transformers encode both language-specific and language-neutral information in geometrically separable subspaces.
+Our experiments test whether this geometric separation extends to NLLB-200---a model trained explicitly for translation across 200 languages---and whether the language-neutral component exhibits structure predicted by cognitive science.
+
+\subsection{Cognitive Science of Multilingual Representation}
+
+The question of whether bilinguals and multilinguals maintain a shared conceptual store has been debated for decades.
+The Revised Hierarchical Model \citep{kroll1994,kroll2010} posits that bilinguals access a common conceptual store through language-specific lexical representations, with direct concept--word connections strengthening with proficiency.
+The BIA+ model \citep{dijkstra2002} further proposes that bilingual word recognition involves non-selective lexical access: encountering a word in one language automatically activates representations in the other, mediated by a shared semantic level.
+
+Neuroimaging evidence supports the existence of language-independent conceptual representations.
+\citet{correia2014} used representational similarity analysis on fMRI data to show that the anterior temporal lobe (ATL) encodes semantic category information identically across languages in bilingual speakers, providing direct neural evidence for a language-independent conceptual hub.
+\citet{thierry2007} demonstrated using event-related potentials that Chinese--English bilinguals unconsciously activate Chinese phonological representations when processing English words, implying automatic cross-linguistic co-activation at a sub-lexical level.
+More recently, \citet{malikmoraleda2024} studied hyperpolyglots (speakers of $\geq$10 languages) and found that the same fronto-temporal language network activates for all languages, suggesting a universal neural substrate for language processing that scales beyond bilingualism.
+
+Cross-linguistic universals provide a complementary perspective.
+\citet{swadesh1952} identified a core vocabulary of basic concepts (body parts, kinship terms, natural phenomena) that resists borrowing and changes slowly across all known languages, motivating its use as a probe for universal semantic structure.
+The ASJP database \citep{jaeger2018} quantifies genetic distances between languages using Swadesh-list cognates, providing the phylogenetic ground truth for our Experiment~1.
+\citet{berlin1969} demonstrated that languages partition the color space in strikingly similar ways, following an implicational hierarchy of basic color terms---a finding we test in the embedding space in Experiment~6.
+
+The colexification literature bridges cognitive and computational perspectives.
+When unrelated languages independently lexify two concepts with the same word form (e.g., ``arm'' and ``hand'' in many languages), this provides evidence for cognitive proximity between those concepts \citep{list2018}.
+The CLICS\textsuperscript{2} database aggregates colexification patterns across thousands of languages, enabling the statistical test in our Experiment~2: if NLLB-200 has learned cognitively plausible semantic structure, colexified pairs should be closer in embedding space.
+
+Cross-lingual word embedding research has also engaged with these cognitive questions.
+\citet{vulic2020} surveyed methods for learning cross-lingual word representations, noting that bilingual lexicon induction implicitly assumes a degree of isomorphism between monolingual semantic spaces---an assumption closely related to the shared conceptual store hypothesis.
+Our offset invariance experiment (Experiment~4) directly tests this assumption by measuring whether semantic difference vectors are preserved across languages.
+
+The present work is, to our knowledge, the first to systematically test predictions from bilingual lexical organization theories against the internal representations of a massively multilingual translation model spanning \NumLanguages{} languages.

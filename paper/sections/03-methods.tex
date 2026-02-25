@@ -1,0 +1,55 @@
+\section{Methods}
+\label{sec:methods}
+
+\subsection{Model and Data}
+
+We probe the internal representations of NLLB-200, a massively multilingual neural machine translation system comprising 600M parameters in its distilled variant \citep{nllbteam2022}.
+NLLB-200 employs an encoder-decoder transformer architecture with a shared encoder across all 200 supported languages, making it a natural test bed for investigating whether cross-lingual semantic structure emerges from translation-oriented training alone.
+
+As our lexical probe we adopt the Swadesh 100-item core vocabulary list \citep{swadesh1952}, a standard tool in historical linguistics designed to capture culturally stable, universally attested concepts such as kinship terms, body parts, natural phenomena, and basic actions.
+We embed all \NumConcepts{} Swadesh items across \NumLanguages{} of the languages supported by NLLB-200, yielding a concept-by-language embedding matrix that serves as the basis for all downstream analyses.
+
+To obtain contextual embeddings rather than decontextualized token representations, we place each target word in a fixed carrier sentence of the form \textit{``I saw a \{word\} near the river''}, translated into each target language.
+We then extract the encoder hidden states corresponding only to the target word's subword tokens, discarding activations from the carrier context.
+When a word is split into multiple subword tokens by the SentencePiece tokenizer, we mean-pool their activations to produce a single vector per concept--language pair.
+All pre-computed embeddings are stored as JSON files to ensure full reproducibility.
+
+\subsection{Embedding Extraction and Correction}
+
+Raw contextual embeddings from large language models are known to occupy a narrow cone in representation space, exhibiting low isotropy that can inflate cosine similarity scores and obscure meaningful geometric structure \citep{mu2018,rajaee2022}.
+We extract mean-pooled encoder hidden states from the final transformer layer and apply a two-stage correction procedure.
+
+First, we perform All-But-The-Top (ABTT) isotropy correction \citep{mu2018}: we subtract the global mean embedding computed over all concept--language pairs, then project out the top $k=3$ principal components of the centered matrix.
+This removes the dominant directions that encode frequency- and language-identity information rather than semantics, yielding a more isotropic embedding space in which cosine similarity more faithfully reflects semantic relatedness.
+
+Second, for analyses that require disentangling concept-level structure from language-level clustering, we apply per-language mean-centering: we subtract each language's centroid (its mean embedding across all \NumConcepts{} concepts) before computing PCA or pairwise distances.
+This correction factors out the systematic offset that each language occupies in the shared space and exposes the residual conceptual geometry shared across languages.
+
+\subsection{Experiments}
+
+We design six complementary experiments that probe distinct facets of the multilingual representation geometry, moving from broad lexical convergence patterns to fine-grained relational structure.
+
+\paragraph{Swadesh Convergence Ranking.}
+For each of the \NumConcepts{} Swadesh concepts we compute the mean pairwise cosine similarity across all $\binom{\NumLanguages{}}{2}$ language pairs, producing a per-concept convergence score.
+Ranking concepts by this score reveals which meanings are encoded most uniformly across languages and which exhibit the greatest cross-lingual dispersion.
+
+\paragraph{Phylogenetic Correlation.}
+We test whether the geometry of the embedding space recapitulates known genetic relationships among languages.
+We construct a language-by-language embedding distance matrix by averaging concept-level cosine distances over all Swadesh items, and compare it to the ASJP phonetic distance matrix \citep{jaeger2018} using the Mantel test with \MantelPermutations{} permutations to assess statistical significance.
+
+\paragraph{Colexification Proximity.}
+Colexification---the phenomenon whereby a single word form covers multiple concepts---reflects deep semantic associations that recur across unrelated languages \citep{list2018}.
+We test whether NLLB-200's representations internalize these associations by comparing the cosine similarity of concept pairs that are colexified in the CLICS\textsuperscript{2} database to those that are not, using a Mann-Whitney $U$ test with Cohen's $d$ as the effect size measure.
+
+\paragraph{Conceptual Store Metric.}
+Inspired by neuroscientific evidence for language-independent conceptual representations \citep{correia2014}, we quantify the degree to which concepts cluster by meaning rather than by language.
+We compute the ratio of mean between-concept cosine distance to mean within-concept cosine distance, both on raw embeddings and after per-language mean-centering, and report the improvement factor.
+
+\paragraph{Color Circle.}
+We project the cross-lingual centroids of the 11 basic color terms identified by \citet{berlin1969} into a two-dimensional PCA space.
+If the model has learned perceptually grounded color semantics from translation data alone, the resulting arrangement should recover the warm--cool opposition and the circular topology observed in human color perception.
+
+\paragraph{Offset Invariance.}
+Following the analogy-based reasoning paradigm introduced by \citet{mikolov2013}, we examine whether semantic relationships are encoded as consistent vector offsets across languages.
+For \OffsetNumPairs{} concept pairs (e.g., \textit{fire}--\textit{water}, \textit{sun}--\textit{moon}), we compute the per-language offset vector and measure its cosine similarity to the centroid offset averaged over all languages \citep{chang2022}.
+High cross-lingual consistency indicates that the model represents relational meaning in a language-invariant manner.

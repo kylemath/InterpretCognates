@@ -1,0 +1,110 @@
+\section{Results}
+\label{sec:results}
+
+\subsection{Swadesh Core Vocabulary Convergence}
+
+Across the \NumConcepts{} Swadesh items embedded in \NumLanguages{} languages, the mean cross-lingual convergence score---defined as the average pairwise cosine similarity over all language pairs for a given concept---is \SwadeshMean{} ($\sigma = \SwadeshStd{}$), with individual concepts ranging from \SwadeshMin{} to \SwadeshMax{}.
+Figure~\ref{fig:swadesh} presents the full ranking.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/fig_swadesh_ranking.pdf}
+  \caption{Swadesh 100-item convergence ranking. Each bar shows the mean pairwise cosine similarity for a concept across all \NumLanguages{} language pairs. Concepts at the top of the ranking are represented most consistently across languages in the NLLB-200 encoder space.}
+  \label{fig:swadesh}
+\end{figure}
+
+The highest-ranked concept is \textit{\SwadeshTopConcept{}}, while the lowest is \textit{\SwadeshBottomConcept{}}.
+The distribution reveals a clear pattern: concepts that are concrete, perceptually grounded, and monosemous (e.g., body parts, celestial objects, kinship terms) tend to cluster near the top, whereas concepts that are abstract or polysemous tend to occupy the bottom ranks.
+Several of the lowest-scoring items---such as \textit{bark} (tree covering vs.\ the sound a dog makes) and \textit{lie} (recline vs.\ falsehood)---are well-known cases of systematic polysemy in English that do not transfer to other languages, resulting in dispersed cross-lingual representations.
+This ordering is broadly consistent with the intuition behind the Swadesh list itself: the most culturally stable meanings \citep{swadesh1952} are also those that the model encodes most uniformly.
+
+\subsection{Phylogenetic Distance Correlation}
+
+To assess whether the embedding space preserves genealogical signal, we applied the Mantel test to the embedding distance matrix (averaged over all Swadesh concepts) and the ASJP phonetic distance matrix \citep{jaeger2018} across \MantelNumLangs{} languages for which both data sources are available.
+The resulting correlation is $\rho = \MantelRho{}$ ($p = \MantelP{}$, \MantelPermutations{} permutations), indicating a statistically significant but modest association.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/fig_phylogenetic.pdf}
+  \caption{Phylogenetic structure in the NLLB-200 embedding space. Left: heatmap of pairwise embedding distances between \MantelNumLangs{} languages, ordered by hierarchical clustering. Right: dendrogram derived from the embedding distance matrix. Major language families (e.g., Indo-European, Austronesian, Niger-Congo) form recognizable clusters.}
+  \label{fig:phylo}
+\end{figure}
+
+Figure~\ref{fig:phylo} presents the hierarchical clustering derived from embedding distances.
+Recognizable family-level groupings emerge: Indo-European languages cluster together, as do Austronesian, Turkic, and Niger-Congo languages.
+However, the modest magnitude of $\rho$ indicates that genealogical relatedness explains only a fraction of the variance in embedding geometry.
+The model's representations are shaped primarily by translational equivalence rather than surface-level phonological or morphological similarity, which explains the incomplete correspondence with phonetic distance.
+This is consistent with the view that NLLB-200's shared encoder constructs a representation space organized predominantly around meaning, with historical signal as a secondary structuring force.
+
+\subsection{Colexification Proximity}
+
+We tested whether concept pairs that are colexified in the CLICS\textsuperscript{2} database \citep{list2018}---that is, expressed by the same word form in at least one language---are represented more similarly than non-colexified pairs in the NLLB-200 encoder space.
+Colexified concept pairs exhibit a mean cosine similarity of \ColexColMean{}, compared to \ColexNonColMean{} for non-colexified pairs.
+A Mann-Whitney $U$ test confirms that this difference is statistically significant ($U = \ColexU{}$, $p = \ColexP{}$), with a medium effect size (Cohen's $d = \ColexCohenD{}$).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/fig_colexification.pdf}
+  \caption{Cosine similarity distributions for colexified ($n = \ColexColCount{}$) and non-colexified ($n = \ColexNonColCount{}$) concept pairs. Colexified pairs are significantly more similar in the NLLB-200 embedding space, suggesting the model has internalized cross-linguistically recurrent semantic associations.}
+  \label{fig:colex}
+\end{figure}
+
+The medium effect size reported in Figure~\ref{fig:colex} indicates that the model has internalized universal conceptual associations that transcend individual languages.
+Colexification patterns arise from shared cognitive and experiential structure across human populations \citep{list2018}, and the fact that a translation model trained without explicit semantic annotation recovers these associations provides evidence that cross-lingual translational equivalence is sufficient to induce conceptually meaningful geometric structure.
+
+\subsection{Conceptual Store Metric}
+
+To quantify the degree to which NLLB-200's representation space is organized by concept rather than by language, we compute the ratio of mean between-concept cosine distance to mean within-concept cosine distance.
+On raw embeddings, this ratio is \ConceptualStoreRaw{}, indicating that even before correction, translation-equivalent words are closer to each other than to words denoting different concepts.
+
+After per-language mean-centering---which removes each language's systematic offset in the shared space---the ratio increases to \ConceptualStoreCentered{}, an improvement factor of \ConceptualStoreImprovement{}$\times$.
+This improvement confirms that a substantial component of the raw embedding geometry reflects language identity rather than semantics, and that subtracting language centroids exposes a cleaner conceptual structure.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/fig_conceptual_store.pdf}
+  \caption{Conceptual store metric before and after per-language mean-centering. The between-concept to within-concept distance ratio increases from \ConceptualStoreRaw{} to \ConceptualStoreCentered{} after correction, revealing a latent conceptual organization that is partially masked by language-level clustering in the raw space.}
+  \label{fig:conceptual_store}
+\end{figure}
+
+The result depicted in Figure~\ref{fig:conceptual_store} resonates with neuroscientific findings of language-independent conceptual stores in anterior temporal cortex \citep{correia2014}.
+Just as bilingual speakers access shared semantic representations across their languages, NLLB-200's encoder appears to construct a representational substrate where meaning is partially factored from language identity---a property that emerges from the translational training objective without explicit encouragement.
+
+\subsection{Color Circle}
+
+We project the cross-lingual centroids of the \ColorNumColors{} basic color terms identified by \citet{berlin1969} into a two-dimensional PCA space using embeddings from \ColorNumLanguages{} languages.
+Figure~\ref{fig:color} shows the resulting arrangement.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/fig_color_circle.pdf}
+  \caption{PCA projection of cross-lingual centroids for \ColorNumColors{} Berlin \& Kay basic color terms across \ColorNumLanguages{} languages. Warm colors (red, orange, yellow) and cool colors (blue, green) occupy opposing regions, and the overall arrangement recovers an approximate circular topology consistent with perceptual color space.}
+  \label{fig:color}
+\end{figure}
+
+The projection reveals a striking arrangement: warm colors (red, orange, yellow) and cool colors (blue, green) occupy opposing regions of the plane, and adjacent colors in perceptual space (e.g., red--orange, blue--green) are adjacent in the PCA projection.
+The overall layout approximates the circular topology of perceptual color wheels, despite the model never having received explicit perceptual training.
+This finding suggests that the co-occurrence and translation statistics across \ColorNumLanguages{} languages implicitly encode perceptual similarity---languages that partition the color spectrum differently nonetheless exert a collective pressure that shapes the encoder's geometry toward a perceptually coherent arrangement.
+White, black, and grey occupy positions partially separated from the chromatic circle, consistent with their distinct status in the Berlin and Kay hierarchy.
+
+\subsection{Semantic Offset Invariance}
+
+We evaluate whether semantic relationships are encoded as consistent vector offsets across languages by examining \OffsetNumPairs{} concept pairs.
+For each pair, we compute the offset vector in each language and measure its cosine similarity to the centroid offset (averaged over all languages).
+The mean cross-lingual consistency across all pairs is \OffsetMeanConsistency{}, with individual pairs ranging from \OffsetMinConsistency{} to \OffsetMaxConsistency{}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/fig_offset_invariance.pdf}
+  \caption{Semantic offset invariance across languages. Each bar shows the mean cosine similarity between per-language offset vectors and the centroid offset for a given concept pair. The best-performing pair is \textit{\OffsetBestPair{}}.}
+  \label{fig:offset}
+\end{figure}
+
+The best-performing pair is \textit{\OffsetBestPair{}}, achieving a consistency score of \OffsetMaxConsistency{}.
+As shown in Figure~\ref{fig:offset}, the high overall consistency (mean = \OffsetMeanConsistency{}) indicates that the directional relationships between concepts are largely preserved across languages in the shared encoder space.
+This extends the classical word2vec analogy finding \citep{mikolov2013} to a massively multilingual setting: not only do semantic offsets exist within a single language's embedding space, but they are approximately invariant across \NumLanguages{} typologically diverse languages.
+The result provides evidence for a shared relational geometry in the NLLB-200 encoder that goes beyond point-wise translational equivalence to encode structured semantic relationships in a language-general manner \citep{chang2022}.
+
+The variation across pairs is itself informative.
+Pairs involving concrete, perceptually grounded oppositions (e.g., \textit{\OffsetBestPair{}}) tend to exhibit higher consistency than those involving more abstract or culturally variable relationships.
+This gradient mirrors the convergence hierarchy observed in the Swadesh ranking (Section~\ref{sec:results}), reinforcing the conclusion that NLLB-200's cross-lingual alignment is strongest for meanings that are universally experienced and least ambiguous.

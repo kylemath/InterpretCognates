@@ -2550,14 +2550,13 @@ function filter95Pct3D(xs, ys, zs) {
 }
 
 function mesh3DHull(xs, ys, zs, color, name, legendgroup) {
-  const f = filter95Pct3D(xs, ys, zs);
-  if (f.xs.length < 4) return null;
+  if (xs.length < 4) return null;
   const r = parseInt(color.slice(1, 3), 16) || 0;
   const g = parseInt(color.slice(3, 5), 16) || 0;
   const b = parseInt(color.slice(5, 7), 16) || 0;
   return {
     type: "mesh3d",
-    x: f.xs, y: f.ys, z: f.zs,
+    x: xs, y: ys, z: zs,
     alphahull: 7,
     color: `rgba(${r},${g},${b},0.34)`,
     flatshading: false,

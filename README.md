@@ -2,6 +2,9 @@
 
 Interactive web applet for probing how multilingual translation networks represent equivalent concepts across languages.
 
+- **[Screenshot](screenshot.png)** — App overview.
+- **Demo:** [InterpretCognates on GitHub Pages](https://kylemath.github.io/InterpretCognates/).
+
 ## Why this project
 
 - Compare semantic neighborhoods for translated concepts (shared vs language-specific structure).

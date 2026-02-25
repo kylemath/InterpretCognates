@@ -1896,25 +1896,132 @@ function renderCategorySummaryAllItems(swadesh, corpus) {
   const orthoScores = corpus ? computeOrthoScoresBlog(corpus) : {};
   const phoneticScores = corpus ? computePhoneticScoresBlog(corpus) : {};
 
+  const rowData = ranking.map(r => {
+    const cat = SWADESH_CATEGORY[r.concept] || "Other";
+    return {
+      concept: r.concept,
+      emb: r.mean_similarity,
+      ortho: orthoScores[r.concept] != null ? orthoScores[r.concept] : null,
+      phon: phoneticScores[r.concept] != null ? phoneticScores[r.concept] : null,
+      cat,
+      clr: CATEGORY_COLORS_BLOG[cat] || ACCENT,
+    };
+  });
+
+  const sortCol = el.dataset.sortCol || "embed";
+  const sortDir = el.dataset.sortDir || "desc";
+
+  function sortKey(d) {
+    if (sortCol === "embed") return d.emb;
+    if (sortCol === "ortho") return d.ortho != null ? d.ortho : -1;
+    if (sortCol === "phon") return d.phon != null ? d.phon : -1;
+    return d.emb;
+  }
+  const sorted = [...rowData].sort((a, b) => {
+    const va = sortKey(a);
+    const vb = sortKey(b);
+    const cmp = va === vb ? 0 : va < vb ? -1 : 1;
+    return sortDir === "desc" ? -cmp : cmp;
+  });
+
   const bar = (value, color) => {
     const pct = Math.max(0, Math.min(1, value)) * 100;
     return `<div class="all-items-bar-wrap"><div class="all-items-bar" style="width:${pct}%;background:${color}"></div></div>`;
   };
 
-  let html = '<div class="all-items-header"><span>Concept</span><span>Embedding</span><span>Orthographic</span><span>Phonetic</span></div>';
-  ranking.forEach(r => {
-    const cat = SWADESH_CATEGORY[r.concept] || "Other";
-    const clr = CATEGORY_COLORS_BLOG[cat] || ACCENT;
-    const ortho = orthoScores[r.concept] != null ? orthoScores[r.concept] : null;
-    const phon = phoneticScores[r.concept] != null ? phoneticScores[r.concept] : null;
-    html += `<div class="all-items-row">
-      <span class="all-items-concept">${escapeHtml(r.concept)}</span>
-      ${bar(r.mean_similarity, clr)}
-      ${ortho != null ? bar(ortho, "#cbd5e1") : "<span class=\"all-items-na\">—</span>"}
-      ${phon != null ? bar(phon, "#a5b4fc") : "<span class=\"all-items-na\">—</span>"}
+  const arrow = (col) => {
+    if (col !== sortCol) return "<span class=\"sort-arrow\" aria-hidden=\"true\"></span>";
+    return sortDir === "desc"
+      ? "<span class=\"sort-arrow sort-arrow-desc\" aria-hidden=\"true\">▾</span>"
+      : "<span class=\"sort-arrow sort-arrow-asc\" aria-hidden=\"true\">▴</span>";
+  };
+
+  const headerHtml = `<div class="all-items-header">
+    <span>Concept</span>
+    <button type="button" class="all-items-sort-hdr" data-col="embed">Embedding ${arrow("embed")}</button>
+    <button type="button" class="all-items-sort-hdr" data-col="ortho">Orthographic ${arrow("ortho")}</button>
+    <button type="button" class="all-items-sort-hdr" data-col="phon">Phonetic ${arrow("phon")}</button>
+  </div>`;
+  let bodyHtml = "";
+  sorted.forEach(d => {
+    bodyHtml += `<div class="all-items-row">
+      <span class="all-items-concept">${escapeHtml(d.concept)}</span>
+      ${bar(d.emb, d.clr)}
+      ${d.ortho != null ? bar(d.ortho, "#cbd5e1") : "<span class=\"all-items-na\">—</span>"}
+      ${d.phon != null ? bar(d.phon, "#a5b4fc") : "<span class=\"all-items-na\">—</span>"}
     </div>`;
   });
-  el.innerHTML = html;
+
+  el.innerHTML = headerHtml + "<div class=\"all-items-body\">" + bodyHtml + "</div>";
+  el._allItemsData = { rowData, bar };
+
+  el.querySelectorAll(".all-items-sort-hdr").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const col = btn.dataset.col;
+      if (el.dataset.sortCol === col) {
+        el.dataset.sortDir = el.dataset.sortDir === "desc" ? "asc" : "desc";
+      } else {
+        el.dataset.sortCol = col;
+        el.dataset.sortDir = "desc";
+      }
+      refreshAllItemsBody(el);
+    });
+  });
+}
+
+function refreshAllItemsBody(el) {
+  if (!el || !el._allItemsData) return;
+  const { rowData, bar } = el._allItemsData;
+  const sortCol = el.dataset.sortCol || "embed";
+  const sortDir = el.dataset.sortDir || "desc";
+  const arrow = (col) => {
+    if (col !== sortCol) return "<span class=\"sort-arrow\" aria-hidden=\"true\"></span>";
+    return sortDir === "desc"
+      ? "<span class=\"sort-arrow sort-arrow-desc\" aria-hidden=\"true\">▾</span>"
+      : "<span class=\"sort-arrow sort-arrow-asc\" aria-hidden=\"true\">▴</span>";
+  };
+  function sortKey(d) {
+    if (sortCol === "embed") return d.emb;
+    if (sortCol === "ortho") return d.ortho != null ? d.ortho : -1;
+    if (sortCol === "phon") return d.phon != null ? d.phon : -1;
+    return d.emb;
+  }
+  const sorted = [...rowData].sort((a, b) => {
+    const va = sortKey(a);
+    const vb = sortKey(b);
+    const cmp = va === vb ? 0 : va < vb ? -1 : 1;
+    return sortDir === "desc" ? -cmp : cmp;
+  });
+  const header = el.querySelector(".all-items-header");
+  header.innerHTML = `
+    <span>Concept</span>
+    <button type="button" class="all-items-sort-hdr" data-col="embed">Embedding ${arrow("embed")}</button>
+    <button type="button" class="all-items-sort-hdr" data-col="ortho">Orthographic ${arrow("ortho")}</button>
+    <button type="button" class="all-items-sort-hdr" data-col="phon">Phonetic ${arrow("phon")}</button>
+  `;
+  let bodyHtml = "";
+  sorted.forEach(d => {
+    bodyHtml += `<div class="all-items-row">
+      <span class="all-items-concept">${escapeHtml(d.concept)}</span>
+      ${bar(d.emb, d.clr)}
+      ${d.ortho != null ? bar(d.ortho, "#cbd5e1") : "<span class=\"all-items-na\">—</span>"}
+      ${d.phon != null ? bar(d.phon, "#a5b4fc") : "<span class=\"all-items-na\">—</span>"}
+    </div>`;
+  });
+  const bodyEl = el.querySelector(".all-items-body");
+  if (bodyEl) bodyEl.innerHTML = bodyHtml;
+  el.querySelectorAll(".all-items-sort-hdr").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const col = btn.dataset.col;
+      if (el.dataset.sortCol === col) {
+        el.dataset.sortDir = el.dataset.sortDir === "desc" ? "asc" : "desc";
+      } else {
+        el.dataset.sortCol = col;
+        el.dataset.sortDir = "desc";
+      }
+      refreshAllItemsBody(el);
+    });
+  });
 }
 
 function escapeHtml(s) {

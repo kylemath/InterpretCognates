@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>InterpretCognates — Probing Conceptual Universals in a 200-Language Neural Translator</title>
-  <link rel="stylesheet" href="/static/blog.css" />
+  <link rel="stylesheet" href="blog.css" />
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 </head>
 <body>
@@ -283,8 +283,9 @@
     </div>
     <p class="figure-caption">
       <strong>Figure 3.</strong> Every Swadesh concept plotted by mean cross-lingual phonetic
-      similarity (x-axis) vs. embedding convergence (y-axis, isotropy-corrected).
-      Points colored by semantic category. Concepts in the upper-left quadrant converge
+      similarity (x-axis) vs. embedding convergence (y-axis, isotropy-corrected). Error bars on
+      each dot show &plusmn;1 standard deviation of embedding convergence across the 780 language
+      pairs. Points colored by semantic category. Concepts in the upper-left quadrant converge
       strongly in embedding space <em>despite</em> low surface-form similarity &mdash; the
       strongest candidates for genuine conceptual universals.
     </p>
@@ -909,7 +910,7 @@
           <label class="toggle-label"><input type="checkbox" id="colorShowMean" checked /> Mean centroids</label>
           <label class="toggle-label"><input type="checkbox" id="colorShowFamilyMeans" /> Family means</label>
           <label class="toggle-label"><input type="checkbox" id="colorShowLines" /> Lines to centroid</label>
-          <label class="toggle-label"><input type="checkbox" id="colorShowHulls" /> Convex hulls</label>
+          <label class="toggle-label"><input type="checkbox" id="colorShowHulls" /> Convex hulls (95%)</label>
         </div>
         <div class="color-toggle-row">
           <span class="map-control-sep">Color by:</span>
@@ -1076,14 +1077,12 @@
       available in the project repository.
     </p>
     <p style="margin-top:8px">
-      <a href="/legacy" style="color:var(--link)">Legacy interactive interface</a> &middot;
-      <a href="/legacy/swadesh" style="color:var(--link)">Swadesh detail page</a> &middot;
-      <a href="/legacy/validation" style="color:var(--link)">Validation dashboard</a>
+      <span style="color:var(--fg-dim)">Legacy interactive pages require the full backend.</span>
     </p>
   </footer>
 
 </article>
 
-<script src="/static/blog.js"></script>
+<script src="blog.js"></script>
 </body>
 </html>

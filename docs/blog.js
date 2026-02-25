@@ -2405,13 +2405,14 @@ function filter95Pct3D(xs, ys, zs) {
 }
 
 function mesh3DHull(xs, ys, zs, color, name, legendgroup) {
-  if (xs.length < 4) return null;
+  const f = filter95Pct3D(xs, ys, zs);
+  if (f.xs.length < 4) return null;
   const r = parseInt(color.slice(1, 3), 16) || 0;
   const g = parseInt(color.slice(3, 5), 16) || 0;
   const b = parseInt(color.slice(5, 7), 16) || 0;
   return {
     type: "mesh3d",
-    x: xs, y: ys, z: zs,
+    x: f.xs, y: f.ys, z: f.zs,
     alphahull: 7,
     color: `rgba(${r},${g},${b},0.34)`,
     flatshading: false,
@@ -2918,6 +2919,9 @@ const EXPLORER_LANGS = [
 ];
 
 async function runExplorer() {
+  alert("The Interactive Explorer requires the full backend with the NLLB model running. See the project README for local setup instructions.");
+  return;
+  // --- original code below (unreachable in static build) ---
   const btn = document.getElementById("explorerRunBtn");
   const status = document.getElementById("explorerStatus");
   const concept = document.getElementById("explorerConcept").value.trim();
@@ -2994,14 +2998,14 @@ async function init() {
   let sample, swadesh, phylo, comparison, colex, store, offset, color;
   try {
     [sample, swadesh, phylo, comparison, colex, store, offset, color] = await Promise.all([
-      fetchJSON("/api/results/sample-concept"),
-      fetchJSON("/api/results/swadesh-convergence"),
-      fetchJSON("/api/results/phylogenetic"),
-      fetchJSON("/api/results/swadesh-comparison"),
-      fetchJSON("/api/results/colexification"),
-      fetchJSON("/api/results/conceptual-store"),
-      fetchJSON("/api/results/offset-invariance"),
-      fetchJSON("/api/results/color-circle"),
+      fetchJSON("data/sample_concept.json"),
+      fetchJSON("data/swadesh_convergence.json"),
+      fetchJSON("data/phylogenetic.json"),
+      fetchJSON("data/swadesh_comparison.json"),
+      fetchJSON("data/colexification.json"),
+      fetchJSON("data/conceptual_store.json"),
+      fetchJSON("data/offset_invariance.json"),
+      fetchJSON("data/color_circle.json"),
     ]);
   } catch (e) {
     console.error("Failed to fetch pre-computed results:", e);
@@ -3012,7 +3016,7 @@ async function init() {
   }
 
   // Corpus fetch is independent — its failure must not block the pre-computed charts.
-  const corpus = await fetchJSON("/api/data/swadesh").catch(() => null);
+  const corpus = await fetchJSON("data/swadesh_corpus.json").catch(() => null);
 
   console.log("Data loaded:", { sample: !!sample, swadesh: !!swadesh, phylo: !!phylo,
     comparison: !!comparison, colex: !!colex, store: !!store, offset: !!offset, color: !!color,

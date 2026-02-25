@@ -47,6 +47,37 @@ Open:
 
 `http://127.0.0.1:8000`
 
+## Deploy the blog as a static site (Netlify / GitHub Pages)
+
+The research blog page can be hosted statically — no backend required. All charts
+use pre-computed JSON data. Only the Interactive Concept Explorer (which runs the
+NLLB model live) is disabled in the static build.
+
+### Build
+
+```bash
+python3 build_static.py          # outputs to docs/
+python3 build_static.py dist     # or specify a custom output directory
+```
+
+### Deploy to GitHub Pages
+
+1. Push the repo (with the `docs/` folder) to GitHub.
+2. Go to **Settings → Pages → Source** and select **Deploy from a branch**.
+3. Set the branch to `main` (or your branch) and the folder to `/docs`.
+4. Your site will be live at `https://<username>.github.io/<repo>/`.
+
+### Deploy to Netlify
+
+**Option A — Drag & drop:** Go to [app.netlify.com/drop](https://app.netlify.com/drop)
+and drag the `docs/` folder.
+
+**Option B — Git integration:**
+1. Connect your repo in Netlify.
+2. Set **Build command** to `python3 build_static.py dist` and **Publish directory** to `dist`.
+
+The static site is ~2.8 MB (mostly pre-computed JSON data for the interactive Plotly charts).
+
 ## NLLB language code examples
 
 - English: `eng_Latn`

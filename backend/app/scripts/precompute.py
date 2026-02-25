@@ -500,5 +500,11 @@ if __name__ == "__main__":
         corpus = load_swadesh_corpus()
         languages = [lang["code"] for lang in corpus["languages"]]
         run_sample_concept({}, languages, corpus)
+    elif "--offset-only" in sys.argv:
+        print("Re-running offset invariance only...")
+        corpus = load_swadesh_corpus()
+        concept_embeddings, languages, _, _ = _embed_corpus(corpus)
+        run_offset_invariance(concept_embeddings, languages)
+        print("Done.")
     else:
         main()

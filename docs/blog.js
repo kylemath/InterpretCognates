@@ -1661,7 +1661,7 @@ const SWADESH_CATEGORY = {
   sun: "Weather", moon: "Weather", star: "Weather",
   rain: "Weather", cloud: "Weather", smoke: "Weather", fire: "Weather", ash: "Weather",
   snow: "Weather", ice: "Weather", wind: "Weather", fog: "Weather",
-  burn: "Weather", warm: "Weather", cold: "Weather", dry: "Weather", wet: "Weather",
+  burn: "Weather", warm: "Weather", hot: "Weather", cold: "Weather", dry: "Weather", wet: "Weather",
   red: "Color", green: "Color", yellow: "Color", white: "Color",
   black: "Color", full: "Adjective",
   new: "Adjective", good: "Adjective", round: "Adjective",

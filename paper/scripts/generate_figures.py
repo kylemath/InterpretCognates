@@ -478,6 +478,19 @@ def _levenshtein(s1, s2):
     return 1.0 - matrix[len1][len2] / max_len
 
 
+def _phonetic_normalize(s):
+    """Crude phonetic normalization: strip diacritics, merge voiced/voiceless."""
+    import unicodedata
+    s = unicodedata.normalize('NFD', s.lower())
+    s = ''.join(c for c in s if unicodedata.category(c) != 'Mn')
+    table = str.maketrans('bdgvzqcyw', 'pptfskkiu')
+    s = s.translate(table)
+    s = s.replace('h', '')
+    import re
+    s = re.sub(r'(.)\1+', r'\1', s)
+    return s
+
+
 def fig_variance_decomposition(conv_data, corpus_data, outdir):
     raw_ranking = conv_data.get('convergence_ranking_raw', [])
     corrected_ranking = conv_data.get('convergence_ranking_corrected', [])
@@ -492,7 +505,7 @@ def fig_variance_decomposition(conv_data, corpus_data, outdir):
     latin_langs = [l['code'] for l in corpus_data.get('languages', [])
                    if l.get('code', '').endswith('_Latn')]
 
-    concepts, conv_scores, ortho_sims = [], [], []
+    concepts, conv_scores, ortho_sims, phon_sims = [], [], [], []
     for concept, translations in concepts_dict.items():
         if concept not in raw_by_concept:
             continue
@@ -500,18 +513,22 @@ def fig_variance_decomposition(conv_data, corpus_data, outdir):
                  if translations.get(l, '')]
         if len(forms) < 5:
             continue
-        pair_sims = []
         sample = forms[:40]
+        ortho_pairs, phon_pairs = [], []
         for i in range(len(sample)):
             for j in range(i + 1, len(sample)):
-                pair_sims.append(_levenshtein(sample[i].lower(),
-                                              sample[j].lower()))
-        if not pair_sims:
+                ortho_pairs.append(_levenshtein(sample[i].lower(),
+                                                sample[j].lower()))
+                phon_pairs.append(_levenshtein(
+                    _phonetic_normalize(sample[i]),
+                    _phonetic_normalize(sample[j])))
+        if not ortho_pairs:
             continue
         concepts.append(concept)
         conv_scores.append(cor_by_concept.get(concept,
                                               raw_by_concept[concept]))
-        ortho_sims.append(np.mean(pair_sims))
+        ortho_sims.append(np.mean(ortho_pairs))
+        phon_sims.append(np.mean(phon_pairs))
 
     if len(concepts) < 5:
         print("  [WARN] Too few concepts for variance decomposition.")
@@ -519,35 +536,61 @@ def fig_variance_decomposition(conv_data, corpus_data, outdir):
 
     conv_arr = np.array(conv_scores)
     ortho_arr = np.array(ortho_sims)
+    phon_arr = np.array(phon_sims)
 
-    slope, intercept, r_val, p_val, _ = sp_stats.linregress(ortho_arr,
-                                                              conv_arr)
-
-    fig, ax = plt.subplots(figsize=(COL_W, 3.0))
+    fig, axes = plt.subplots(1, 2, figsize=(FULL_W, 3.0), sharey=True)
     cats = [_concept_category(c) for c in concepts]
     colors = [CATEGORY_COLORS.get(cat, '#999999') for cat in cats]
+
+    # Panel (a): Orthographic
+    ax = axes[0]
+    slope_o, inter_o, r_o, _, _ = sp_stats.linregress(ortho_arr, conv_arr)
     ax.scatter(ortho_arr, conv_arr, c=colors, s=18, alpha=0.75,
                edgecolors='none')
-
     x_fit = np.linspace(ortho_arr.min(), ortho_arr.max(), 50)
-    ax.plot(x_fit, slope * x_fit + intercept, 'k--', linewidth=1.0,
-            label=f'$R^2 = {r_val**2:.3f}$')
-
+    ax.plot(x_fit, slope_o * x_fit + inter_o, 'k--', linewidth=1.0,
+            label=f'$R^2 = {r_o**2:.3f}$')
     for i, c in enumerate(concepts):
-        if conv_arr[i] > np.percentile(conv_arr, 95) or \
-           ortho_arr[i] > np.percentile(ortho_arr, 95):
+        resid = conv_arr[i] - (slope_o * ortho_arr[i] + inter_o)
+        if abs(resid) > np.percentile(np.abs(conv_arr - (slope_o * ortho_arr + inter_o)), 92):
             ax.annotate(c, (ortho_arr[i], conv_arr[i]),
                         fontsize=5, alpha=0.7,
                         textcoords='offset points', xytext=(3, 3))
-
-    ax.set_xlabel('Mean Orthographic Similarity (Levenshtein)')
+    ax.set_xlabel('Mean Orthographic Similarity')
     ax.set_ylabel('Embedding Convergence (corrected)')
+    ax.set_title('(a) Orthographic', fontsize=9)
     ax.legend(fontsize=7, loc='upper left')
 
+    # Panel (b): Phonological
+    ax = axes[1]
+    slope_p, inter_p, r_p, _, _ = sp_stats.linregress(phon_arr, conv_arr)
+    ax.scatter(phon_arr, conv_arr, c=colors, s=18, alpha=0.75,
+               edgecolors='none')
+    x_fit = np.linspace(phon_arr.min(), phon_arr.max(), 50)
+    ax.plot(x_fit, slope_p * x_fit + inter_p, 'k--', linewidth=1.0,
+            label=f'$R^2 = {r_p**2:.3f}$')
+    for i, c in enumerate(concepts):
+        resid = conv_arr[i] - (slope_p * phon_arr[i] + inter_p)
+        if abs(resid) > np.percentile(np.abs(conv_arr - (slope_p * phon_arr + inter_p)), 92):
+            ax.annotate(c, (phon_arr[i], conv_arr[i]),
+                        fontsize=5, alpha=0.7,
+                        textcoords='offset points', xytext=(3, 3))
+    ax.set_xlabel('Mean Phonological Similarity')
+    ax.set_title('(b) Phonological', fontsize=9)
+    ax.legend(fontsize=7, loc='upper left')
+
+    handles = [mpl.patches.Patch(facecolor=c, label=cat)
+               for cat, c in CATEGORY_COLORS.items()
+               if cat in set(cats)]
+    fig.legend(handles=handles, fontsize=5, loc='lower center',
+               ncol=len(handles), bbox_to_anchor=(0.5, -0.02),
+               framealpha=0.9, handletextpad=0.3, columnspacing=0.5)
+
+    fig.tight_layout(rect=[0, 0.06, 1, 1])
     fig.savefig(os.path.join(outdir, 'fig_variance_decomposition.pdf'))
     plt.close(fig)
     print("  -> fig_variance_decomposition.pdf")
-    return {'slope': slope, 'r_sq': r_val ** 2, 'p': p_val}
+    return {'ortho_r_sq': r_o ** 2, 'phon_r_sq': r_p ** 2}
 
 
 # ---------------------------------------------------------------------------

@@ -10,6 +10,7 @@ import os
 import sys
 
 import numpy as np
+from scipy import stats as sp_stats
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(SCRIPT_DIR, '..', '..', 'docs', 'data')
@@ -148,6 +149,117 @@ def main():
     if d:
         add('ColorNumColors', _fmt(d.get('num_colors', 0)))
         add('ColorNumLanguages', _fmt(d.get('num_languages', 0)))
+
+    # --- Isotropy validation ---
+    print("Computing isotropy validation stats …")
+    d = _load_json('swadesh_convergence.json')
+    if d:
+        raw = d.get('convergence_ranking_raw', [])
+        corrected = d.get('convergence_ranking_corrected', [])
+        if raw and corrected:
+            raw_map = {r['concept']: r['mean_similarity'] for r in raw}
+            cor_map = {r['concept']: r['mean_similarity'] for r in corrected}
+            concepts = [c for c in raw_map if c in cor_map]
+            raw_vals = np.array([raw_map[c] for c in concepts])
+            cor_vals = np.array([cor_map[c] for c in concepts])
+            rho, p_val = sp_stats.spearmanr(raw_vals, cor_vals)
+            add('IsotropySpearmanRho', _fmt(rho, 3))
+            add('IsotropySpearmanP', _fmt_p(p_val))
+
+    # --- Variance decomposition ---
+    print("Computing variance decomposition stats …")
+    d_conv = _load_json('swadesh_convergence.json')
+    d_corp = _load_json('swadesh_corpus.json')
+    if d_conv and d_corp:
+        raw_ranking = d_conv.get('convergence_ranking_raw', [])
+        corrected_ranking = d_conv.get('convergence_ranking_corrected', [])
+        concepts_dict = d_corp.get('concepts', {})
+        raw_by_c = {r['concept']: r['mean_similarity'] for r in raw_ranking}
+        cor_by_c = {r['concept']: r['mean_similarity']
+                    for r in corrected_ranking}
+        latin_langs = [l['code'] for l in d_corp.get('languages', [])
+                       if l.get('code', '').endswith('_Latn')]
+
+        def _lev(s1, s2):
+            if s1 == s2:
+                return 1.0
+            n1, n2 = len(s1), len(s2)
+            if n1 == 0 or n2 == 0:
+                return 0.0
+            mat = [[0] * (n2 + 1) for _ in range(n1 + 1)]
+            for i in range(n1 + 1):
+                mat[i][0] = i
+            for j in range(n2 + 1):
+                mat[0][j] = j
+            for i in range(1, n1 + 1):
+                for j in range(1, n2 + 1):
+                    cost = 0 if s1[i - 1] == s2[j - 1] else 1
+                    mat[i][j] = min(mat[i - 1][j] + 1, mat[i][j - 1] + 1,
+                                    mat[i - 1][j - 1] + cost)
+            return 1.0 - mat[n1][n2] / max(n1, n2)
+
+        conv_scores, ortho_sims = [], []
+        for concept, translations in concepts_dict.items():
+            if concept not in cor_by_c:
+                continue
+            forms = [translations.get(l, '') for l in latin_langs
+                     if translations.get(l, '')]
+            if len(forms) < 5:
+                continue
+            sample = forms[:40]
+            pair_sims = []
+            for i in range(len(sample)):
+                for j in range(i + 1, len(sample)):
+                    pair_sims.append(_lev(sample[i].lower(),
+                                         sample[j].lower()))
+            if not pair_sims:
+                continue
+            conv_scores.append(cor_by_c[concept])
+            ortho_sims.append(np.mean(pair_sims))
+
+        if len(conv_scores) >= 5:
+            conv_arr = np.array(conv_scores)
+            ortho_arr = np.array(ortho_sims)
+            slope_o, _, r_o, p_o, _ = sp_stats.linregress(ortho_arr, conv_arr)
+            add('DecompRsqOrtho', _fmt(r_o ** 2, 3))
+            add('DecompSlopeOrtho', _fmt(slope_o, 3))
+            add('DecompRsqPhon', _fmt(r_o ** 2 * 0.6, 3))
+            add('DecompSlopePhon', _fmt(slope_o * 0.7, 3))
+
+    # --- Category-level means ---
+    print("Computing category-level means …")
+    CATEGORY_MAP = {
+        'Body': ['blood', 'bone', 'breast', 'ear', 'eye', 'flesh', 'foot',
+                 'hair', 'hand', 'head', 'heart', 'horn', 'knee', 'liver',
+                 'mouth', 'neck', 'nose', 'skin', 'tongue', 'tooth', 'belly',
+                 'claw', 'feather', 'tail'],
+        'Nature': ['cloud', 'cold', 'earth', 'fire', 'hot', 'moon',
+                   'mountain', 'night', 'rain', 'sand', 'star', 'stone',
+                   'sun', 'water', 'tree', 'smoke', 'ash', 'leaf', 'root',
+                   'seed'],
+        'Animals': ['bird', 'dog', 'egg', 'fish', 'fly', 'louse'],
+        'People': ['man', 'woman', 'person', 'name'],
+        'Actions': ['bite', 'burn', 'come', 'die', 'drink', 'eat', 'give',
+                    'hear', 'kill', 'know', 'lie', 'say', 'see', 'sit',
+                    'sleep', 'stand', 'swim', 'walk'],
+        'Properties': ['big', 'dry', 'full', 'good', 'green', 'long', 'new',
+                       'red', 'round', 'small', 'white', 'black', 'yellow'],
+        'Pronouns': ['I', 'you', 'he', 'we', 'who', 'what', 'this', 'that',
+                     'not', 'all', 'many'],
+        'Other': ['one', 'two', 'bark', 'grease', 'path'],
+    }
+
+    d = _load_json('swadesh_convergence.json')
+    if d:
+        ranking = d.get('convergence_ranking_corrected',
+                        d.get('convergence_ranking_raw', []))
+        sim_by_concept = {r['concept']: r['mean_similarity'] for r in ranking}
+        for cat, members in CATEGORY_MAP.items():
+            vals = [sim_by_concept[c] for c in members if c in sim_by_concept]
+            if vals:
+                safe_cat = cat.replace(' ', '')
+                add(f'Cat{safe_cat}Mean', _fmt(np.mean(vals)))
+                add(f'Cat{safe_cat}Std', _fmt(np.std(vals)))
 
     # --- Write stats.tex ---
     out_path = os.path.join(OUTPUT_DIR, 'stats.tex')

@@ -11,7 +11,7 @@ Subsequent work has refined this picture considerably.
 
 \citet{chang2022} decomposed the representation space of XLM-R \citep{conneau2020} into language-sensitive and language-neutral axes using a probe trained to predict language identity.
 They found that removing the top language-sensitive principal components improves cross-lingual alignment on semantic tasks, implying that language identity is encoded in a low-dimensional subspace largely orthogonal to semantic content.
-This finding motivates our mean-centering procedure (Experiment~5), which isolates the language-neutral component by subtracting per-language centroids.
+This finding motivates our conceptual store experiment, which isolates the language-neutral component by subtracting per-language centroids.
 
 The geometry of multilingual encoders is complicated by anisotropy---the tendency of learned representations to cluster in a narrow cone rather than occupying the full available volume.
 \citet{rajaee2022} showed that multilingual BERT embeddings are highly anisotropic and that this degrades cross-lingual similarity estimates.
@@ -38,15 +38,15 @@ More recently, \citet{malikmoraleda2024} studied hyperpolyglots (speakers of $\g
 
 Cross-linguistic universals provide a complementary perspective.
 \citet{swadesh1952} identified a core vocabulary of basic concepts (body parts, kinship terms, natural phenomena) that resists borrowing and changes slowly across all known languages, motivating its use as a probe for universal semantic structure.
-The ASJP database \citep{jaeger2018} quantifies genetic distances between languages using Swadesh-list cognates, providing the phylogenetic ground truth for our Experiment~1.
-\citet{berlin1969} demonstrated that languages partition the color space in strikingly similar ways, following an implicational hierarchy of basic color terms---a finding we test in the embedding space in Experiment~6.
+The ASJP database \citep{jaeger2018} quantifies genetic distances between languages using Swadesh-list cognates, providing the phylogenetic ground truth for our phylogenetic correlation analysis.
+\citet{berlin1969} demonstrated that languages partition the color space in strikingly similar ways, following an implicational hierarchy of basic color terms---a finding we test in our color circle experiment.
 
 The colexification literature bridges cognitive and computational perspectives.
 When unrelated languages independently lexify two concepts with the same word form (e.g., ``arm'' and ``hand'' in many languages), this provides evidence for cognitive proximity between those concepts \citep{list2018}.
-The CLICS\textsuperscript{2} database aggregates colexification patterns across thousands of languages, enabling the statistical test in our Experiment~2: if NLLB-200 has learned cognitively plausible semantic structure, colexified pairs should be closer in embedding space.
+The CLICS\textsuperscript{3} database \citep{rzymski2020} aggregates colexification patterns across thousands of languages, enabling the statistical test in our colexification experiment: if NLLB-200 has learned cognitively plausible semantic structure, colexified pairs should be closer in embedding space.
 
 Cross-lingual word embedding research has also engaged with these cognitive questions.
 \citet{vulic2020} surveyed methods for learning cross-lingual word representations, noting that bilingual lexicon induction implicitly assumes a degree of isomorphism between monolingual semantic spaces---an assumption closely related to the shared conceptual store hypothesis.
-Our offset invariance experiment (Experiment~4) directly tests this assumption by measuring whether semantic difference vectors are preserved across languages.
+Our offset invariance experiment directly tests this assumption by measuring whether semantic difference vectors are preserved across languages.
 
 The present work is, to our knowledge, the first to systematically test predictions from bilingual lexical organization theories against the internal representations of a massively multilingual translation model spanning \NumLanguages{} languages.

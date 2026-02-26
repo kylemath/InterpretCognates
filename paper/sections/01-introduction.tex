@@ -20,7 +20,7 @@ Our key findings are as follows:
     The model's representation space thus partially recapitulates the phylogenetic tree of human languages.
 
     \item \textbf{Colexification sensitivity.}
-    Concept pairs that are colexified in natural languages---i.e., lexified by the same word form, as catalogued in the CLICS\textsuperscript{2} database \citep{list2018}---show significantly higher embedding similarity than non-colexified pairs ($U = \ColexU{}$, $p = \ColexP{}$, Cohen's $d = \ColexCohenD{}$).
+    Concept pairs that are colexified in natural languages---i.e., lexified by the same word form, as catalogued in the CLICS\textsuperscript{3} database \citep{list2018,rzymski2020}---show significantly higher embedding similarity than non-colexified pairs ($U = \ColexU{}$, $p = \ColexP{}$, Cohen's $d = \ColexCohenD{}$).
 
     \item \textbf{Conceptual store structure.}
     Mean-centering embeddings per language, a procedure inspired by the language-neutral subspace hypothesis \citep{chang2022}, improves the ratio of between-concept to within-concept variance by a factor of $\ConceptualStoreImprovement{}\times$, consistent with a shared conceptual store overlaid with language-specific offsets.
@@ -31,6 +31,7 @@ Our key findings are as follows:
 
 Two additional experiments---Swadesh convergence ranking and universal color term geometry---provide converging evidence.
 A comparison against modern loanword-heavy vocabulary reveals that high embedding convergence can reflect orthographic borrowing rather than semantic universality, underscoring the importance of the external validation experiments.
+We further validate these findings through isotropy correction analysis, variance decomposition that disentangles orthographic from semantic contributions to convergence, and per-family offset consistency heatmaps that reveal how relational structure varies across language families.
 
 All experiments are implemented in the open-source \textsc{InterpretCognates} toolkit, which provides a fully reproducible pipeline from pre-computed embeddings to statistical tests and figures.
 Code and data are available at \url{https://github.com/kylemath/InterpretCognates}.

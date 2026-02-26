@@ -1162,7 +1162,7 @@ def fig_offset_family_heatmap(data, outdir):
 
 
 # ---------------------------------------------------------------------------
-# Figure 15 — Offset vector demo: joint PCA for all concept pairs
+# Figure 15 — Offset vector demo: joint PCA for top-4 concept pairs
 # ---------------------------------------------------------------------------
 def fig_offset_vector_demo(data, outdir):
     jp = data.get('joint_vector_plot')
@@ -1174,62 +1174,69 @@ def fig_offset_vector_demo(data, outdir):
     concepts = jp['concepts']
     centroids = jp['centroids']
     per_language = jp['per_language']
-    n_pairs = len(pairs)
 
-    pair_cmap = mpl.colormaps.get_cmap('tab20').resampled(n_pairs)
-    pair_colors = [mpl.colors.rgb2hex(pair_cmap(i)) for i in range(n_pairs)]
+    pair_colors = ['#d62728', '#1f77b4', '#2ca02c', '#9467bd']
+    _all_markers = ['o', '*', 'D', 's', '^', 'v', 'P', 'X', 'h', 'd']
+    concept_markers = {c: _all_markers[i % len(_all_markers)]
+                       for i, c in enumerate(concepts)}
 
-    concept_to_pair_color = {}
-    for pi, pair in enumerate(pairs):
-        for c in (pair['concept_a'], pair['concept_b']):
-            if c not in concept_to_pair_color:
-                concept_to_pair_color[c] = pair_colors[pi]
+    fig, axes = plt.subplots(1, 2, figsize=(FULL_W, 3.8))
 
-    fig, axes = plt.subplots(1, 2, figsize=(FULL_W, 4.2))
-
-    # --- Panel (a): joint PCA embedding space ---
+    # --- Panel (a): joint PCA embedding space with concept clusters ---
     ax = axes[0]
     rng = np.random.RandomState(42)
     langs = list(per_language.keys())
-    sample = rng.choice(langs, size=min(40, len(langs)), replace=False)
+    sample = rng.choice(langs, size=min(50, len(langs)), replace=False)
+
+    for concept in concepts:
+        xs = [per_language[l]['points'][concept]['x'] for l in sample]
+        ys = [per_language[l]['points'][concept]['y'] for l in sample]
+        ax.scatter(xs, ys, s=8, alpha=0.25, c='#aaaaaa',
+                   marker=concept_markers[concept], edgecolors='none')
 
     for pi, pair in enumerate(pairs):
         ca, cb = pair['concept_a'], pair['concept_b']
         col = pair_colors[pi]
+        norm = pair['centroid_offset_norm']
+        cax, cay = centroids[ca]['x'], centroids[ca]['y']
+        cbx, cby = centroids[cb]['x'], centroids[cb]['y']
 
         for lang in sample:
             pts = per_language[lang]['points']
             ax.annotate('', xy=(pts[cb]['x'], pts[cb]['y']),
                         xytext=(pts[ca]['x'], pts[ca]['y']),
                         arrowprops=dict(arrowstyle='->', color=col,
-                                        lw=0.3, alpha=0.08))
+                                        lw=0.4, alpha=0.15))
 
-    for pi, pair in enumerate(pairs):
-        ca, cb = pair['concept_a'], pair['concept_b']
-        col = pair_colors[pi]
-        cax, cay = centroids[ca]['x'], centroids[ca]['y']
-        cbx, cby = centroids[cb]['x'], centroids[cb]['y']
         ax.annotate('', xy=(cbx, cby), xytext=(cax, cay),
                     arrowprops=dict(arrowstyle='->', color=col,
-                                    lw=1.6, alpha=0.85),
+                                    lw=2.5, alpha=0.9),
                     zorder=6)
 
     for concept in concepts:
         cx = centroids[concept]['x']
         cy = centroids[concept]['y']
-        col = concept_to_pair_color.get(concept, '#666666')
-        ax.scatter(cx, cy, s=40, marker='o', c=col,
-                   edgecolors='black', linewidths=0.4, zorder=8)
-        ax.annotate(concept, (cx, cy), fontsize=4.5, fontweight='bold',
-                    ha='center', va='bottom', xytext=(0, 3.5),
-                    textcoords='offset points', zorder=9, color=col,
-                    bbox=dict(boxstyle='round,pad=0.1', fc='white',
-                              ec='none', alpha=0.75))
+        ax.scatter(cx, cy, s=100, marker=concept_markers[concept],
+                   c='white', edgecolors='black', linewidths=0.8, zorder=8)
+        ax.annotate(concept, (cx, cy), fontsize=6, fontweight='bold',
+                    ha='center', va='bottom', xytext=(0, 5),
+                    textcoords='offset points', zorder=9,
+                    bbox=dict(boxstyle='round,pad=0.15', fc='white',
+                              ec='none', alpha=0.8))
 
+    legend_elements = []
+    for pi, pair in enumerate(pairs):
+        ca, cb = pair['concept_a'], pair['concept_b']
+        norm = pair['centroid_offset_norm']
+        legend_elements.append(mpl.lines.Line2D(
+            [], [], color=pair_colors[pi], lw=2,
+            label=f'{ca}→{cb} ({norm:.1f})'))
+    ax.legend(handles=legend_elements, fontsize=5.5, loc='best',
+              framealpha=0.85, handletextpad=0.4, borderpad=0.4,
+              title='Pair (|d|)', title_fontsize=6)
     ax.set_xlabel('PC1', fontsize=8)
     ax.set_ylabel('PC2', fontsize=8)
-    ax.set_title('(a) Joint PCA: all offset pairs', fontsize=9)
-    ax.tick_params(labelsize=6)
+    ax.set_title('(a) Joint PCA: top-4 offset pairs', fontsize=9)
     ax.grid(True, alpha=0.2, linewidth=0.5)
 
     # --- Panel (b): Offset vectors from common origin ---
@@ -1239,6 +1246,7 @@ def fig_offset_vector_demo(data, outdir):
     for pi, pair in enumerate(pairs):
         ca, cb = pair['concept_a'], pair['concept_b']
         col = pair_colors[pi]
+        norm = pair['centroid_offset_norm']
 
         centroid_dx = centroids[cb]['x'] - centroids[ca]['x']
         centroid_dy = centroids[cb]['y'] - centroids[ca]['y']
@@ -1249,21 +1257,20 @@ def fig_offset_vector_demo(data, outdir):
             dy = pts[cb]['y'] - pts[ca]['y']
             all_dx.append(dx)
             all_dy.append(dy)
-            ax.arrow(0, 0, dx, dy, head_width=0.12, head_length=0.08,
-                     fc=col, ec=col, alpha=0.10, linewidth=0.3)
+            ax.arrow(0, 0, dx, dy, head_width=0.18, head_length=0.12,
+                     fc=col, ec=col, alpha=0.18, linewidth=0.5)
 
         all_dx.append(centroid_dx)
         all_dy.append(centroid_dy)
         ax.arrow(0, 0, centroid_dx, centroid_dy,
-                 head_width=0.22, head_length=0.12,
-                 fc=col, ec=col, linewidth=1.2, zorder=5)
+                 head_width=0.35, head_length=0.18,
+                 fc=col, ec='black', linewidth=2.0, zorder=5)
         ax.annotate(f'{ca}→{cb}',
-                    (centroid_dx, centroid_dy), fontsize=3.8,
+                    (centroid_dx, centroid_dy), fontsize=5.5,
                     fontweight='bold', ha='center', va='bottom',
-                    xytext=(0, 3), textcoords='offset points', zorder=6,
-                    color=col,
-                    bbox=dict(boxstyle='round,pad=0.08', fc='white',
-                              ec='none', alpha=0.75))
+                    xytext=(0, 4), textcoords='offset points', zorder=6,
+                    bbox=dict(boxstyle='round,pad=0.12', fc='white',
+                              ec='none', alpha=0.8))
 
     pad = 1.5
     xmin = min(0, min(all_dx)) - pad
@@ -1276,8 +1283,7 @@ def fig_offset_vector_demo(data, outdir):
     ax.axvline(0, color='grey', linewidth=0.3)
     ax.set_xlabel('$\\Delta$PC1', fontsize=8)
     ax.set_ylabel('$\\Delta$PC2', fontsize=8)
-    ax.set_title(f'(b) Offset vectors ({n_pairs} pairs)', fontsize=9)
-    ax.tick_params(labelsize=6)
+    ax.set_title('(b) Offset vectors (all 4 pairs)', fontsize=9)
     ax.grid(True, alpha=0.2, linewidth=0.5)
 
     fig.tight_layout()

@@ -284,10 +284,9 @@ def run_offset_invariance(concept_embeddings, languages):
             "explained_variance": [float(v) for v in pca_2d.explained_variance_ratio_],
         })
 
-    # Joint PCA: project all concepts from all pairs into a shared 2D space
-    all_pairs_sorted = sorted(pairs, key=lambda p: p["centroid_offset_norm"], reverse=True)
+    # Joint PCA: project all concepts from top-4 pairs into a shared 2D space
     unique_concepts = list(dict.fromkeys(
-        c for p in all_pairs_sorted for c in (p["concept_a"], p["concept_b"])
+        c for p in top_k for c in (p["concept_a"], p["concept_b"])
     ))
     joint_langs = sorted(set.intersection(*(
         set(lang for lang in languages if lang in concept_embeddings.get(c, {}))
@@ -333,7 +332,7 @@ def run_offset_invariance(concept_embeddings, languages):
                 {"concept_a": p["concept_a"], "concept_b": p["concept_b"],
                  "centroid_offset_norm": float(p["centroid_offset_norm"]),
                  "mean_consistency": float(p["mean_consistency"])}
-                for p in all_pairs_sorted
+                for p in top_k
             ],
             "concepts": unique_concepts,
             "centroids": centroids,

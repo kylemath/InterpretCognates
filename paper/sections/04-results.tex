@@ -23,12 +23,12 @@ This example motivates the systematic analysis that follows.
 Across the \NumConcepts{} Swadesh items embedded in \NumLanguages{} languages, the mean cross-lingual convergence score---defined as the average pairwise cosine similarity over all language pairs for a given concept---is \SwadeshMean{} ($\sigma = \SwadeshStd{}$), with individual concepts ranging from \SwadeshMin{} to \SwadeshMax{}.
 Figure~\ref{fig:swadesh} presents the full ranking.
 
-\begin{figure}[htbp]
+\begin{figure*}[htbp]
   \centering
-  \includegraphics[width=\columnwidth,height=0.85\textheight,keepaspectratio]{figures/fig_swadesh_ranking.pdf}
-  \caption{Swadesh convergence ranking. Each bar shows the mean pairwise cosine similarity for a concept across all \NumLanguages{} language pairs. Concepts at the top of the ranking are represented most consistently across languages in the NLLB-200 encoder space.}
+  \includegraphics[width=\textwidth]{figures/fig_swadesh_ranking.pdf}
+  \caption{Swadesh convergence ranking. Each concept is plotted by mean cross-lingual phonetic similarity among Latin-script translations (x-axis) versus embedding convergence in NLLB-200's encoder (y-axis, isotropy-corrected). Points are colored by semantic category. Concepts in the upper-left region converge strongly in embedding space \emph{despite} low surface-form similarity---the strongest candidates for genuine conceptual universals.}
   \label{fig:swadesh}
-\end{figure}
+\end{figure*}
 
 The highest-ranked concept is \textit{\SwadeshTopConcept{}}, while the lowest is \textit{\SwadeshBottomConcept{}}.
 The distribution reveals a clear pattern: concepts that are concrete, perceptually grounded, and monosemous (e.g., body parts, celestial objects, kinship terms) tend to cluster near the top, whereas concepts that are abstract or polysemous tend to occupy the bottom ranks.
@@ -37,23 +37,15 @@ This ordering is broadly consistent with the intuition behind the Swadesh list i
 
 \subsection{Swadesh vs.\ Non-Swadesh Vocabulary}
 
-To test whether the Swadesh convergence pattern reflects cultural stability rather than incidental properties of the vocabulary, we compared convergence scores for \SwadeshCompNumSwadesh{} Swadesh concepts against \SwadeshCompNumNonSwadesh{} non-Swadesh concepts drawn from culturally specific, modern, and abstract vocabulary (e.g., \textit{government}, \textit{university}, \textit{airport}, \textit{democracy}).
+As a sanity check, we compared convergence scores for \SwadeshCompNumSwadesh{} Swadesh concepts against \SwadeshCompNumNonSwadesh{} non-Swadesh concepts drawn from modern and institutional vocabulary (e.g., \textit{telephone}, \textit{university}, \textit{democracy}, \textit{restaurant}).
+Counter to the na\"ive prediction that culturally universal concepts should converge more, the non-Swadesh set exhibits \textit{higher} mean convergence ($\mu = \NonSwadeshCompMean{}$ vs.\ $\mu = \SwadeshCompMean{}$; Mann-Whitney $U = \SwadeshCompU{}$, $p = \SwadeshCompP{}$, Cohen's $d = \SwadeshCompCohenD{}$).
 
-Counter to the na\"ive prediction that culturally universal concepts should converge more, the non-Swadesh vocabulary exhibits \textit{higher} mean convergence ($\mu = \NonSwadeshCompMean{}$) than Swadesh items ($\mu = \SwadeshCompMean{}$), with a Mann-Whitney $U = \SwadeshCompU{}$ and $p = \SwadeshCompP{}$ (Cohen's $d = \SwadeshCompCohenD{}$).
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=\columnwidth]{figures/fig_swadesh_comparison.pdf}
-  \caption{Convergence distributions for Swadesh core vocabulary ($n = \SwadeshCompNumSwadesh{}$) and non-Swadesh modern vocabulary ($n = \SwadeshCompNumNonSwadesh{}$). Contrary to the cultural stability prediction, non-Swadesh concepts show higher mean convergence, driven by loanword orthographic similarity.}
-  \label{fig:swadesh_comp}
-\end{figure}
-
-This reversal is informative rather than damaging to the broader argument.
-Modern abstract vocabulary is disproportionately composed of loanwords: terms like \textit{democracy}, \textit{university}, and \textit{telephone} share surface forms across dozens of languages precisely because they were culturally borrowed rather than independently coined.
-High embedding convergence for these items therefore reflects orthographic and phonological similarity---the model recognizes shared subword tokens---rather than deep semantic universality.
+This reversal is largely an artifact of our non-Swadesh selection, which is heavily biased toward loanwords.
+Terms like \textit{democracy}, \textit{telephone}, \textit{computer}, and \textit{hotel} share surface forms across dozens of languages because they were culturally borrowed rather than independently coined; the model's high convergence for these items therefore reflects shared subword tokens rather than deep semantic universality.
 By contrast, Swadesh items denote universal concepts with \textit{diverse} surface forms across unrelated language families: the word for ``water'' differs radically between English, Mandarin, Arabic, and Swahili, yet must converge in the model's semantic space if conceptual structure is truly universal.
-The moderate convergence of Swadesh items is thus the more remarkable finding, as it emerges despite surface-form diversity.
-This distinction between borrowing-driven convergence and semantically-driven convergence motivates our remaining experiments, which use external benchmarks to validate that the Swadesh convergence signal reflects genuine conceptual structure.
+The moderate convergence of Swadesh items is thus the more noteworthy finding, as it emerges despite surface-form diversity.
+A properly controlled comparison would require a non-Swadesh set matched for borrowability and orthographic diversity; we leave this to future work.
+This distinction between borrowing-driven convergence and semantically-driven convergence motivates the variance decomposition analysis that follows, which directly quantifies the surface-form contribution.
 
 \subsection{Variance Decomposition}
 
@@ -77,12 +69,12 @@ Grouping the \NumConcepts{} Swadesh items by semantic category reveals a clear h
 Nature terms (mean $= \CatNatureMean{} \pm \CatNatureStd{}$) and People terms (mean $= \CatPeopleMean{} \pm \CatPeopleStd{}$) converge most strongly, while Pronouns (mean $= \CatPronounsMean{} \pm \CatPronounsStd{}$) converge least.
 Figure~\ref{fig:category_summary} presents this breakdown.
 
-\begin{figure}[htbp]
+\begin{figure*}[htbp]
   \centering
-  \includegraphics[width=\columnwidth]{figures/fig_category_summary.pdf}
-  \caption{Mean convergence score by Swadesh semantic category (corrected embeddings). Error bars show within-category standard deviation. Nature and People categories converge most strongly; Pronouns converge least, consistent with their high cross-linguistic grammaticalization variability.}
+  \includegraphics[width=\textwidth]{figures/fig_category_summary.pdf}
+  \caption{Convergence by semantic category. (a) Box-and-whisker plots and (b) violin plots with individual data points for each Swadesh semantic category (isotropy-corrected). Dashed lines mark the overall mean. Nature and People categories converge most strongly; Pronouns converge least, consistent with their high cross-linguistic grammaticalization variability.}
   \label{fig:category_summary}
-\end{figure}
+\end{figure*}
 
 The category hierarchy aligns with linguistic intuitions: concrete, perceptually grounded categories (Nature, Animals) converge more than grammatical categories (Pronouns), which exhibit greater cross-linguistic variability in form and function.
 
@@ -124,24 +116,25 @@ Figure~\ref{fig:phylo} presents the hierarchical clustering derived from embeddi
 Recognizable family-level groupings emerge: Indo-European languages cluster together, as do Austronesian, Turkic, and Niger-Congo languages.
 However, the modest magnitude of $\rho$ indicates that genealogical relatedness explains only a fraction of the variance in embedding geometry.
 
-Figure~\ref{fig:mantel_scatter} provides a direct visualization of the Mantel correlation by plotting each language pair's ASJP phonetic distance against its embedding distance.
-The positive trend is visible but noisy, confirming that the correlation is real but weak.
+Figure~\ref{fig:mantel_scatter} provides a direct visualization of the Mantel correlation by plotting each language pair's ASJP phonetic distance against its embedding distance, stratified by phylogenetic relationship.
+Same-subfamily pairs (e.g., French--Spanish) cluster at low ASJP distance with tight embedding distances; cross-branch Indo-European pairs (e.g., English--Russian) occupy the middle range; and cross-family pairs (e.g., English--Chinese) dominate the high-distance region.
+Separate per-group regression lines reveal that the positive trend is driven primarily by the contrast between these tiers rather than a uniform linear relationship.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\columnwidth]{figures/fig_mantel_scatter.pdf}
-  \caption{Mantel test scatter: pairwise embedding distance vs.\ ASJP phonetic distance across \MantelNumLangs{} languages (subsampled to 2000 pairs for legibility). The positive trend ($\rho = \MantelRho{}$, $p = \MantelP{}$) indicates that more genetically distant languages occupy more distant embedding regions.}
+  \caption{Mantel test scatter: pairwise embedding distance vs.\ ASJP phonetic distance across \MantelNumLangs{} languages, colored by phylogenetic relationship tier---same subfamily (blue), cross-branch Indo-European (amber), and cross-family (red). Dashed lines show per-group linear fits with Spearman $\rho$ values. The overall Mantel $\rho = \MantelRho{}$ ($p = \MantelP{}$).}
   \label{fig:mantel_scatter}
 \end{figure}
 
 Complementing the language-level view, Figure~\ref{fig:concept_map} provides a concept-level perspective by projecting the cross-lingual centroids of all \NumConcepts{} Swadesh items into a 2D PCA space, colored by semantic category.
 
-\begin{figure}[htbp]
+\begin{figure*}[htbp]
   \centering
-  \includegraphics[width=\columnwidth]{figures/fig_concept_map.pdf}
-  \caption{2D PCA projection of cross-lingual concept centroids for all \NumConcepts{} Swadesh items, colored by semantic category. Concepts from the same semantic domain (e.g., body parts, nature terms) tend to cluster, revealing that the model's representation space is organized by meaning.}
+  \includegraphics[width=\textwidth]{figures/fig_concept_map.pdf}
+  \caption{2D PCA projection of Swadesh concept embeddings pooled across all 19 language families. Small translucent dots show per-family centroid positions (one per concept per family, ${\sim}1{,}900$ points total); convex hulls delineate each semantic category's spread; large opaque dots mark the overall cross-lingual centroids. Body parts and nature terms occupy distinct regions of the space, while pronouns cluster tightly---confirming that the model's geometry is organized by meaning rather than arbitrary lexical associations.}
   \label{fig:concept_map}
-\end{figure}
+\end{figure*}
 
 The concept map reveals that semantically related items (e.g., body parts, nature terms) cluster together in the shared embedding space, providing visual evidence that the model's geometry is organized by conceptual content rather than arbitrary lexical associations.
 
@@ -150,19 +143,19 @@ This is consistent with the view that NLLB-200's shared encoder constructs a rep
 
 \subsection{Colexification Proximity}
 
-We tested whether concept pairs that are colexified in the CLICS\textsuperscript{3} database \citep{list2018,rzymski2020}---that is, expressed by the same word form in at least one language---are represented more similarly than non-colexified pairs in the NLLB-200 encoder space.
-Colexified concept pairs exhibit a mean cosine similarity of \ColexColMean{}, compared to \ColexNonColMean{} for non-colexified pairs.
-A Mann-Whitney $U$ test confirms that this difference is statistically significant ($U = \ColexU{}$, $p = \ColexP{}$), with a medium effect size (Cohen's $d = \ColexCohenD{}$).
+We assessed whether colexification frequency---the number of language families in CLICS\textsuperscript{3} \citep{list2018,rzymski2020} that express two concepts with the same word form---predicts embedding similarity in the NLLB-200 encoder space.
+Treating colexification as a continuous variable across all \ColexNumPairs{} Swadesh concept pairs yields a significant positive Spearman correlation ($\rho_s = \ColexSpearmanRho{}$, $p = \ColexSpearmanP{}$): the more language families that colexify a pair, the more similar the model's representations.
+A confirmatory Mann-Whitney $U$ test on the binary split (colexified $\geq 3$ families vs.\ non-colexified) corroborates this gradient ($U = \ColexU{}$, $p = \ColexP{}$, Cohen's $d = \ColexCohenD{}$).
 
-\begin{figure}[htbp]
+\begin{figure*}[htbp]
   \centering
-  \includegraphics[width=\columnwidth]{figures/fig_colexification.pdf}
-  \caption{Cosine similarity distributions for colexified ($n = \ColexColCount{}$) and non-colexified ($n = \ColexNonColCount{}$) concept pairs. Colexified pairs are significantly more similar in the NLLB-200 embedding space, suggesting the model has internalized cross-linguistically recurrent semantic associations.}
+  \includegraphics[width=\textwidth]{figures/fig_colexification.pdf}
+  \caption{Cosine similarity as a function of colexification frequency for \ColexNumPairs{} Swadesh concept pairs. Each red point is a pair attested by at least one CLICS\textsuperscript{3} language family; grey points are non-colexified controls. The dashed line is a linear fit. Spearman $\rho_s = \ColexSpearmanRho{}$ ($p = \ColexSpearmanP{}$). Selected pairs are labelled to illustrate the semantic content at different frequency levels.}
   \label{fig:colex}
-\end{figure}
+\end{figure*}
 
-The medium effect size reported in Figure~\ref{fig:colex} indicates that the model has internalized universal conceptual associations that transcend individual languages.
-Colexification patterns arise from shared cognitive and experiential structure across human populations \citep{list2018}, and the fact that a translation model trained without explicit semantic annotation recovers these associations provides evidence that cross-lingual translational equivalence is sufficient to induce conceptually meaningful geometric structure.
+The continuous relationship visible in Figure~\ref{fig:colex} indicates that the model's geometry tracks the \emph{strength} of cross-linguistic semantic association, not merely its presence or absence.
+Colexification patterns arise from shared cognitive and experiential structure across human populations \citep{list2018}, and the monotonic increase in embedding similarity with colexification frequency provides evidence that NLLB-200's shared encoder has internalized a graded scale of conceptual relatedness through translational equivalence alone.
 
 \subsection{Conceptual Store Metric}
 
@@ -175,7 +168,7 @@ This improvement confirms that a substantial component of the raw embedding geom
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\columnwidth]{figures/fig_conceptual_store.pdf}
-  \caption{Conceptual store metric before and after per-language mean-centering. The between-concept to within-concept distance ratio increases from \ConceptualStoreRaw{} to \ConceptualStoreCentered{} after correction, revealing a latent conceptual organization that is partially masked by language-level clustering in the raw space.}
+  \caption{Conceptual store metric before and after per-language mean-centering. The between-concept to within-concept distance ratio increases from \ConceptualStoreRaw{} to \ConceptualStoreCentered{} after correction. Error bars show 95\% bootstrap confidence intervals (resampling over concepts). The improvement reveals a latent conceptual organization partially masked by language-level clustering in the raw space.}
   \label{fig:conceptual_store}
 \end{figure}
 
@@ -187,12 +180,12 @@ Just as bilingual speakers access shared semantic representations across their l
 We project the cross-lingual centroids of the \ColorNumColors{} basic color terms identified by \citet{berlin1969} into a two-dimensional PCA space using embeddings from \ColorNumLanguages{} languages.
 Figure~\ref{fig:color} shows the resulting arrangement.
 
-\begin{figure}[htbp]
+\begin{figure*}[htbp]
   \centering
-  \includegraphics[width=\columnwidth]{figures/fig_color_circle.pdf}
-  \caption{PCA projection of cross-lingual centroids for \ColorNumColors{} Berlin \& Kay basic color terms across \ColorNumLanguages{} languages. Warm colors (red, orange, yellow) and cool colors (blue, green) occupy opposing regions, and the overall arrangement recovers an approximate circular topology consistent with perceptual color space.}
+  \includegraphics[width=\textwidth]{figures/fig_color_circle.pdf}
+  \caption{PCA projection of \ColorNumColors{} Berlin \& Kay basic color terms across \ColorNumLanguages{} languages. Small translucent dots show individual per-language embeddings; convex hulls delineate the spread of each color term across languages; large filled circles mark the cross-lingual centroids. Warm colors (red, orange, yellow) and cool colors (blue, green) occupy opposing regions, and the overall arrangement recovers an approximate circular topology consistent with perceptual color space.}
   \label{fig:color}
-\end{figure}
+\end{figure*}
 
 The projection reveals a striking arrangement: warm colors (red, orange, yellow) and cool colors (blue, green) occupy opposing regions of the plane, and adjacent colors in perceptual space (e.g., red--orange, blue--green) are adjacent in the PCA projection.
 The overall layout approximates the circular topology of perceptual color wheels, despite the model never having received explicit perceptual training.
@@ -230,11 +223,11 @@ Figure~\ref{fig:offset_family_heatmap} disaggregates offset consistency by langu
   \label{fig:offset_family_heatmap}
 \end{figure*}
 
-Finally, Figure~\ref{fig:offset_vector_demo} provides a geometric illustration of the best-performing pair (\textit{\OffsetBestPair{}}), showing that per-language offset vectors align closely with the centroid direction.
+Finally, Figure~\ref{fig:offset_vector_demo} provides a geometric illustration of the top four concept pairs, visualizing how per-language offset vectors align with the centroid direction across the shared PCA space.
 
 \begin{figure*}[htbp]
   \centering
   \includegraphics[width=\textwidth]{figures/fig_offset_vector_demo.pdf}
-  \caption{Offset vector demonstration for the best-performing pair (\textit{\OffsetBestPair{}}). (a) 2D PCA projection of per-language embeddings for both concepts, with centroids marked by stars. (b) Offset vectors from origin, showing that per-language vectors (colored by family) align closely with the centroid offset (black arrow), indicating language-invariant relational structure.}
+  \caption{Offset vector demonstration for the top-4 concept pairs. (a) Joint PCA projection showing per-language embeddings (translucent), centroid positions (white markers), and offset arrows for each pair (colored). Thin arrows show individual per-language offsets; bold arrows show centroid offsets. (b) All offset vectors plotted from a common origin, revealing directional consistency: per-language offsets cluster tightly around their centroid direction for each pair, confirming language-invariant relational structure.}
   \label{fig:offset_vector_demo}
 \end{figure*}

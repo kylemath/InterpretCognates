@@ -105,6 +105,9 @@ def main():
     print("Loading colexification.json …")
     d = _load_json('colexification.json')
     if d:
+        add('ColexSpearmanRho', _fmt(d.get('spearman_rho', 0)))
+        add('ColexSpearmanP', _fmt_p(d.get('spearman_p', 1.0)))
+        add('ColexNumPairs', _fmt(d.get('num_pairs', 0)))
         add('ColexU', _fmt(d.get('U_statistic', 0)))
         add('ColexP', _fmt_p(d.get('p_value', 1.0)))
         add('ColexColMean', _fmt(d.get('colexified_mean', 0)))

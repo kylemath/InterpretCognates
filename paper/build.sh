@@ -34,7 +34,11 @@ if [ ! -f "output/stats.tex" ]; then
 fi
 
 MISSING_FIGS=0
-for fig in fig_swadesh_ranking fig_phylogenetic fig_swadesh_comparison fig_colexification fig_conceptual_store fig_color_circle fig_offset_invariance; do
+for fig in fig_swadesh_ranking fig_phylogenetic fig_swadesh_comparison \
+           fig_colexification fig_conceptual_store fig_color_circle \
+           fig_offset_invariance fig_water_manifold fig_variance_decomposition \
+           fig_category_summary fig_isotropy_validation fig_mantel_scatter \
+           fig_concept_map fig_offset_family_heatmap fig_offset_vector_demo; do
     if [ ! -f "figures/${fig}.pdf" ]; then
         echo "WARNING: figures/${fig}.pdf not found"
         MISSING_FIGS=$((MISSING_FIGS + 1))

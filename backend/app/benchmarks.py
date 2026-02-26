@@ -656,15 +656,15 @@ def colexification_test(
     concept_embeddings: dict[str, dict[str, np.ndarray]],
     languages: list[str],
 ) -> dict[str, Any]:
-    """Mann-Whitney U test comparing cosine similarity of colexified vs non-colexified pairs.
+    """Continuous colexification analysis: correlate CLICS frequency with embedding similarity.
 
-    For each concept pair, computes mean cross-lingual cosine similarity of the
-    two concepts' embeddings averaged across languages, then compares the
-    distributions of colexified vs non-colexified pairs.
-
-    Returns dict with: colexified_mean, non_colexified_mean, U_statistic, p_value,
-                       colexified_sims, non_colexified_sims.
+    For every Swadesh concept pair, computes (a) the colexification frequency
+    (number of language families in CLICS³ that colexify the pair) and (b) the
+    mean cross-lingual cosine similarity in the embedding space.  Returns
+    per-pair records for the scatter plot plus Spearman correlation and the
+    legacy Mann-Whitney U comparison.
     """
+    from itertools import combinations as _combs
 
     def _pair_similarity(concept_a: str, concept_b: str):
         sims = []
@@ -680,34 +680,50 @@ def colexification_test(
             sims.append(float(np.dot(vec_a, vec_b) / (norm_a * norm_b)))
         return float(np.mean(sims)) if sims else None
 
-    colex_sims = []
-    for a, b in COLEXIFIED_PAIRS:
+    clics_data = load_clics_colexifications()
+    frequencies = clics_data["frequencies"]
+
+    available_concepts = sorted(
+        c for c in _SWADESH_CONCEPTS if c in concept_embeddings
+    )
+
+    pair_records = []
+    for a, b in _combs(available_concepts, 2):
         sim = _pair_similarity(a, b)
-        if sim is not None:
-            colex_sims.append(sim)
+        if sim is None:
+            continue
+        freq = frequencies.get((a, b), frequencies.get((b, a), 0))
+        pair_records.append({
+            "concept_a": a,
+            "concept_b": b,
+            "frequency": freq,
+            "similarity": sim,
+        })
 
-    non_colex_sims = []
-    for a, b in NON_COLEXIFIED_PAIRS:
-        sim = _pair_similarity(a, b)
-        if sim is not None:
-            non_colex_sims.append(sim)
+    freqs_arr = np.array([r["frequency"] for r in pair_records])
+    sims_arr = np.array([r["similarity"] for r in pair_records])
 
-    if len(colex_sims) < 2 or len(non_colex_sims) < 2:
-        return {
-            "error": "Insufficient concept overlap with embeddings",
-            "colexified_count": len(colex_sims),
-            "non_colexified_count": len(non_colex_sims),
-        }
+    spearman_rho, spearman_p = spearmanr(freqs_arr, sims_arr)
 
-    u_stat, p_value = mannwhitneyu(colex_sims, non_colex_sims, alternative="greater")
+    colex_sims = [r["similarity"] for r in pair_records if r["frequency"] >= _MIN_FAMILIES_THRESHOLD]
+    non_colex_sims = [r["similarity"] for r in pair_records if r["frequency"] == 0]
+
+    if len(colex_sims) >= 2 and len(non_colex_sims) >= 2:
+        u_stat, u_p = mannwhitneyu(colex_sims, non_colex_sims, alternative="greater")
+    else:
+        u_stat, u_p = 0.0, 1.0
 
     return {
-        "colexified_mean": float(np.mean(colex_sims)),
-        "colexified_std": float(np.std(colex_sims)),
-        "non_colexified_mean": float(np.mean(non_colex_sims)),
-        "non_colexified_std": float(np.std(non_colex_sims)),
+        "pair_records": pair_records,
+        "spearman_rho": float(spearman_rho),
+        "spearman_p": float(spearman_p),
+        "num_pairs": len(pair_records),
+        "colexified_mean": float(np.mean(colex_sims)) if colex_sims else 0.0,
+        "colexified_std": float(np.std(colex_sims)) if colex_sims else 0.0,
+        "non_colexified_mean": float(np.mean(non_colex_sims)) if non_colex_sims else 0.0,
+        "non_colexified_std": float(np.std(non_colex_sims)) if non_colex_sims else 0.0,
         "U_statistic": float(u_stat),
-        "p_value": float(p_value),
+        "p_value": float(u_p),
         "colexified_sims": colex_sims,
         "non_colexified_sims": non_colex_sims,
         "colexified_count": len(colex_sims),
@@ -769,16 +785,19 @@ def swadesh_vs_non_swadesh_comparison(
 def conceptual_store_metric(
     concept_embeddings: Dict[str, Dict[str, np.ndarray]],
     languages: List[str],
+    n_bootstrap: int = 1000,
 ) -> Dict[str, Any]:
     """Measure concept separation in embedding space.
 
     Computes the ratio of mean between-concept distance to mean within-concept
     distance, both raw and after per-language mean-centering. A higher ratio
     indicates better conceptual separation.
+
+    Bootstrap resampling over concepts provides 95% confidence intervals.
     """
 
     def _within_between(embeddings: Dict[str, Dict[str, np.ndarray]]):
-        within_dists: List[float] = []
+        per_concept_within: List[List[float]] = []
         concept_centroids: List[np.ndarray] = []
         concept_names = list(embeddings.keys())
 
@@ -788,20 +807,35 @@ def conceptual_store_metric(
             if len(available) < 2:
                 continue
             vecs = [lang_vecs[lang] for lang in available]
-            for va, vb in combinations(vecs, 2):
-                within_dists.append(float(cosine_dist(va, vb)))
+            dists = [float(cosine_dist(va, vb))
+                     for va, vb in combinations(vecs, 2)]
+            per_concept_within.append(dists)
             concept_centroids.append(np.mean(vecs, axis=0))
 
+        all_within = [d for dists in per_concept_within for d in dists]
         between_dists: List[float] = []
         for ca, cb in combinations(concept_centroids, 2):
             between_dists.append(float(cosine_dist(ca, cb)))
 
-        mean_within = float(np.mean(within_dists)) if within_dists else 0.0
+        mean_within = float(np.mean(all_within)) if all_within else 0.0
         mean_between = float(np.mean(between_dists)) if between_dists else 0.0
         ratio = mean_between / mean_within if mean_within > 1e-12 else 0.0
-        return ratio
+        return ratio, per_concept_within, concept_centroids
 
-    raw_ratio = _within_between(concept_embeddings)
+    def _bootstrap_ratio(per_concept_within, concept_centroids, rng):
+        n = len(concept_centroids)
+        if n < 2:
+            return 0.0
+        idx = rng.choice(n, size=n, replace=True)
+        within = [d for i in idx for d in per_concept_within[i]]
+        centroids = [concept_centroids[i] for i in idx]
+        between = [float(cosine_dist(centroids[a], centroids[b]))
+                   for a in range(n) for b in range(a + 1, n)]
+        mw = float(np.mean(within)) if within else 0.0
+        mb = float(np.mean(between)) if between else 0.0
+        return mb / mw if mw > 1e-12 else 0.0
+
+    raw_ratio, raw_within, raw_centroids = _within_between(concept_embeddings)
 
     # Mean-center: subtract per-language mean vector
     lang_vectors: Dict[str, List[np.ndarray]] = {}
@@ -819,14 +853,27 @@ def conceptual_store_metric(
             if lang in lang_means:
                 centered_embeddings[concept][lang] = vec - lang_means[lang]
 
-    centered_ratio = _within_between(centered_embeddings)
+    centered_ratio, cen_within, cen_centroids = _within_between(
+        centered_embeddings)
 
     improvement = centered_ratio / raw_ratio if raw_ratio > 1e-12 else 0.0
+
+    rng = np.random.RandomState(42)
+    raw_boots = [_bootstrap_ratio(raw_within, raw_centroids, rng)
+                 for _ in range(n_bootstrap)]
+    cen_boots = [_bootstrap_ratio(cen_within, cen_centroids, rng)
+                 for _ in range(n_bootstrap)]
+    raw_ci = (float(np.percentile(raw_boots, 2.5)),
+              float(np.percentile(raw_boots, 97.5)))
+    centered_ci = (float(np.percentile(cen_boots, 2.5)),
+                   float(np.percentile(cen_boots, 97.5)))
 
     return {
         "raw_ratio": float(raw_ratio),
         "centered_ratio": float(centered_ratio),
         "improvement_factor": float(improvement),
+        "raw_ci_95": raw_ci,
+        "centered_ci_95": centered_ci,
         "num_concepts": len(concept_embeddings),
         "num_languages": len(languages),
     }

@@ -236,18 +236,23 @@ def run_offset_invariance(concept_embeddings, languages):
     t0 = step_timer("6/8  Semantic Offset Invariance")
     pairs = semantic_offset_invariance(concept_embeddings, languages, DEFAULT_OFFSET_PAIRS)
 
-    best_pair = max(pairs, key=lambda p: p["mean_consistency"])
-    concept_a = best_pair["concept_a"]
-    concept_b = best_pair["concept_b"]
+    top_k = sorted(pairs, key=lambda p: p["centroid_offset_norm"], reverse=True)[:4]
 
-    vecs_a, vecs_b, arrow_langs = [], [], []
-    for lang in languages:
-        if lang in concept_embeddings.get(concept_a, {}) and lang in concept_embeddings.get(concept_b, {}):
-            vecs_a.append(concept_embeddings[concept_a][lang])
-            vecs_b.append(concept_embeddings[concept_b][lang])
-            arrow_langs.append(lang)
+    vector_plots = []
+    for pair_info in top_k:
+        concept_a = pair_info["concept_a"]
+        concept_b = pair_info["concept_b"]
 
-    if len(vecs_a) >= 3:
+        vecs_a, vecs_b, arrow_langs = [], [], []
+        for lang in languages:
+            if lang in concept_embeddings.get(concept_a, {}) and lang in concept_embeddings.get(concept_b, {}):
+                vecs_a.append(concept_embeddings[concept_a][lang])
+                vecs_b.append(concept_embeddings[concept_b][lang])
+                arrow_langs.append(lang)
+
+        if len(vecs_a) < 3:
+            continue
+
         all_vecs = np.vstack([np.array(vecs_a), np.array(vecs_b)])
         pca_2d = PCA(n_components=2)
         projected = pca_2d.fit_transform(all_vecs)
@@ -258,26 +263,11 @@ def run_offset_invariance(concept_embeddings, languages):
         centroid_a = proj_a.mean(axis=0)
         centroid_b = proj_b.mean(axis=0)
 
-        ref_concepts = []
-        skip = {concept_a, concept_b}
-        for concept in concept_embeddings:
-            if concept in skip:
-                continue
-            cvecs = [concept_embeddings[concept][lang]
-                     for lang in languages if lang in concept_embeddings[concept]]
-            if len(cvecs) >= 3:
-                centroid_hd = np.mean(cvecs, axis=0).reshape(1, -1)
-                centroid_2d = pca_2d.transform(centroid_hd)[0]
-                ref_concepts.append({
-                    "concept": concept,
-                    "x": float(centroid_2d[0]),
-                    "y": float(centroid_2d[1]),
-                })
-
-        vector_plot_data = {
+        vector_plots.append({
             "concept_a": concept_a,
             "concept_b": concept_b,
-            "mean_consistency": float(best_pair["mean_consistency"]),
+            "mean_consistency": float(pair_info["mean_consistency"]),
+            "centroid_offset_norm": float(pair_info["centroid_offset_norm"]),
             "centroid_a": {"x": float(centroid_a[0]), "y": float(centroid_a[1])},
             "centroid_b": {"x": float(centroid_b[0]), "y": float(centroid_b[1])},
             "per_language": [
@@ -292,16 +282,72 @@ def run_offset_invariance(concept_embeddings, languages):
                 for i in range(n)
             ],
             "explained_variance": [float(v) for v in pca_2d.explained_variance_ratio_],
-            "reference_concepts": ref_concepts,
+        })
+
+    # Joint PCA: project all concepts from all pairs into a shared 2D space
+    all_pairs_sorted = sorted(pairs, key=lambda p: p["centroid_offset_norm"], reverse=True)
+    unique_concepts = list(dict.fromkeys(
+        c for p in all_pairs_sorted for c in (p["concept_a"], p["concept_b"])
+    ))
+    joint_langs = sorted(set.intersection(*(
+        set(lang for lang in languages if lang in concept_embeddings.get(c, {}))
+        for c in unique_concepts
+    )))
+    joint_plot = None
+    if len(joint_langs) >= 3:
+        all_vecs = []
+        for concept in unique_concepts:
+            for lang in joint_langs:
+                all_vecs.append(concept_embeddings[concept][lang])
+        all_vecs = np.array(all_vecs)
+        n_langs = len(joint_langs)
+        pca_joint = PCA(n_components=2)
+        projected = pca_joint.fit_transform(all_vecs)
+
+        concept_blocks = {}
+        for ci, concept in enumerate(unique_concepts):
+            block = projected[ci * n_langs:(ci + 1) * n_langs]
+            concept_blocks[concept] = block
+
+        centroids = {
+            c: {"x": float(concept_blocks[c].mean(axis=0)[0]),
+                "y": float(concept_blocks[c].mean(axis=0)[1])}
+            for c in unique_concepts
         }
-    else:
-        vector_plot_data = None
+
+        per_language = {}
+        for li, lang in enumerate(joint_langs):
+            pts = {}
+            for concept in unique_concepts:
+                pts[concept] = {
+                    "x": float(concept_blocks[concept][li, 0]),
+                    "y": float(concept_blocks[concept][li, 1]),
+                }
+            per_language[lang] = {
+                "family": LANGUAGE_FAMILY_MAP.get(lang, "Unknown"),
+                "points": pts,
+            }
+
+        joint_plot = {
+            "pairs": [
+                {"concept_a": p["concept_a"], "concept_b": p["concept_b"],
+                 "centroid_offset_norm": float(p["centroid_offset_norm"]),
+                 "mean_consistency": float(p["mean_consistency"])}
+                for p in all_pairs_sorted
+            ],
+            "concepts": unique_concepts,
+            "centroids": centroids,
+            "per_language": per_language,
+            "explained_variance": [float(v) for v in pca_joint.explained_variance_ratio_],
+        }
 
     save_result("offset_invariance", {
         "num_pairs": len(pairs),
         "num_languages": len(languages),
         "pairs": pairs,
-        "vector_plot": vector_plot_data,
+        "vector_plot": vector_plots[0] if vector_plots else None,
+        "vector_plots": vector_plots,
+        "joint_vector_plot": joint_plot,
     })
     print(f"  Elapsed: {time.time() - t0:.1f}s")
 

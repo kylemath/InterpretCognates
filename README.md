@@ -4,6 +4,7 @@ Interactive web applet for probing how multilingual translation networks represe
 
 - **[Screenshot](screenshot.png)** — App overview.
 - **Demo:** [InterpretCognates on GitHub Pages](https://kylemath.github.io/InterpretCognates/).
+- **Paper:** [Universal Conceptual Structure in Neural Translation: Probing NLLB-200's Multilingual Geometry](paper/main.pdf) (PDF in repo; see [paper/REPRODUCING.md](paper/REPRODUCING.md) to build).
 
 ## Why this project
 

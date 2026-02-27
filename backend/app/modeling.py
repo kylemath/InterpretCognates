@@ -183,6 +183,54 @@ def embed_word_in_context(
     return pooled.detach().cpu().numpy()
 
 
+def embed_word_in_context_all_layers(
+    word: str,
+    lang: str,
+    context_template: str = DEFAULT_CONTEXT_TEMPLATE,
+    *,
+    include_embedding_layer: bool = False,
+) -> list[np.ndarray]:
+    """Embed a word in context and return pooled vectors for all encoder layers.
+
+    By default this returns one vector per *encoder block* (12 for NLLB-200 distilled),
+    excluding the initial token embedding output. Set include_embedding_layer=True
+    to include that first hidden state as layer 0.
+    """
+    model, tokenizer = _ensure_model_loaded()
+    tokenizer.src_lang = lang
+    sentence = context_template.format(word=word)
+    encoded = tokenizer(sentence, return_tensors="pt").to(_DEVICE)
+
+    with torch.no_grad():
+        out = model.model.encoder(
+            input_ids=encoded["input_ids"],
+            attention_mask=encoded["attention_mask"],
+            output_hidden_states=True,
+            return_dict=True,
+        )
+
+    hidden_states = list(out.hidden_states or [])
+    if not hidden_states:
+        # Fallback: just return final layer embedding (compatible with callers)
+        return [embed_word_in_context(word, lang, context_template=context_template)]
+
+    if not include_embedding_layer:
+        hidden_states = hidden_states[1:]
+
+    word_indices = _find_word_token_indices(encoded["input_ids"], tokenizer, word)
+
+    pooled_per_layer: list[np.ndarray] = []
+    for h in hidden_states:
+        # h: (1, seq_len, dim)
+        if word_indices is not None and len(word_indices) > 0:
+            pooled = h[0, word_indices, :].mean(dim=0)
+        else:
+            pooled = _pool_hidden(h, encoded["attention_mask"]).squeeze(0)
+        pooled_per_layer.append(pooled.detach().cpu().numpy())
+
+    return pooled_per_layer
+
+
 def embed_words_in_context_batch(
     words: list[str],
     langs: list[str],

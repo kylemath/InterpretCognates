@@ -94,12 +94,32 @@ def main():
         sw = np.array(comp.get('swadesh_sims', []))
         nsw = np.array(comp.get('non_swadesh_sims', []))
         if len(sw) > 0 and len(nsw) > 0:
-            pooled_std = np.sqrt((np.var(sw) + np.var(nsw)) / 2)
-            cohen_d = abs(np.mean(nsw) - np.mean(sw)) / pooled_std if pooled_std > 0 else 0
+            pooled_std = np.sqrt((np.var(sw, ddof=1) + np.var(nsw, ddof=1)) / 2)
+            cohen_d = (np.mean(sw) - np.mean(nsw)) / pooled_std if pooled_std > 0 else 0
             add('SwadeshCompCohenD', _fmt(cohen_d))
 
         add('SwadeshCompNumSwadesh', _fmt(d.get('swadesh', {}).get('num_concepts', 0)))
         add('SwadeshCompNumNonSwadesh', _fmt(d.get('non_swadesh', {}).get('num_concepts', 0)))
+
+    # --- Controlled Swadesh comparison ---
+    print("Loading improved_swadesh_comparison.json …")
+    d = _load_json('improved_swadesh_comparison.json')
+    if d:
+        comp = d.get('comparison', {})
+        add('ControlledSwadeshCompMean', _fmt(comp.get('swadesh_mean', 0)))
+        add('ControlledNonSwadeshCompMean', _fmt(comp.get('non_swadesh_mean', 0)))
+        add('ControlledSwadeshCompU', _fmt(comp.get('U_statistic', 0)))
+        add('ControlledSwadeshCompP', _fmt_p(comp.get('p_value', 1.0)))
+
+        sw = np.array(comp.get('swadesh_sims', []))
+        nsw = np.array(comp.get('non_swadesh_sims', []))
+        if len(sw) > 0 and len(nsw) > 0:
+            pooled_std = np.sqrt((np.var(sw, ddof=1) + np.var(nsw, ddof=1)) / 2)
+            cohen_d = (np.mean(sw) - np.mean(nsw)) / pooled_std if pooled_std > 0 else 0
+            add('ControlledSwadeshCompCohenD', _fmt(cohen_d))
+
+        add('ControlledSwadeshCompNumSwadesh', _fmt(d.get('swadesh', {}).get('num_concepts', 0)))
+        add('ControlledSwadeshCompNumNonSwadesh', _fmt(d.get('non_swadesh', {}).get('num_concepts', 0)))
 
     # --- Colexification ---
     print("Loading colexification.json …")
@@ -201,7 +221,18 @@ def main():
                                     mat[i - 1][j - 1] + cost)
             return 1.0 - mat[n1][n2] / max(n1, n2)
 
-        conv_scores, ortho_sims = [], []
+        def _phonetic_normalize(s):
+            import unicodedata
+            import re
+            s = unicodedata.normalize('NFD', s.lower())
+            s = ''.join(c for c in s if unicodedata.category(c) != 'Mn')
+            table = str.maketrans('bdgvzqcyw', 'pptfskkiu')
+            s = s.translate(table)
+            s = s.replace('h', '')
+            s = re.sub(r'(.)\1+', r'\1', s)
+            return s
+
+        conv_scores, ortho_sims, phon_sims = [], [], []
         for concept, translations in concepts_dict.items():
             if concept not in cor_by_c:
                 continue
@@ -210,24 +241,30 @@ def main():
             if len(forms) < 5:
                 continue
             sample = forms[:40]
-            pair_sims = []
+            ortho_pairs = []
+            phon_pairs = []
             for i in range(len(sample)):
                 for j in range(i + 1, len(sample)):
-                    pair_sims.append(_lev(sample[i].lower(),
-                                         sample[j].lower()))
-            if not pair_sims:
+                    ortho_pairs.append(_lev(sample[i].lower(),
+                                            sample[j].lower()))
+                    phon_pairs.append(_lev(_phonetic_normalize(sample[i]),
+                                           _phonetic_normalize(sample[j])))
+            if not ortho_pairs:
                 continue
             conv_scores.append(cor_by_c[concept])
-            ortho_sims.append(np.mean(pair_sims))
+            ortho_sims.append(np.mean(ortho_pairs))
+            phon_sims.append(np.mean(phon_pairs) if phon_pairs else 0.0)
 
         if len(conv_scores) >= 5:
             conv_arr = np.array(conv_scores)
             ortho_arr = np.array(ortho_sims)
-            slope_o, _, r_o, p_o, _ = sp_stats.linregress(ortho_arr, conv_arr)
+            phon_arr = np.array(phon_sims)
+            slope_o, _, r_o, _p_o, _ = sp_stats.linregress(ortho_arr, conv_arr)
+            slope_p, _, r_p, _p_p, _ = sp_stats.linregress(phon_arr, conv_arr)
             add('DecompRsqOrtho', _fmt(r_o ** 2, 3))
             add('DecompSlopeOrtho', _fmt(slope_o, 3))
-            add('DecompRsqPhon', _fmt(r_o ** 2 * 0.6, 3))
-            add('DecompSlopePhon', _fmt(slope_o * 0.7, 3))
+            add('DecompRsqPhon', _fmt(r_p ** 2, 3))
+            add('DecompSlopePhon', _fmt(slope_p, 3))
 
     # --- Category-level means ---
     print("Computing category-level means …")
@@ -280,6 +317,7 @@ def main():
     d = _load_json('layerwise_metrics.json')
     if d:
         add('LayerwiseNumLayers', _fmt(d.get('num_layers', 0)))
+        add('LayerwiseNumLangs', _fmt(len(d.get('languages', []))))
         summary = d.get('summary', {})
         add('LayerwiseEmergenceLayer', _fmt(summary.get('convergence_emergence_layer', '?')))
         add('LayerwisePhaseTrans', _fmt(summary.get('csm_phase_transition_layer', '?')))

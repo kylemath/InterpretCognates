@@ -8,13 +8,6 @@ We present our six core experiments alongside descriptive illustrations and vali
 Before presenting the full ranking, we illustrate the geometry of a single concept.
 Figure~\ref{fig:water_manifold} shows the 29-language embedding manifold for ``water'' --- a concept with diverse surface forms across language families (\textit{agua}, \textit{eau}, \textit{Wasser}, \textit{maji}, etc.).
 
-\begin{figure*}[htbp]
-  \centering
-  \includegraphics[width=\textwidth,height=0.88\textheight,keepaspectratio]{figures/fig_water_manifold.pdf}
-  \caption{Embedding geometry for the concept ``water'' across 29 languages. (a) 3D PCA projection colored by language family shows tight clustering despite orthographic diversity. (b) Pairwise similarity heatmap reveals that same-family languages (e.g., Romance, Slavic) cluster, but cross-family similarity remains high ($>0.93$ for most pairs).}
-  \label{fig:water_manifold}
-\end{figure*}
-
 Despite radically different surface forms and scripts, the embeddings cluster tightly in representation space: same-family languages form sub-clusters, but cross-family similarity remains high, suggesting that the model maps ``water'' to a shared semantic region regardless of its lexical realization.
 This example motivates the systematic analysis that follows.
 
@@ -42,10 +35,10 @@ An initial comparison against \SwadeshCompNumNonSwadesh{} modern and institution
 This comparison is confounded by loanword bias: terms like \textit{democracy}, \textit{telephone}, and \textit{hotel} share surface forms across dozens of languages due to cultural borrowing, and the model's high convergence for these items reflects shared subword tokens rather than semantic universality.
 
 To obtain a properly controlled comparison, we constructed a second non-Swadesh set of frequency-matched, non-loanword concrete nouns with cross-linguistic orthographic diversity comparable to the Swadesh set.
-Under this controlled baseline, Swadesh concepts exhibit convergence commensurate with or exceeding that of the matched controls, consistent with the hypothesis that culturally stable, universally attested concepts develop robust cross-lingual representations.
+Under this controlled baseline, Swadesh concepts exhibit convergence commensurate with or exceeding that of the matched controls ($\mu = \ControlledSwadeshCompMean{}$ vs.\ $\mu = \ControlledNonSwadeshCompMean{}$; Mann-Whitney $U = \ControlledSwadeshCompU{}$, $p = \ControlledSwadeshCompP{}$, Cohen's $d = \ControlledSwadeshCompCohenD{}$), consistent with the hypothesis that culturally stable, universally attested concepts develop robust cross-lingual representations.
 The key insight is that Swadesh convergence is meaningful precisely because it emerges despite maximal surface-form diversity across language families.
 Crucially, Figure~\ref{fig:swadesh} demonstrates that surface-form similarity does not drive Swadesh convergence: regressing convergence scores against mean orthographic similarity yields $R^2 = \DecompRsqOrtho{}$ (panel~a), and a parallel regression against mean phonological similarity---after crude phonetic normalization that collapses voiced/voiceless distinctions and removes diacritics---explains only $R^2 = \DecompRsqPhon{}$ (panel~b).
-Over 98\% of the convergence signal is thus attributable to semantic rather than surface-form factors, confirming that the convergence of Swadesh items reflects deeper conceptual structure.
+Both controls explain only a small fraction of variance, supporting the interpretation that the convergence of Swadesh items reflects deeper conceptual structure rather than shared surface forms.
 
 \subsection{Category Summary}
 
@@ -115,8 +108,8 @@ Crucially, the top-ranking concepts (body parts, kinship terms, natural phenomen
 \subsection{Layer-wise Emergence of Semantic Structure}
 
 All preceding analyses use representations from the final encoder layer.
-To understand how cross-lingual semantic structure develops across the encoder stack, we repeat the convergence analysis at each of the \LayerwiseNumLayers{} encoder layers.
-Figure~\ref{fig:layerwise} shows that semantic convergence increases monotonically from the input layer (mean convergence $= \LayerwiseInputConv{}$) to the final layer (mean convergence $= \LayerwiseFinalConv{}$), with a sharp rise around layer~\LayerwiseEmergenceLayer{}.
+To understand how cross-lingual semantic structure develops across the encoder stack, we repeat the convergence analysis at each of the \LayerwiseNumLayers{} encoder layers on a diverse \LayerwiseNumLangs{}-language subset (for computational tractability).
+Figure~\ref{fig:layerwise} shows that semantic convergence increases monotonically from early layers (mean convergence $= \LayerwiseInputConv{}$) to the final layer (mean convergence $= \LayerwiseFinalConv{}$), with a sharp rise around layer~\LayerwiseEmergenceLayer{}.
 
 This trajectory parallels the ``NLP pipeline'' effect documented by \citet{tenney2019}, in which lower Transformer layers encode surface-level features (part-of-speech, morphology) while upper layers encode progressively more abstract semantic information.
 In our setting, this manifests as a gradual factoring-out of language identity: lower layers retain language-specific orthographic and morphological features, while upper layers converge toward a language-universal conceptual representation.
@@ -127,7 +120,7 @@ The per-concept heatmap (Figure~\ref{fig:layerwise}c) reveals that concrete, per
 \begin{figure*}[htbp]
   \centering
   \includegraphics[width=\textwidth]{figures/fig_layerwise_trajectory.pdf}
-  \caption{Layer-wise emergence of language-universal semantic structure across \LayerwiseNumLayers{} encoder layers. (a) Mean Swadesh convergence increases monotonically, with a sharp rise around layer~\LayerwiseEmergenceLayer{}, paralleling the ``NLP pipeline'' effect. (b) The Conceptual Store Metric (both raw and mean-centered ratios) shows a similar trajectory, with the centered ratio exhibiting a phase transition at layer~\LayerwisePhaseTrans{}. (c) Per-concept convergence heatmap reveals that concrete, perceptually grounded concepts (top rows) achieve high cross-lingual convergence earlier than abstract or polysemous concepts (bottom rows).}
+  \caption{Layer-wise emergence of language-universal semantic structure across \LayerwiseNumLayers{} encoder layers (computed on a \LayerwiseNumLangs{}-language subset). (a) Mean Swadesh convergence increases monotonically, with a sharp rise around layer~\LayerwiseEmergenceLayer{}, paralleling the ``NLP pipeline'' effect. (b) The Conceptual Store Metric (both raw and mean-centered ratios) shows a similar trajectory, with the centered ratio exhibiting a phase transition at layer~\LayerwisePhaseTrans{}. (c) Per-concept convergence heatmap reveals that concrete, perceptually grounded concepts (top rows) achieve high cross-lingual convergence earlier than abstract or polysemous concepts (bottom rows).}
   \label{fig:layerwise}
 \end{figure*}
 

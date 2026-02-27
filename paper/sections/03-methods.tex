@@ -7,7 +7,7 @@ We probe the internal representations of NLLB-200, a massively multilingual neur
 NLLB-200 employs an encoder-decoder Transformer architecture \citep{vaswani2017} with a shared encoder across all 200 supported languages, making it a natural test bed for investigating whether cross-lingual semantic structure emerges from translation-oriented training alone.
 
 As our lexical probe we adopt the Swadesh core vocabulary list \citep{swadesh1952}, a standard tool in historical linguistics designed to capture culturally stable, universally attested concepts such as kinship terms, body parts, natural phenomena, and basic actions.
-We embed all \NumConcepts{} Swadesh items across \NumLanguages{} of the languages supported by NLLB-200, yielding a concept-by-language embedding matrix that serves as the basis for all downstream analyses.
+We embed all \NumConcepts{} Swadesh items across \NumLanguages{} languages supported by NLLB-200 (excluding a small set of languages whose encoder embeddings are degenerate outliers in our extraction pipeline), yielding a concept-by-language embedding matrix that serves as the basis for all downstream analyses.
 
 To obtain contextual embeddings rather than decontextualized token representations, we place each target word in a fixed carrier sentence of the form \textit{``I saw a \{word\} near the river''}, translated into each target language.
 This choice is motivated by the observation that Transformer encoder representations are highly context-dependent \citep{devlin2019}: a bare word input would yield an embedding dominated by positional and start-of-sequence artifacts rather than lexical semantics.
@@ -16,7 +16,7 @@ We then extract the encoder hidden states corresponding only to the target word'
 When a word is split into multiple subword tokens by the SentencePiece tokenizer, we mean-pool their activations to produce a single vector per concept--language pair.
 Agglutinative and polysynthetic languages tend to produce longer subword sequences, as morphological markers (case, evidentiality, tense) are segmented into additional tokens whose mean-pooling may attenuate fine-grained lexical features.
 We note that this carrier sentence is English-derived and imposes structural assumptions (SVO order, articles, spatial prepositions) that are not typologically universal; we assess this confound in Sections~\ref{sec:results} and~5.
-All pre-computed embeddings are stored as JSON files to ensure full reproducibility of the analysis-to-figure pipeline.
+To support reproducibility, we release the full analysis code and the derived experiment outputs (JSON summaries, figures, and macro tables) used to build the paper; the pipeline can also be rerun from model weights and the included corpora.
 
 To assess the impact of the carrier sentence on our results, we additionally extract decontextualized embeddings by embedding each target word in isolation, without any surrounding context.
 This bare-word baseline tests whether the convergence patterns we report in Section~\ref{sec:results} are driven by the carrier sentence's syntactic scaffold or by the target word's intrinsic lexical representation.
@@ -26,6 +26,13 @@ This bare-word baseline tests whether the convergence patterns we report in Sect
 Raw contextual embeddings from large language models are known to occupy a narrow cone in representation space, exhibiting low isotropy that can inflate cosine similarity scores and obscure meaningful geometric structure \citep{mu2018,rajaee2022}.
 We extract mean-pooled encoder hidden states from the final Transformer layer and apply a two-stage correction procedure.
 
+\begin{figure*}[htbp]
+    \centering
+    \includegraphics[width=\textwidth,height=0.88\textheight,keepaspectratio]{figures/fig_water_manifold.pdf}
+    \caption{Embedding geometry for the concept ``water'' across 29 languages. (a) 3D PCA projection colored by language family shows tight clustering despite orthographic diversity. (b) Pairwise similarity heatmap reveals that same-family languages (e.g., Romance, Slavic) cluster, but cross-family similarity remains high ($>0.93$ for most pairs).}
+    \label{fig:water_manifold}
+  \end{figure*}
+  
 First, we perform All-But-The-Top (ABTT) isotropy correction \citep{mu2018}: we subtract the global mean embedding computed over all concept--language pairs, then project out the top $k=3$ principal components of the centered matrix.
 This removes the dominant directions that encode frequency- and language-identity information rather than semantics, yielding a more isotropic embedding space in which cosine similarity more faithfully reflects semantic relatedness.
 The choice of $k=3$ is validated by a sensitivity analysis across a range of $k$ values (Section~\ref{sec:results}), which confirms that the convergence ranking is robust to this hyperparameter.

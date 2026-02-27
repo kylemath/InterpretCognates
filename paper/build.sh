@@ -14,7 +14,19 @@ if command -v python3 &> /dev/null; then
         python3 -m venv scripts/.venv
     fi
     source scripts/.venv/bin/activate
-    pip install -q -r scripts/requirements.txt 2>/dev/null
+    pip install -r scripts/requirements.txt
+
+    # ASJP CLDF tables may be absent in some checkouts; we refuse to fabricate them.
+    if ! ls ../backend/app/data/external/asjp/lexibank-asjp-*/cldf/languages.csv >/dev/null 2>&1 || \
+       ! ls ../backend/app/data/external/asjp/lexibank-asjp-*/cldf/forms.csv >/dev/null 2>&1; then
+        echo ""
+        echo "ERROR: ASJP CLDF tables (languages.csv/forms.csv) are missing."
+        echo "Run:  PYTHONPATH=backend python3 -m app.scripts.fetch_asjp_cldf"
+        echo "Or:   (from backend/) python3 -m app.scripts.fetch_asjp_cldf"
+        echo ""
+        deactivate
+        exit 1
+    fi
 
     python3 scripts/run_all.py
 
@@ -55,10 +67,10 @@ echo ""
 echo "=== Step 3: Compiling LaTeX ==="
 mkdir -p build
 
-pdflatex -interaction=nonstopmode -output-directory=build main.tex || true
-bibtex build/main || true
-pdflatex -interaction=nonstopmode -output-directory=build main.tex || true
-pdflatex -interaction=nonstopmode -output-directory=build main.tex || true
+pdflatex -interaction=nonstopmode -output-directory=build main.tex
+bibtex build/main
+pdflatex -interaction=nonstopmode -output-directory=build main.tex
+pdflatex -interaction=nonstopmode -output-directory=build main.tex
 
 if [ -f "build/main.pdf" ]; then
     cp build/main.pdf main.pdf

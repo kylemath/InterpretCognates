@@ -810,12 +810,16 @@ def fig_offset_combined(data, outdir):
     ax_bar.set_title('(a) Cross-Lingual Consistency', fontsize=9)
 
     nf = len(all_families)
-    cmap = plt.cm.YlOrRd
-    norm = plt.Normalize(vmin=0, vmax=1)
+    # Use same white-to-red colormap as Figure 1 (water manifold)
+    cmap_wr = mpl.colors.LinearSegmentedColormap.from_list(
+        'white_red', ['#ffffff', '#d62728'], N=256)
+    # Autoscale to data range
+    vmin, vmax = matrix.min(), matrix.max()
+    norm = plt.Normalize(vmin=vmin, vmax=vmax)
     for i in range(n):
         for j in range(nf):
             rect = plt.Rectangle((j - 0.5, y_pos[i] - 0.275), 1, 0.55,
-                                 facecolor=cmap(norm(matrix[i, j])),
+                                 facecolor=cmap_wr(norm(matrix[i, j])),
                                  edgecolor='white', linewidth=0.3)
             ax_heat.add_patch(rect)
 
@@ -828,7 +832,7 @@ def fig_offset_combined(data, outdir):
     ax_heat.set_title('(b) Per-Family Consistency', fontsize=9)
     ax_heat.axhline(gap_y, color='grey', linestyle=':', linewidth=0.6, alpha=0.5)
 
-    sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+    sm = plt.cm.ScalarMappable(cmap=cmap_wr, norm=norm)
     sm.set_array([])
     fig.colorbar(sm, cax=ax_cb, label='Consistency')
     fig.savefig(os.path.join(outdir, 'fig_offset_combined.pdf'))
@@ -1947,10 +1951,16 @@ def fig_layerwise_trajectory(data, outdir):
         matrix = np.zeros((len(shown), len(layer_idx)))
         for i, c in enumerate(shown):
             for j, li in enumerate(layer_idx):
-                matrix[i, j] = concept_data[c].get(li, 0)
+                # Handle both string and int keys in concept_trajectories
+                val = concept_data[c].get(li, concept_data[c].get(str(li), 0))
+                matrix[i, j] = val
 
-        im = ax.imshow(matrix, cmap='magma', aspect='auto',
-                        interpolation='nearest')
+        # Use white-to-red colormap matching other figures, autoscale to data
+        cmap_wr = mpl.colors.LinearSegmentedColormap.from_list(
+            'white_red', ['#ffffff', '#d62728'], N=256)
+        vmin, vmax = matrix.min(), matrix.max()
+        im = ax.imshow(matrix, cmap=cmap_wr, aspect='auto',
+                        interpolation='nearest', vmin=vmin, vmax=vmax)
         ax.set_xticks(range(len(layer_idx)))
         ax.set_xticklabels([str(l) for l in layer_idx], fontsize=5)
         ax.set_yticks(range(len(shown)))

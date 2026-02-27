@@ -13,6 +13,12 @@ Usage:
     python paper/scripts/precompute_revisions.py
 """
 
+raise RuntimeError(
+    "paper/scripts/precompute_revisions.py is deprecated because it generated simulated "
+    "placeholder artifacts. Use paper/scripts/precompute_paper_data.py instead, which "
+    "computes all paper artifacts from real model outputs and datasets."
+)
+
 import json
 import os
 import sys

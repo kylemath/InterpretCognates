@@ -6,6 +6,8 @@ The geometric structure we observe in NLLB-200's encoder bears striking parallel
 The conceptual store experiment, in which mean-centering per language improves the between-concept to within-concept variance ratio by a factor of $\ConceptualStoreImprovement{}\times$, provides direct geometric evidence for a language-neutral semantic core.
 This finding mirrors Correia et al.'s fMRI results showing that semantic representations in the anterior temporal lobe can be decoded across languages, localizing a language-independent conceptual hub in biological neural tissue \citep{correia2014}.
 In both systems---biological and artificial---meaning appears to be organized along axes that are invariant to the language of expression, with language-specific information superimposed as a removable offset.
+A parallel convergence emerges from \citet{deniz2025}, who used naturalistic fMRI with voxelwise encoding models to show that Chinese--English bilinguals rely on largely shared semantic brain representations that are nonetheless systematically \emph{modulated} by language---their ``primary semantic tuning shift dimension'' describes how voxelwise tuning rotates between languages while preserving coarse semantic cluster identity.
+This is the neural analogue of our mean-centering result: the shared conceptual geometry persists after the language-specific shift is removed.
 
 The architecture of NLLB-200 also maps naturally onto the Bilingual Interactive Activation Plus (BIA+) model of visual word recognition \citep{dijkstra2002}.
 In BIA+, a language-nonselective identification system activates lexical candidates from all known languages simultaneously, while a separate task-decision system gates output to a single language.
@@ -65,7 +67,7 @@ The cognitive parallels we draw are structural analogies, not claims of mechanis
 Despite these caveats, the convergence of evidence across our six experiments points toward a substantive conclusion: NLLB-200 has internalized aspects of conceptual structure that transcend individual languages.
 The colexification result is particularly telling.
 The graded positive correlation between colexification frequency and embedding similarity ($\rho_s = \ColexSpearmanRho{}$, $p = \ColexSpearmanP{}$) shows that the model has not merely learned a binary colexified/non-colexified distinction but has internalized a continuous scale of conceptual association that mirrors cross-linguistic cognitive patterns \citep{list2018}.
-This echoes recent neuroscience findings of a universal language network whose functional topography is preserved across typologically distant languages \citep{malikmoraleda2024}.
+This echoes recent neuroscience findings of a universal language network whose functional topography is preserved across typologically distant languages \citep{malikmoraleda2022}.
 
 The phylogenetic correlation, while modest, demonstrates that translation co-occurrence statistics alone---without any explicit genealogical supervision---are sufficient to partially recapitulate thousands of years of language divergence.
 This is consistent with the view that statistical regularities in parallel text carry a phylogenetic signal, much as cognate frequency in the Swadesh list carries one for historical linguists.
@@ -76,12 +78,13 @@ Several promising directions emerge from this work.
 
 \paragraph{Computational ATL layer.}
 The conceptual store metric can be viewed as a computational analogue of the anterior temporal lobe (ATL), which neuroimaging studies identify as a language-independent semantic hub \citep{correia2014}.
+\citet{deniz2025} provide an especially tractable target for this comparison: their voxelwise encoding models were trained on fastText embeddings with the same cross-lingual alignment procedure used in related multilingual NLP work, meaning their model weights could in principle be projected onto NLLB-200's encoder space to test for geometric correspondence.
 Future work could formalize this analogy by training probes \citep{hewitt2019} that map encoder representations to fMRI activation patterns, testing whether the geometric structure we observe in silico corresponds to the representational geometry measured in vivo.
 
 \paragraph{Per-head cross-attention decomposition.}
 Our analyses treat the encoder as a black box, examining only its output representations.
 A finer-grained analysis could decompose the encoder's behavior across its attention heads \citep{voita2019,clark2019}, identifying which heads encode language-universal semantic information and which encode language-specific features.
-The per-family offset consistency patterns observed in Figure~\ref{fig:offset_family_heatmap} suggest that language-family information is encoded in specific subspaces; attention-head analysis could localize this encoding.
+The per-family offset consistency patterns observed in Figure~\ref{fig:offset}(b) suggest that language-family information is encoded in specific subspaces; attention-head analysis could localize this encoding.
 
 \paragraph{RHM asymmetry.}
 The Revised Hierarchical Model \citep{kroll2010} predicts asymmetric translation behavior: L1$\to$L2 translation proceeds via conceptual mediation, while L2$\to$L1 translation can bypass the conceptual level via direct lexical links.

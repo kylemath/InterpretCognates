@@ -33,8 +33,10 @@ The BIA+ model \citep{dijkstra2002} further proposes that bilingual word recogni
 
 Neuroimaging evidence supports the existence of language-independent conceptual representations.
 \citet{correia2014} used representational similarity analysis on fMRI data to show that the anterior temporal lobe (ATL) encodes semantic category information identically across languages in bilingual speakers, providing direct neural evidence for a language-independent conceptual hub.
+More recently, \citet{deniz2025} used voxelwise encoding models on several hours of naturalistic narrative fMRI data to show that Chinese--English bilinguals employ largely shared semantic brain representations across languages, but that these representations undergo systematic fine-grained \emph{shifts} between languages---shifts that modulate how concept categories are weighted rather than which brain regions are recruited.
+This finding of shared-but-modulated representations provides striking neural support for the geometric picture we advance computationally: a language-neutral conceptual core with language-specific offsets superimposed.
 \citet{thierry2007} demonstrated using event-related potentials that Chinese--English bilinguals unconsciously activate Chinese phonological representations when processing English words, implying automatic cross-linguistic co-activation at a sub-lexical level.
-More recently, \citet{malikmoraleda2024} studied hyperpolyglots (speakers of $\geq$10 languages) and found that the same fronto-temporal language network activates for all languages, suggesting a universal neural substrate for language processing that scales beyond bilingualism.
+More recently, \citet{malikmoraleda2022} investigated the fronto-temporal language network across 45 languages spanning 12 language families and found that the same network activates for all languages with consistent left-lateralization and functional selectivity, suggesting a universal neural substrate for language processing.
 
 Cross-linguistic universals provide a complementary perspective.
 \citet{swadesh1952} identified a core vocabulary of basic concepts (body parts, kinship terms, natural phenomena) that resists borrowing and changes slowly across all known languages, motivating its use as a probe for universal semantic structure.
@@ -46,7 +48,7 @@ When unrelated languages independently lexify two concepts with the same word fo
 The CLICS\textsuperscript{3} database \citep{rzymski2020} aggregates colexification patterns across thousands of languages, enabling the statistical test in our colexification experiment: if NLLB-200 has learned cognitively plausible semantic structure, colexified pairs should be closer in embedding space.
 
 Cross-lingual word embedding research has also engaged with these cognitive questions.
-\citet{vulic2020} surveyed methods for learning cross-lingual word representations, noting that bilingual lexicon induction implicitly assumes a degree of isomorphism between monolingual semantic spaces---an assumption closely related to the shared conceptual store hypothesis.
+\citet{vulic2020} introduced a large-scale multilingual evaluation benchmark covering 12 typologically diverse languages, noting that bilingual lexicon induction implicitly assumes a degree of isomorphism between monolingual semantic spaces---an assumption closely related to the shared conceptual store hypothesis.
 Our offset invariance experiment directly tests this assumption by measuring whether semantic difference vectors are preserved across languages.
 
 The present work is, to our knowledge, the first to systematically test predictions from bilingual lexical organization theories against the internal representations of a massively multilingual translation model spanning \NumLanguages{} languages.

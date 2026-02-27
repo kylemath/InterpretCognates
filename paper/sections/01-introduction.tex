@@ -1,7 +1,7 @@
 \section{Introduction}
 
 Do neural machine translation models learn language-universal concepts, or do they merely memorize surface-level correspondences between languages?
-This question sits at the intersection of NLP interpretability and a long-standing debate in cognitive science: whether multilingual speakers access a shared conceptual store or maintain language-specific representations \citep{dijkstra2002,correia2014}.
+This question sits at the intersection of NLP interpretability and a long-standing debate in cognitive science: whether multilingual speakers access a shared conceptual store or maintain language-specific representations \citep{dijkstra2002,correia2014,deniz2025}.
 Large-scale multilingual models now offer a unique empirical lens on this question.
 If a single encoder--decoder network can translate between hundreds of typologically diverse languages, its internal geometry must encode \emph{something} about meaning that transcends any individual language.
 
@@ -31,7 +31,7 @@ Our key findings are as follows:
 
 Two additional experiments---Swadesh convergence ranking and universal color term geometry---provide converging evidence.
 A comparison against modern loanword-heavy vocabulary reveals that high embedding convergence can reflect orthographic borrowing rather than semantic universality, underscoring the importance of the external validation experiments.
-We further validate these findings through isotropy correction analysis, variance decomposition that disentangles orthographic from semantic contributions to convergence, and per-family offset consistency heatmaps that reveal how relational structure varies across language families.
+We further validate these findings through isotropy correction analysis, regression controls confirming that surface-form similarity explains less than 2\% of convergence variance, and a per-family offset consistency analysis that reveals how relational structure varies across language families.
 
 All experiments are implemented in the open-source \textsc{InterpretCognates} toolkit, which provides a fully reproducible pipeline from pre-computed embeddings to statistical tests and figures.
 Code and data are available at \url{https://github.com/kylemath/InterpretCognates}.

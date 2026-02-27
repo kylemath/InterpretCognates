@@ -57,13 +57,11 @@ Following the analogy-based reasoning paradigm introduced by \citet{mikolov2013}
 For \OffsetNumPairs{} concept pairs (e.g., \textit{fire}--\textit{water}, \textit{sun}--\textit{moon}), we compute the per-language offset vector and measure its cosine similarity to the centroid offset averaged over all languages \citep{chang2022}.
 High cross-lingual consistency indicates that the model represents relational meaning in a language-invariant manner.
 
-We supplement these six experiments with two validation analyses that assess the robustness of our embedding corrections and the role of surface-form overlap.
+We supplement these six experiments with a validation analysis that assesses the robustness of our embedding corrections.
 
 \paragraph{Isotropy Correction Validation.}
 To verify that our ABTT correction does not distort the convergence signal, we compare the full Swadesh ranking under raw and corrected embeddings.
 We compute the Spearman rank correlation $\rho$ between the two orderings and visually inspect the top-20 concepts under each regime.
 A high correlation indicates that isotropy correction preserves the relative ordering of concepts while rescaling absolute similarity values to a more interpretable range.
 
-\paragraph{Variance Decomposition.}
-To disentangle orthographic from semantic contributions to embedding convergence, we compute the mean normalized Levenshtein similarity of each concept's word forms across Latin-script languages in our corpus and regress convergence scores against this orthographic predictor.
-The resulting $R^2$ quantifies the fraction of convergence variance attributable to surface-form overlap---the signature of loanword-driven rather than semantically-driven convergence.
+To disentangle orthographic from semantic contributions to embedding convergence, we additionally regress convergence scores against mean orthographic and phonological similarity of each concept's word forms across Latin-script languages, reporting $R^2$ alongside the Swadesh convergence ranking.

@@ -75,6 +75,100 @@ CATEGORY_COLORS = {
     'Other': '#999999',
 }
 
+LANG_NAME = {
+    'eng_Latn': 'English', 'spa_Latn': 'Spanish', 'fra_Latn': 'French',
+    'deu_Latn': 'German', 'ita_Latn': 'Italian', 'por_Latn': 'Portuguese',
+    'pol_Latn': 'Polish', 'ron_Latn': 'Romanian', 'nld_Latn': 'Dutch',
+    'swe_Latn': 'Swedish', 'tur_Latn': 'Turkish', 'vie_Latn': 'Vietnamese',
+    'ind_Latn': 'Indonesian', 'tgl_Latn': 'Tagalog', 'swh_Latn': 'Swahili',
+    'yor_Latn': 'Yoruba', 'hau_Latn': 'Hausa', 'fin_Latn': 'Finnish',
+    'hun_Latn': 'Hungarian', 'eus_Latn': 'Basque', 'uzb_Latn': 'Uzbek',
+    'arb_Arab': 'Arabic', 'pes_Arab': 'Persian',
+    'zho_Hans': 'Chinese (Simp.)', 'zho_Hant': 'Chinese (Trad.)',
+    'jpn_Jpan': 'Japanese', 'kor_Hang': 'Korean',
+    'tha_Thai': 'Thai', 'hin_Deva': 'Hindi', 'ben_Beng': 'Bengali',
+    'tam_Taml': 'Tamil', 'tel_Telu': 'Telugu', 'kat_Geor': 'Georgian',
+    'hye_Armn': 'Armenian', 'ell_Grek': 'Greek', 'heb_Hebr': 'Hebrew',
+    'rus_Cyrl': 'Russian', 'amh_Ethi': 'Amharic', 'khm_Khmr': 'Khmer',
+    'mya_Mymr': 'Burmese', 'kaz_Cyrl': 'Kazakh', 'khk_Cyrl': 'Mongolian',
+    'cat_Latn': 'Catalan', 'glg_Latn': 'Galician', 'ast_Latn': 'Asturian',
+    'oci_Latn': 'Occitan', 'scn_Latn': 'Sicilian',
+    'dan_Latn': 'Danish', 'nob_Latn': 'Norwegian', 'isl_Latn': 'Icelandic',
+    'afr_Latn': 'Afrikaans', 'ltz_Latn': 'Luxembourgish', 'fao_Latn': 'Faroese',
+    'ydd_Hebr': 'Yiddish',
+    'ukr_Cyrl': 'Ukrainian', 'ces_Latn': 'Czech', 'bul_Cyrl': 'Bulgarian',
+    'hrv_Latn': 'Croatian', 'bel_Cyrl': 'Belarusian', 'slk_Latn': 'Slovak',
+    'srp_Cyrl': 'Serbian', 'slv_Latn': 'Slovenian', 'mkd_Cyrl': 'Macedonian',
+    'urd_Arab': 'Urdu', 'mar_Deva': 'Marathi', 'guj_Gujr': 'Gujarati',
+    'pan_Guru': 'Punjabi', 'sin_Sinh': 'Sinhala', 'npi_Deva': 'Nepali',
+    'asm_Beng': 'Assamese', 'ory_Orya': 'Odia', 'pbt_Arab': 'Pashto',
+    'tgk_Cyrl': 'Tajik', 'ckb_Arab': 'Central Kurdish',
+    'kmr_Latn': 'N. Kurdish', 'san_Deva': 'Sanskrit',
+    'lit_Latn': 'Lithuanian', 'lav_Latn': 'Latvian',
+    'cym_Latn': 'Welsh', 'gle_Latn': 'Irish', 'gla_Latn': 'Sc. Gaelic',
+    'als_Latn': 'Albanian', 'bod_Tibt': 'Tibetan',
+    'som_Latn': 'Somali', 'mlt_Latn': 'Maltese', 'tir_Ethi': 'Tigrinya',
+    'ary_Arab': 'Moroccan Ar.', 'kab_Latn': 'Kabyle', 'gaz_Latn': 'Oromo',
+    'kan_Knda': 'Kannada', 'mal_Mlym': 'Malayalam',
+    'azj_Latn': 'Azerbaijani', 'kir_Cyrl': 'Kyrgyz', 'tuk_Latn': 'Turkmen',
+    'tat_Cyrl': 'Tatar', 'crh_Latn': 'Crimean Tatar',
+    'lao_Laoo': 'Lao',
+    'zsm_Latn': 'Malay', 'jav_Latn': 'Javanese', 'plt_Latn': 'Malagasy',
+    'sun_Latn': 'Sundanese', 'ceb_Latn': 'Cebuano', 'ilo_Latn': 'Ilocano',
+    'war_Latn': 'Waray', 'ace_Latn': 'Acehnese', 'min_Latn': 'Minangkabau',
+    'bug_Latn': 'Buginese', 'ban_Latn': 'Balinese', 'pag_Latn': 'Pangasinan',
+    'mri_Latn': 'Maori', 'smo_Latn': 'Samoan', 'fij_Latn': 'Fijian',
+    'ibo_Latn': 'Igbo', 'zul_Latn': 'Zulu', 'xho_Latn': 'Xhosa',
+    'lin_Latn': 'Lingala', 'lug_Latn': 'Luganda', 'kin_Latn': 'Kinyarwanda',
+    'sna_Latn': 'Shona', 'wol_Latn': 'Wolof', 'tsn_Latn': 'Tswana',
+    'aka_Latn': 'Akan', 'ewe_Latn': 'Ewe', 'fon_Latn': 'Fon',
+    'bam_Latn': 'Bambara', 'mos_Latn': 'Mossi', 'nso_Latn': 'N. Sotho',
+    'ssw_Latn': 'Swazi', 'tso_Latn': 'Tsonga', 'nya_Latn': 'Chichewa',
+    'run_Latn': 'Kirundi', 'fuv_Latn': 'Fulfulde', 'bem_Latn': 'Bemba',
+    'sot_Latn': 'S. Sotho', 'est_Latn': 'Estonian',
+    'luo_Latn': 'Luo', 'knc_Latn': 'Kanuri',
+    'quy_Latn': 'Quechua', 'grn_Latn': 'Guarani', 'ayr_Latn': 'Aymara',
+    'hat_Latn': 'Haitian Cr.', 'tpi_Latn': 'Tok Pisin',
+}
+
+FAMILY_COLORS_FIG = {
+    'IE: Romance':        '#6366f1',
+    'IE: Germanic':       '#4f46e5',
+    'IE: Slavic':         '#4338ca',
+    'IE: Indo-Iranian':   '#7c3aed',
+    'IE: Hellenic':       '#3730a3',
+    'IE: Baltic':         '#a5b4fc',
+    'IE: Celtic':         '#818cf8',
+    'IE: Armenian':       '#5b21b6',
+    'IE: Albanian':       '#8b5cf6',
+    'Sino-Tibetan':       '#e53e3e',
+    'Japonic & Koreanic': '#dd6b20',
+    'Afro-Asiatic':       '#d69e2e',
+    'Dravidian':          '#38a169',
+    'Turkic':             '#319795',
+    'Austroasiatic':      '#2b6cb0',
+    'Tai-Kadai':          '#3182ce',
+    'Austronesian':       '#805ad5',
+    'Niger-Congo':        '#b7791f',
+    'Nilo-Saharan':       '#8d6e63',
+    'Uralic':             '#c53030',
+    'Kartvelian':         '#e91e63',
+    'Mongolic':           '#ff9800',
+    'Language Isolate':   '#607d8b',
+    'Indigenous Americas': '#558b2f',
+    'Creole':             '#00acc1',
+    'Unknown':            '#718096',
+}
+
+
+def _lang_display_name(code):
+    return LANG_NAME.get(code, code)
+
+
+def _lang_family_color(code):
+    fam = LANG_FAMILY.get(code, 'Unknown')
+    return FAMILY_COLORS_FIG.get(fam, '#718096')
+
 
 def _concept_category(concept):
     for cat, members in CATEGORY_MAP.items():
@@ -106,34 +200,33 @@ def fig_swadesh_ranking(data, corpus_data, outdir):
     latin_langs = [l['code'] for l in corpus_data.get('languages', [])
                    if l.get('code', '').endswith('_Latn')] if corpus_data else []
 
-    phon_scores = {}
+    ortho_scores = {}
     for concept, translations in concepts_dict.items():
         forms = [translations.get(l, '') for l in latin_langs
                  if translations.get(l, '')]
         if len(forms) < 2:
-            phon_scores[concept] = 0.0
+            ortho_scores[concept] = 0.0
             continue
         sample = forms[:40]
         pairs = []
         for i in range(len(sample)):
             for j in range(i + 1, len(sample)):
-                pairs.append(_levenshtein(
-                    _phonetic_normalize(sample[i]),
-                    _phonetic_normalize(sample[j])))
-        phon_scores[concept] = np.mean(pairs) if pairs else 0.0
+                pairs.append(_levenshtein(sample[i].lower(),
+                                          sample[j].lower()))
+        ortho_scores[concept] = np.mean(pairs) if pairs else 0.0
 
-    concepts, conv_vals, phon_vals, cats, colors = [], [], [], [], []
+    concepts, conv_vals, ortho_vals, cats, colors = [], [], [], [], []
     for r in ranking:
         c = r['concept']
         concepts.append(c)
         conv_vals.append(r['mean_similarity'])
-        phon_vals.append(phon_scores.get(c, 0.0))
+        ortho_vals.append(ortho_scores.get(c, 0.0))
         cat = _concept_category(c)
         cats.append(cat)
         colors.append(CATEGORY_COLORS.get(cat, '#999999'))
 
     conv_arr = np.array(conv_vals)
-    phon_arr = np.array(phon_vals)
+    ortho_arr = np.array(ortho_vals)
 
     fig, ax = plt.subplots(figsize=(FULL_W, FULL_W * 0.72))
 
@@ -141,23 +234,23 @@ def fig_swadesh_ranking(data, corpus_data, outdir):
         idx = [i for i, cc in enumerate(cats) if cc == cat]
         if not idx:
             continue
-        ax.scatter([phon_arr[i] for i in idx],
+        ax.scatter([ortho_arr[i] for i in idx],
                    [conv_arr[i] for i in idx],
                    c=CATEGORY_COLORS[cat], s=36, alpha=0.85,
                    edgecolors='white', linewidths=0.4,
                    label=cat, zorder=3)
 
     for i, c in enumerate(concepts):
-        ax.annotate(c, (phon_arr[i], conv_arr[i]),
+        ax.annotate(c, (ortho_arr[i], conv_arr[i]),
                     fontsize=5.5, alpha=0.8,
                     textcoords='offset points', xytext=(4, 4), zorder=4)
 
-    slope, intercept, r_val, _, _ = sp_stats.linregress(phon_arr, conv_arr)
-    x_fit = np.linspace(phon_arr.min(), phon_arr.max(), 50)
+    slope, intercept, r_val, _, _ = sp_stats.linregress(ortho_arr, conv_arr)
+    x_fit = np.linspace(ortho_arr.min(), ortho_arr.max(), 50)
     ax.plot(x_fit, slope * x_fit + intercept, 'k--', linewidth=1.0, alpha=0.6,
             label=f'$R^2 = {r_val**2:.3f}$')
 
-    ax.set_xlabel('Mean Cross-Lingual Phonetic Similarity (Latin-script)')
+    ax.set_xlabel('Mean Cross-Lingual Orthographic Similarity (Latin-script)')
     ax.set_ylabel('Embedding Convergence (Isotropy-Corrected)')
     ax.legend(fontsize=6, loc='upper left', ncol=2, framealpha=0.9,
               handletextpad=0.3, columnspacing=0.5)
@@ -199,33 +292,78 @@ def fig_phylogenetic(data, outdir):
         dist_ordered = dist_matrix
         labels_ordered = languages
 
-    fig, axes = plt.subplots(1, 2, figsize=(FULL_W, 4.5),
-                             gridspec_kw={'width_ratios': [3, 2]})
+    row_height = max(8.0, n * 0.12)
+    fig = plt.figure(figsize=(FULL_W * 1.5, row_height))
+    gs = fig.add_gridspec(1, 2, width_ratios=[2.2, 3], wspace=0.15)
 
-    ax_heat = axes[0]
+    # --- Panel (a): Heatmap — no axis labels (dendrogram provides ordering) ---
+    ax_heat = fig.add_subplot(gs[0])
     im = ax_heat.imshow(dist_ordered, cmap='viridis', aspect='auto')
-    ax_heat.set_title('(a) Pairwise Embedding Distances')
-    step = max(1, n // 20)
-    ax_heat.set_xticks(range(0, n, step))
-    ax_heat.set_xticklabels([labels_ordered[i][:7] for i in range(0, n, step)],
-                            rotation=90, fontsize=5)
-    ax_heat.set_yticks(range(0, n, step))
-    ax_heat.set_yticklabels([labels_ordered[i][:7] for i in range(0, n, step)],
-                            fontsize=5)
+    ax_heat.set_title('(a) Pairwise Embedding Distances', fontsize=10, pad=8)
+    ax_heat.set_xticks([])
+    ax_heat.set_yticks([])
     plt.colorbar(im, ax=ax_heat, fraction=0.046, pad=0.04)
 
-    ax_dend = axes[1]
+    # --- Panel (b): Dendrogram with colored leaf labels ---
+    ax_dend = fig.add_subplot(gs[1])
     np.fill_diagonal(dist_matrix, 0)
     condensed = squareform(dist_matrix, checks=False)
     Z = linkage(condensed, method='average')
-    short_labels = [l[:7] for l in languages]
-    dendrogram(Z, orientation='right', labels=short_labels, ax=ax_dend,
-               leaf_font_size=4, color_threshold=0)
-    ax_dend.set_title('(b) Hierarchical Clustering')
-    ax_dend.set_xlabel('Distance')
 
-    fig.tight_layout()
-    fig.savefig(os.path.join(outdir, 'fig_phylogenetic.pdf'))
+    display_labels = [_lang_display_name(c) for c in languages]
+    leaf_colors_map = {_lang_display_name(c): _lang_family_color(c)
+                       for c in languages}
+
+    leaf_families = [_broad_family(LANG_FAMILY.get(c, 'Unknown'))
+                     for c in languages]
+    cluster_leaves = {}
+    for i in range(n):
+        cluster_leaves[i] = {i}
+    for k, row in enumerate(Z):
+        cid = n + k
+        cluster_leaves[cid] = cluster_leaves[int(row[0])] | cluster_leaves[int(row[1])]
+
+    def _cluster_color(cid):
+        leaves = cluster_leaves[cid]
+        fams = {leaf_families[l] for l in leaves}
+        if len(fams) == 1:
+            fam = next(iter(fams))
+            code_sample = languages[next(iter(leaves))]
+            return _lang_family_color(code_sample)
+        return '#aaaaaa'
+
+    def link_color_func(cid):
+        return _cluster_color(cid)
+
+    dendro = dendrogram(Z, orientation='right', labels=display_labels,
+                        ax=ax_dend, leaf_font_size=5.5,
+                        link_color_func=link_color_func)
+
+    ylbls = ax_dend.get_ymajorticklabels()
+    for lbl in ylbls:
+        lbl.set_color(leaf_colors_map.get(lbl.get_text(), '#718096'))
+        lbl.set_fontweight('medium')
+
+    ax_dend.set_title('(b) Hierarchical Clustering', fontsize=10, pad=8)
+    ax_dend.set_xlabel('Distance', fontsize=9)
+    ax_dend.tick_params(axis='y', which='major', pad=2)
+
+    # Family legend
+    families_present = {}
+    for code in languages:
+        fam = LANG_FAMILY.get(code, 'Unknown')
+        broad = _broad_family(fam)
+        if broad not in families_present:
+            families_present[broad] = FAMILY_COLORS_FIG.get(fam, '#718096')
+    legend_handles = [mpl.patches.Patch(facecolor=col, label=fam)
+                      for fam, col in sorted(families_present.items())]
+    ax_dend.legend(handles=legend_handles, fontsize=5, loc='upper right',
+                   ncol=2, framealpha=0.85, handletextpad=0.3,
+                   columnspacing=0.5, borderpad=0.4,
+                   title='Language Family', title_fontsize=6)
+
+    fig.savefig(os.path.join(outdir, 'fig_phylogenetic.pdf'),
+                bbox_inches='tight', pad_inches=0.08)
     plt.close(fig)
     print("  -> fig_phylogenetic.pdf")
 
@@ -314,28 +452,43 @@ def fig_colexification(data, outdir):
     ax.plot(x_line, slope * x_line + intercept, '--', color='#377eb8',
             linewidth=1.0, alpha=0.7, zorder=2, label='Linear fit')
 
-    label_frac = 0.10
-    colex_idx = [i for i, r in enumerate(records) if r['frequency'] > 0]
-    noncolex_idx = [i for i, r in enumerate(records) if r['frequency'] == 0]
-    n_colex_label = max(1, int(len(colex_idx) * label_frac))
-    n_noncolex_label = max(1, int(len(noncolex_idx) * label_frac))
+    from adjustText import adjust_text
 
-    rng2 = np.random.default_rng(7)
-    label_indices = set(
-        list(rng2.choice(colex_idx, size=n_colex_label, replace=False))
-        + list(rng2.choice(noncolex_idx, size=n_noncolex_label, replace=False))
-    )
+    colex_idx = [i for i, r in enumerate(records) if r['frequency'] > 0]
+    colex_freqs = np.array([freqs[i] for i in colex_idx])
+
+    n_labels = 12
+    bin_edges = np.linspace(colex_freqs.min() - 0.5, colex_freqs.max() + 0.5, n_labels + 1)
+    label_indices = []
+    for b in range(len(bin_edges) - 1):
+        lo, hi = bin_edges[b], bin_edges[b + 1]
+        candidates = [i for i in colex_idx if lo <= freqs[i] < hi]
+        if candidates:
+            best = max(candidates, key=lambda i: abs(sims[i] - np.median(sims)))
+            label_indices.append(best)
+
+    top_freq = sorted(colex_idx, key=lambda i: freqs[i], reverse=True)[:3]
+    for i in top_freq:
+        if i not in label_indices:
+            label_indices.append(i)
 
     texts = []
+    label_xs, label_ys = [], []
     for i in label_indices:
         r = records[i]
         lbl = f"{r['concept_a']}–{r['concept_b']}"
-        color = '#b01015' if r['frequency'] > 0 else '#555555'
-        texts.append(ax.annotate(
-            lbl, (freqs_j[i], sims[i]),
-            fontsize=5.5, color=color, alpha=0.9,
-            xytext=(5, 3), textcoords='offset points',
-        ))
+        color = '#b01015'
+        t = ax.text(freqs_j[i], sims[i], lbl,
+                    fontsize=5.5, color=color, alpha=0.9)
+        texts.append(t)
+        label_xs.append(freqs_j[i])
+        label_ys.append(sims[i])
+
+    adjust_text(texts, x=label_xs, y=label_ys, ax=ax,
+                arrowprops=dict(arrowstyle='-', color='#999999',
+                                lw=0.4, alpha=0.6),
+                force_text=(0.8, 1.0), force_points=(0.5, 0.5),
+                expand=(1.3, 1.5), max_move=50)
 
     p_str = f'{sp_p:.1e}' if sp_p < 0.001 else f'{sp_p:.4f}'
     stat_text = f'$\\rho_s$ = {rho:.3f},  p = {p_str}\nn = {len(records):,} pairs'
@@ -490,36 +643,71 @@ def fig_color_circle(data, outdir):
 
 
 # ---------------------------------------------------------------------------
-# Figure 7 — Offset invariance consistency
+# Figure 7 — Combined offset invariance: bar chart + per-family heatmap
 # ---------------------------------------------------------------------------
-def fig_offset_invariance(data, outdir):
+def fig_offset_combined(data, outdir):
     pairs = data.get('pairs', [])
     if not pairs:
         print("  [WARN] Missing offset invariance data.")
         return
 
     sorted_pairs = sorted(pairs, key=lambda p: p['mean_consistency'])
-    labels = [f"{p['concept_a']}–{p['concept_b']}" for p in sorted_pairs]
+    pair_labels = [f"{p['concept_a']}–{p['concept_b']}" for p in sorted_pairs]
     means = [p['mean_consistency'] for p in sorted_pairs]
     stds = [p['std_consistency'] for p in sorted_pairs]
 
-    fig, ax = plt.subplots(figsize=(COL_W, 3.5))
-    y_pos = np.arange(len(labels))
-    ax.barh(y_pos, means, xerr=stds, height=0.6,
-            color='#377eb8', edgecolor='none', alpha=0.85,
-            error_kw=dict(ecolor='grey', capsize=2, capthick=0.8,
-                          linewidth=0.8))
-    ax.set_yticks(y_pos)
-    ax.set_yticklabels(labels, fontsize=7)
-    ax.set_xlabel('Consistency Score')
-    ax.set_xlim(0, 1.05)
-    ax.axvline(np.mean(means), color='k', linestyle='--', linewidth=0.8,
-               label=f'Mean = {np.mean(means):.2f}')
-    ax.legend(fontsize=7, loc='lower right')
+    all_families = set()
+    for p in pairs:
+        for entry in p.get('per_language', []):
+            all_families.add(entry.get('family', 'Unknown'))
+    all_families = sorted(all_families)
 
-    fig.savefig(os.path.join(outdir, 'fig_offset_invariance.pdf'))
+    matrix = np.zeros((len(sorted_pairs), len(all_families)))
+    for i, p in enumerate(sorted_pairs):
+        fam_scores = {}
+        for entry in p.get('per_language', []):
+            fam = entry.get('family', 'Unknown')
+            if fam not in fam_scores:
+                fam_scores[fam] = []
+            fam_scores[fam].append(entry.get('consistency', 0))
+        for j, fam in enumerate(all_families):
+            if fam in fam_scores:
+                matrix[i, j] = np.mean(fam_scores[fam])
+
+    fig, (ax_bar, ax_heat) = plt.subplots(
+        1, 2, figsize=(FULL_W, 4.0),
+        gridspec_kw={'width_ratios': [1, 2.8], 'wspace': 0.05},
+        sharey=True)
+
+    n = len(pair_labels)
+    y_pos = np.arange(n)
+
+    ax_bar.barh(y_pos, means, xerr=stds, height=0.6,
+                color='#377eb8', edgecolor='none', alpha=0.85,
+                error_kw=dict(ecolor='grey', capsize=2, capthick=0.8,
+                              linewidth=0.8))
+    ax_bar.set_yticks(y_pos)
+    ax_bar.set_yticklabels(pair_labels, fontsize=6)
+    ax_bar.set_xlabel('Consistency Score')
+    ax_bar.set_xlim(0, 1.05)
+    ax_bar.axvline(np.mean(means), color='k', linestyle='--', linewidth=0.8,
+                   label=f'Mean = {np.mean(means):.2f}')
+    ax_bar.legend(fontsize=6, loc='lower right')
+    ax_bar.set_title('(a) Cross-Lingual Consistency', fontsize=9)
+
+    im = ax_heat.imshow(matrix, cmap='YlOrRd', aspect='auto',
+                        extent=[-0.5, len(all_families) - 0.5,
+                                n - 0.5, -0.5])
+    ax_heat.set_xticks(range(len(all_families)))
+    ax_heat.set_xticklabels(all_families, rotation=90, fontsize=5)
+    ax_heat.set_title('(b) Per-Family Consistency', fontsize=9)
+    plt.colorbar(im, ax=ax_heat, fraction=0.03, pad=0.02,
+                 label='Consistency')
+
+    fig.tight_layout()
+    fig.savefig(os.path.join(outdir, 'fig_offset_combined.pdf'))
     plt.close(fig)
-    print("  -> fig_offset_invariance.pdf")
+    print("  -> fig_offset_combined.pdf")
 
 
 # ---------------------------------------------------------------------------
@@ -764,32 +952,11 @@ def fig_category_summary(data, outdir):
     x_labels = [f'{c}\n(n={n})' for c, n in zip(cats_sorted, counts)]
     x = np.arange(len(cats_sorted))
 
-    fig, (ax_box, ax_viol) = plt.subplots(1, 2, figsize=(FULL_W, 3.2),
-                                           sharey=True)
+    fig, ax = plt.subplots(figsize=(FULL_W, 3.2))
 
-    # Panel (a): box-and-whisker plots
-    bp = ax_box.boxplot(score_lists, positions=x, widths=0.5,
-                        patch_artist=True,
-                        medianprops=dict(color='black', linewidth=1.2),
-                        whiskerprops=dict(linewidth=0.8),
-                        capprops=dict(linewidth=0.8),
-                        flierprops=dict(marker='o', markersize=3,
-                                        alpha=0.5, markeredgewidth=0.3))
-    for patch, col in zip(bp['boxes'], colors):
-        patch.set_facecolor(col)
-        patch.set_alpha(0.7)
-    ax_box.axhline(overall_mean, color='k', linestyle='--', linewidth=0.8,
-                   label=f'Overall mean = {overall_mean:.2f}')
-    ax_box.set_xticks(x)
-    ax_box.set_xticklabels(x_labels, fontsize=6, rotation=30, ha='right')
-    ax_box.set_ylabel('Convergence Score')
-    ax_box.set_title('(a) Box & Whisker', fontsize=9)
-    ax_box.legend(fontsize=6, loc='lower left')
-
-    # Panel (b): violin plots with individual data points
-    parts = ax_viol.violinplot(score_lists, positions=x, widths=0.6,
-                               showmeans=False, showmedians=True,
-                               showextrema=False)
+    parts = ax.violinplot(score_lists, positions=x, widths=0.6,
+                          showmeans=False, showmedians=True,
+                          showextrema=False)
     for i, body in enumerate(parts['bodies']):
         body.set_facecolor(colors[i])
         body.set_edgecolor('grey')
@@ -801,22 +968,113 @@ def fig_category_summary(data, outdir):
     rng = np.random.RandomState(42)
     for i, scores in enumerate(score_lists):
         jitter = rng.uniform(-0.12, 0.12, size=len(scores))
-        ax_viol.scatter(x[i] + jitter, scores, s=10, c=colors[i],
-                        alpha=0.7, edgecolors='white', linewidths=0.3,
-                        zorder=3)
+        ax.scatter(x[i] + jitter, scores, s=10, c=colors[i],
+                   alpha=0.7, edgecolors='white', linewidths=0.3,
+                   zorder=3)
 
-    ax_viol.axhline(overall_mean, color='k', linestyle='--', linewidth=0.8,
-                    label=f'Overall mean = {overall_mean:.2f}')
-    ax_viol.set_xticks(x)
-    ax_viol.set_xticklabels(x_labels, fontsize=6, rotation=30, ha='right')
-    ax_viol.set_title('(b) Violin & Data Points', fontsize=9)
-    ax_viol.legend(fontsize=6, loc='lower left')
+    ax.axhline(overall_mean, color='k', linestyle='--', linewidth=0.8,
+               label=f'Overall mean = {overall_mean:.2f}')
+    ax.set_xticks(x)
+    ax.set_xticklabels(x_labels, fontsize=6, rotation=30, ha='right')
+    ax.set_ylabel('Convergence Score')
+    ax.legend(fontsize=6, loc='lower left')
 
     fig.tight_layout()
     fig.savefig(os.path.join(outdir, 'fig_category_summary.pdf'))
     plt.close(fig)
     print("  -> fig_category_summary.pdf")
     return {c: np.mean(cat_scores[c]) for c in cats_sorted if cat_scores[c]}
+
+
+# ---------------------------------------------------------------------------
+# Figure 10b — Category detail: two-column grid of per-category dot plots
+# ---------------------------------------------------------------------------
+def fig_category_detail(data, outdir):
+    ranking = data.get('convergence_ranking_corrected',
+                       data.get('convergence_ranking_raw', []))
+    if not ranking:
+        print("  [WARN] No ranking data for category detail.")
+        return
+
+    cat_concepts = {cat: [] for cat in CATEGORY_MAP}
+    for r in ranking:
+        cat = _concept_category(r['concept'])
+        cat_concepts[cat].append((r['concept'], r['mean_similarity']))
+
+    for cat in cat_concepts:
+        cat_concepts[cat].sort(key=lambda x: x[1], reverse=True)
+
+    overall_mean = np.mean([r['mean_similarity'] for r in ranking])
+
+    cats_sorted = sorted(
+        [c for c in cat_concepts if cat_concepts[c]],
+        key=lambda c: np.mean([s for _, s in cat_concepts[c]]),
+        reverse=True)
+
+    # Balance categories into two columns; keep 'Other' on the right
+    col_left, col_right = [], []
+    n_left, n_right = 0, 0
+    for cat in cats_sorted:
+        n = len(cat_concepts[cat])
+        if cat == 'Other':
+            col_right.append(cat); n_right += n
+        elif n_left <= n_right:
+            col_left.append(cat); n_left += n
+        else:
+            col_right.append(cat); n_right += n
+
+    col_left.sort(key=lambda c: len(cat_concepts[c]), reverse=True)
+    col_right.sort(key=lambda c: len(cat_concepts[c]), reverse=True)
+
+    all_scores = [r['mean_similarity'] for r in ranking]
+    x_lo, x_hi = min(all_scores) - 0.05, max(all_scores) + 0.05
+
+    fig = plt.figure(figsize=(FULL_W, 7.8))
+    outer = fig.add_gridspec(1, 2, wspace=0.40)
+
+    def _make_column(outer_cell, cats):
+        heights = [len(cat_concepts[c]) for c in cats]
+        gs = outer_cell.subgridspec(len(cats), 1,
+                                    height_ratios=heights, hspace=0.45)
+        axes = []
+        for i, cat in enumerate(cats):
+            ax = fig.add_subplot(gs[i])
+            items = cat_concepts[cat]
+            concepts = [c for c, _ in items]
+            scores = [s for _, s in items]
+            color = CATEGORY_COLORS.get(cat, '#999999')
+            y = np.arange(len(items))
+            ax.scatter(scores, y, c=color, s=20, edgecolors='white',
+                       linewidths=0.3, zorder=3)
+            for j, (sc, lbl) in enumerate(zip(scores, concepts)):
+                ax.plot([overall_mean, sc], [j, j], color=color,
+                        linewidth=0.5, alpha=0.3, zorder=1)
+            ax.set_yticks(y)
+            ax.set_yticklabels(concepts, fontsize=5.5)
+            ax.invert_yaxis()
+            ax.axvline(overall_mean, color='k', linestyle='--',
+                       linewidth=0.6, alpha=0.45)
+            ax.set_xlim(x_lo, x_hi)
+            ax.set_title(cat, fontsize=7, fontweight='bold', color=color,
+                         pad=3)
+            ax.grid(True, axis='x', alpha=0.15, linewidth=0.4)
+            ax.tick_params(axis='both', labelsize=5.5)
+            axes.append(ax)
+        axes[-1].set_xlabel('Convergence Score (isotropy-corrected)',
+                            fontsize=6)
+        return axes
+
+    _make_column(outer[0], col_left)
+    _make_column(outer[1], col_right)
+
+    fig.text(0.5, 0.005,
+             f'Dashed line = overall mean ({overall_mean:.2f})',
+             ha='center', fontsize=6, style='italic')
+
+    fig.savefig(os.path.join(outdir, 'fig_category_detail.pdf'),
+                bbox_inches='tight')
+    plt.close(fig)
+    print("  -> fig_category_detail.pdf")
 
 
 # ---------------------------------------------------------------------------
@@ -1115,50 +1373,6 @@ def fig_concept_map(data, outdir):
     print("  -> fig_concept_map.pdf")
 
 
-# ---------------------------------------------------------------------------
-# Figure 14 — Offset family heatmap: per-family consistency
-# ---------------------------------------------------------------------------
-def fig_offset_family_heatmap(data, outdir):
-    pairs = data.get('pairs', [])
-    if not pairs:
-        print("  [WARN] Missing offset family heatmap data.")
-        return
-
-    all_families = set()
-    for p in pairs:
-        for entry in p.get('per_language', []):
-            all_families.add(entry.get('family', 'Unknown'))
-    all_families = sorted(all_families)
-    pair_labels = [f"{p['concept_a']}–{p['concept_b']}" for p in pairs]
-
-    matrix = np.zeros((len(pairs), len(all_families)))
-    for i, p in enumerate(pairs):
-        fam_scores = {}
-        for entry in p.get('per_language', []):
-            fam = entry.get('family', 'Unknown')
-            if fam not in fam_scores:
-                fam_scores[fam] = []
-            fam_scores[fam].append(entry.get('consistency', 0))
-        for j, fam in enumerate(all_families):
-            if fam in fam_scores:
-                matrix[i, j] = np.mean(fam_scores[fam])
-
-    sorted_idx = np.argsort(-np.mean(matrix, axis=1))
-    matrix = matrix[sorted_idx]
-    pair_labels = [pair_labels[i] for i in sorted_idx]
-
-    fig, ax = plt.subplots(figsize=(FULL_W, 4.0))
-    im = ax.imshow(matrix, cmap='YlOrRd', aspect='auto')
-    ax.set_xticks(range(len(all_families)))
-    ax.set_xticklabels(all_families, rotation=90, fontsize=5)
-    ax.set_yticks(range(len(pair_labels)))
-    ax.set_yticklabels(pair_labels, fontsize=6)
-    plt.colorbar(im, ax=ax, fraction=0.03, pad=0.02, label='Consistency')
-
-    fig.tight_layout()
-    fig.savefig(os.path.join(outdir, 'fig_offset_family_heatmap.pdf'))
-    plt.close(fig)
-    print("  -> fig_offset_family_heatmap.pdf")
 
 
 # ---------------------------------------------------------------------------
@@ -1302,56 +1516,56 @@ def main():
     print()
 
     # Figure 1
-    print("[1/15] Swadesh convergence ranking …")
+    print("[1/14] Swadesh convergence ranking …")
     d = _load_json('swadesh_convergence.json')
     d_corp_fig1 = _load_json('swadesh_corpus.json')
     if d:
         fig_swadesh_ranking(d, d_corp_fig1, FIG_DIR)
 
     # Figure 2
-    print("[2/15] Phylogenetic heatmap + dendrogram …")
+    print("[2/14] Phylogenetic heatmap + dendrogram …")
     d = _load_json('phylogenetic.json')
     if d:
         fig_phylogenetic(d, FIG_DIR)
 
     # Figure 3
-    print("[3/15] Swadesh vs non-Swadesh comparison …")
+    print("[3/14] Swadesh vs non-Swadesh comparison …")
     d = _load_json('swadesh_comparison.json')
     if d:
         fig_swadesh_comparison(d, FIG_DIR)
 
     # Figure 4
-    print("[4/15] Colexification test …")
+    print("[4/14] Colexification test …")
     d = _load_json('colexification.json')
     if d:
         fig_colexification(d, FIG_DIR)
 
     # Figure 5
-    print("[5/15] Conceptual store metric …")
+    print("[5/14] Conceptual store metric …")
     d = _load_json('conceptual_store.json')
     if d:
         fig_conceptual_store(d, FIG_DIR)
 
     # Figure 6
-    print("[6/15] Berlin & Kay color circle …")
+    print("[6/14] Berlin & Kay color circle …")
     d = _load_json('color_circle.json')
     if d:
         fig_color_circle(d, FIG_DIR)
 
     # Figure 7
-    print("[7/15] Offset invariance …")
+    print("[7/14] Offset invariance (combined) …")
     d = _load_json('offset_invariance.json')
     if d:
-        fig_offset_invariance(d, FIG_DIR)
+        fig_offset_combined(d, FIG_DIR)
 
     # Figure 8
-    print("[8/15] Water manifold …")
+    print("[8/14] Water manifold …")
     d = _load_json('sample_concept.json')
     if d:
         fig_water_manifold(d, FIG_DIR)
 
     # Figure 9
-    print("[9/15] Variance decomposition …")
+    print("[9/14] Variance decomposition …")
     d_conv = _load_json('swadesh_convergence.json')
     d_corp = _load_json('swadesh_corpus.json')
     if d_conv and d_corp:
@@ -1363,6 +1577,12 @@ def main():
     if d:
         fig_category_summary(d, FIG_DIR)
 
+    # Figure 10b
+    print("[10b/15] Category detail …")
+    d = _load_json('swadesh_convergence.json')
+    if d:
+        fig_category_detail(d, FIG_DIR)
+
     # Figure 11
     print("[11/15] Isotropy validation …")
     d = _load_json('swadesh_convergence.json')
@@ -1370,25 +1590,19 @@ def main():
         fig_isotropy_validation(d, FIG_DIR)
 
     # Figure 12
-    print("[12/15] Mantel scatter …")
+    print("[12/14] Mantel scatter …")
     d = _load_json('phylogenetic.json')
     if d:
         fig_mantel_scatter(d, FIG_DIR)
 
     # Figure 13
-    print("[13/15] Concept map …")
+    print("[13/14] Concept map …")
     d = _load_json('phylogenetic.json')
     if d:
         fig_concept_map(d, FIG_DIR)
 
     # Figure 14
-    print("[14/15] Offset family heatmap …")
-    d = _load_json('offset_invariance.json')
-    if d:
-        fig_offset_family_heatmap(d, FIG_DIR)
-
-    # Figure 15
-    print("[15/15] Offset vector demo …")
+    print("[14/14] Offset vector demo …")
     d = _load_json('offset_invariance.json')
     if d:
         fig_offset_vector_demo(d, FIG_DIR)

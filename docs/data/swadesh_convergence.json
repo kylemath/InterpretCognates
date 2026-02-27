@@ -1,1221 +1,1221 @@
 {
   "num_concepts": 101,
-  "num_languages": 141,
-  "total_embeddings": 14241,
+  "num_languages": 135,
+  "total_embeddings": 13635,
   "convergence_ranking_raw": [
     {
       "concept": "night",
-      "mean_similarity": 0.8931217193603516,
-      "std": 0.1728566735982895,
-      "n_languages": 141
+      "mean_similarity": 0.9316248893737793,
+      "std": 0.07957801222801208,
+      "n_languages": 135
     },
     {
       "concept": "star",
-      "mean_similarity": 0.8898424506187439,
-      "std": 0.166056290268898,
-      "n_languages": 141
-    },
-    {
-      "concept": "stone",
-      "mean_similarity": 0.8815966248512268,
-      "std": 0.1786176562309265,
-      "n_languages": 141
+      "mean_similarity": 0.9064220786094666,
+      "std": 0.14138691127300262,
+      "n_languages": 135
     },
     {
       "concept": "water",
-      "mean_similarity": 0.8781012296676636,
-      "std": 0.1491941660642624,
-      "n_languages": 141
+      "mean_similarity": 0.9061829447746277,
+      "std": 0.09593334048986435,
+      "n_languages": 135
     },
     {
       "concept": "tree",
-      "mean_similarity": 0.8702843189239502,
-      "std": 0.21122141182422638,
-      "n_languages": 141
+      "mean_similarity": 0.9051753878593445,
+      "std": 0.15692342817783356,
+      "n_languages": 135
     },
     {
-      "concept": "woman",
-      "mean_similarity": 0.8630753755569458,
-      "std": 0.17841468751430511,
-      "n_languages": 141
-    },
-    {
-      "concept": "blood",
-      "mean_similarity": 0.8594146966934204,
-      "std": 0.21540942788124084,
-      "n_languages": 141
+      "concept": "stone",
+      "mean_similarity": 0.904610276222229,
+      "std": 0.1433139145374298,
+      "n_languages": 135
     },
     {
       "concept": "fish",
-      "mean_similarity": 0.8547257781028748,
-      "std": 0.20996800065040588,
-      "n_languages": 141
+      "mean_similarity": 0.8847666382789612,
+      "std": 0.1768990308046341,
+      "n_languages": 135
     },
     {
-      "concept": "mountain",
-      "mean_similarity": 0.8522699475288391,
-      "std": 0.21806423366069794,
-      "n_languages": 141
+      "concept": "woman",
+      "mean_similarity": 0.8845261335372925,
+      "std": 0.14896461367607117,
+      "n_languages": 135
     },
     {
       "concept": "fire",
-      "mean_similarity": 0.8498994708061218,
-      "std": 0.22411158680915833,
-      "n_languages": 141
+      "mean_similarity": 0.8834148645401001,
+      "std": 0.18176960945129395,
+      "n_languages": 135
+    },
+    {
+      "concept": "mountain",
+      "mean_similarity": 0.8764224648475647,
+      "std": 0.185177743434906,
+      "n_languages": 135
+    },
+    {
+      "concept": "blood",
+      "mean_similarity": 0.8746265769004822,
+      "std": 0.19765594601631165,
+      "n_languages": 135
     },
     {
       "concept": "cloud",
-      "mean_similarity": 0.8413574695587158,
-      "std": 0.22238250076770782,
-      "n_languages": 141
+      "mean_similarity": 0.8602395057678223,
+      "std": 0.20571322739124298,
+      "n_languages": 135
     },
     {
       "concept": "rain",
-      "mean_similarity": 0.8300692439079285,
-      "std": 0.26127609610557556,
-      "n_languages": 141
+      "mean_similarity": 0.8569434881210327,
+      "std": 0.2315196543931961,
+      "n_languages": 135
     },
     {
       "concept": "bird",
-      "mean_similarity": 0.8246510028839111,
-      "std": 0.2253822684288025,
-      "n_languages": 141
-    },
-    {
-      "concept": "foot",
-      "mean_similarity": 0.8219846487045288,
-      "std": 0.1610916703939438,
-      "n_languages": 141
+      "mean_similarity": 0.8458336591720581,
+      "std": 0.20657144486904144,
+      "n_languages": 135
     },
     {
       "concept": "name",
-      "mean_similarity": 0.8201562762260437,
-      "std": 0.20443783700466156,
-      "n_languages": 141
+      "mean_similarity": 0.843956708908081,
+      "std": 0.18387578427791595,
+      "n_languages": 135
+    },
+    {
+      "concept": "foot",
+      "mean_similarity": 0.8437970876693726,
+      "std": 0.12079720199108124,
+      "n_languages": 135
     },
     {
       "concept": "hand",
-      "mean_similarity": 0.819166898727417,
-      "std": 0.18838614225387573,
-      "n_languages": 141
-    },
-    {
-      "concept": "small",
-      "mean_similarity": 0.8116722702980042,
-      "std": 0.14772728085517883,
-      "n_languages": 141
-    },
-    {
-      "concept": "man",
-      "mean_similarity": 0.8050767183303833,
-      "std": 0.1910182684659958,
-      "n_languages": 141
-    },
-    {
-      "concept": "sun",
-      "mean_similarity": 0.8047739863395691,
-      "std": 0.21164843440055847,
-      "n_languages": 141
+      "mean_similarity": 0.835228681564331,
+      "std": 0.1705019474029541,
+      "n_languages": 135
     },
     {
       "concept": "dog",
-      "mean_similarity": 0.8034599423408508,
-      "std": 0.2358384132385254,
-      "n_languages": 141
+      "mean_similarity": 0.831805408000946,
+      "std": 0.2113521695137024,
+      "n_languages": 135
     },
     {
-      "concept": "moon",
-      "mean_similarity": 0.7982263565063477,
-      "std": 0.20022869110107422,
-      "n_languages": 141
+      "concept": "sun",
+      "mean_similarity": 0.8282034993171692,
+      "std": 0.18664593994617462,
+      "n_languages": 135
     },
     {
-      "concept": "head",
-      "mean_similarity": 0.7948780655860901,
-      "std": 0.17230483889579773,
-      "n_languages": 141
-    },
-    {
-      "concept": "person",
-      "mean_similarity": 0.7944415807723999,
-      "std": 0.13311365246772766,
-      "n_languages": 141
+      "concept": "small",
+      "mean_similarity": 0.8204579949378967,
+      "std": 0.13821665942668915,
+      "n_languages": 135
     },
     {
       "concept": "heart",
-      "mean_similarity": 0.7944161891937256,
-      "std": 0.20534728467464447,
-      "n_languages": 141
+      "mean_similarity": 0.8178755640983582,
+      "std": 0.18354900181293488,
+      "n_languages": 135
     },
     {
-      "concept": "new",
-      "mean_similarity": 0.793941080570221,
-      "std": 0.17918111383914948,
-      "n_languages": 141
+      "concept": "person",
+      "mean_similarity": 0.8164933919906616,
+      "std": 0.10576580464839935,
+      "n_languages": 135
     },
     {
-      "concept": "cold",
-      "mean_similarity": 0.7906396985054016,
-      "std": 0.2381470948457718,
-      "n_languages": 141
+      "concept": "man",
+      "mean_similarity": 0.8160189986228943,
+      "std": 0.18449746072292328,
+      "n_languages": 135
     },
     {
       "concept": "path",
-      "mean_similarity": 0.7887662649154663,
-      "std": 0.1616564691066742,
-      "n_languages": 141
+      "mean_similarity": 0.8141001462936401,
+      "std": 0.1234426349401474,
+      "n_languages": 135
     },
     {
-      "concept": "die",
-      "mean_similarity": 0.7742729187011719,
-      "std": 0.19150052964687347,
-      "n_languages": 141
+      "concept": "moon",
+      "mean_similarity": 0.8133087754249573,
+      "std": 0.1841202974319458,
+      "n_languages": 135
     },
     {
-      "concept": "two",
-      "mean_similarity": 0.7723749876022339,
-      "std": 0.18637129664421082,
-      "n_languages": 141
+      "concept": "head",
+      "mean_similarity": 0.8110752701759338,
+      "std": 0.15883800387382507,
+      "n_languages": 135
     },
     {
-      "concept": "red",
-      "mean_similarity": 0.7711478471755981,
-      "std": 0.2353527843952179,
-      "n_languages": 141
+      "concept": "cold",
+      "mean_similarity": 0.8092441558837891,
+      "std": 0.22158944606781006,
+      "n_languages": 135
     },
     {
-      "concept": "earth",
-      "mean_similarity": 0.7662336230278015,
-      "std": 0.14557531476020813,
-      "n_languages": 141
+      "concept": "new",
+      "mean_similarity": 0.7998539209365845,
+      "std": 0.17568853497505188,
+      "n_languages": 135
     },
     {
       "concept": "sit",
-      "mean_similarity": 0.7658398747444153,
-      "std": 0.20014218986034393,
-      "n_languages": 141
+      "mean_similarity": 0.7933631539344788,
+      "std": 0.16978919506072998,
+      "n_languages": 135
+    },
+    {
+      "concept": "die",
+      "mean_similarity": 0.791844367980957,
+      "std": 0.17425395548343658,
+      "n_languages": 135
+    },
+    {
+      "concept": "red",
+      "mean_similarity": 0.7912300229072571,
+      "std": 0.2189793884754181,
+      "n_languages": 135
+    },
+    {
+      "concept": "two",
+      "mean_similarity": 0.7856636047363281,
+      "std": 0.17669305205345154,
+      "n_languages": 135
     },
     {
       "concept": "flesh",
-      "mean_similarity": 0.7629868984222412,
-      "std": 0.2334456890821457,
-      "n_languages": 141
+      "mean_similarity": 0.7820311188697815,
+      "std": 0.2146095186471939,
+      "n_languages": 135
     },
     {
-      "concept": "big",
-      "mean_similarity": 0.7551902532577515,
-      "std": 0.18303851783275604,
-      "n_languages": 141
-    },
-    {
-      "concept": "white",
-      "mean_similarity": 0.7506344318389893,
-      "std": 0.24144291877746582,
-      "n_languages": 141
-    },
-    {
-      "concept": "walk",
-      "mean_similarity": 0.7491236925125122,
-      "std": 0.201279416680336,
-      "n_languages": 141
-    },
-    {
-      "concept": "hair",
-      "mean_similarity": 0.7488393783569336,
-      "std": 0.25198501348495483,
-      "n_languages": 141
-    },
-    {
-      "concept": "eye",
-      "mean_similarity": 0.7450728416442871,
-      "std": 0.21893830597400665,
-      "n_languages": 141
+      "concept": "earth",
+      "mean_similarity": 0.779505729675293,
+      "std": 0.13170626759529114,
+      "n_languages": 135
     },
     {
       "concept": "sleep",
-      "mean_similarity": 0.7424744963645935,
-      "std": 0.251029372215271,
-      "n_languages": 141
+      "mean_similarity": 0.7703893184661865,
+      "std": 0.23322325944900513,
+      "n_languages": 135
+    },
+    {
+      "concept": "hair",
+      "mean_similarity": 0.7691482901573181,
+      "std": 0.24358364939689636,
+      "n_languages": 135
+    },
+    {
+      "concept": "big",
+      "mean_similarity": 0.76859050989151,
+      "std": 0.17345097661018372,
+      "n_languages": 135
     },
     {
       "concept": "ear",
-      "mean_similarity": 0.7419244050979614,
-      "std": 0.22577089071273804,
-      "n_languages": 141
+      "mean_similarity": 0.7652450203895569,
+      "std": 0.21132586896419525,
+      "n_languages": 135
     },
     {
-      "concept": "drink",
-      "mean_similarity": 0.7354109287261963,
-      "std": 0.24960584938526154,
-      "n_languages": 141
+      "concept": "white",
+      "mean_similarity": 0.7631877660751343,
+      "std": 0.23462723195552826,
+      "n_languages": 135
     },
     {
-      "concept": "tongue",
-      "mean_similarity": 0.7342096567153931,
-      "std": 0.20382413268089294,
-      "n_languages": 141
+      "concept": "walk",
+      "mean_similarity": 0.7628482580184937,
+      "std": 0.1912776529788971,
+      "n_languages": 135
     },
     {
-      "concept": "kill",
-      "mean_similarity": 0.7320361733436584,
-      "std": 0.19441890716552734,
-      "n_languages": 141
+      "concept": "eye",
+      "mean_similarity": 0.7623023390769958,
+      "std": 0.2048705369234085,
+      "n_languages": 135
     },
     {
       "concept": "one",
-      "mean_similarity": 0.7318604588508606,
-      "std": 0.17193838953971863,
-      "n_languages": 141
+      "mean_similarity": 0.7517938613891602,
+      "std": 0.1532580852508545,
+      "n_languages": 135
+    },
+    {
+      "concept": "drink",
+      "mean_similarity": 0.7511787414550781,
+      "std": 0.24020543694496155,
+      "n_languages": 135
+    },
+    {
+      "concept": "kill",
+      "mean_similarity": 0.7494902610778809,
+      "std": 0.17962808907032013,
+      "n_languages": 135
+    },
+    {
+      "concept": "tongue",
+      "mean_similarity": 0.7454132437705994,
+      "std": 0.1999993622303009,
+      "n_languages": 135
     },
     {
       "concept": "eat",
-      "mean_similarity": 0.7188571691513062,
-      "std": 0.21793299913406372,
-      "n_languages": 141
-    },
-    {
-      "concept": "skin",
-      "mean_similarity": 0.714316189289093,
-      "std": 0.22699548304080963,
-      "n_languages": 141
-    },
-    {
-      "concept": "long",
-      "mean_similarity": 0.7112019658088684,
-      "std": 0.1747773438692093,
-      "n_languages": 141
-    },
-    {
-      "concept": "mouth",
-      "mean_similarity": 0.708846926689148,
-      "std": 0.23007752001285553,
-      "n_languages": 141
-    },
-    {
-      "concept": "smoke",
-      "mean_similarity": 0.7079390287399292,
-      "std": 0.3008965849876404,
-      "n_languages": 141
+      "mean_similarity": 0.7443804144859314,
+      "std": 0.20052112638950348,
+      "n_languages": 135
     },
     {
       "concept": "black",
-      "mean_similarity": 0.7042645215988159,
-      "std": 0.22935186326503754,
-      "n_languages": 141
+      "mean_similarity": 0.7356046438217163,
+      "std": 0.21208079159259796,
+      "n_languages": 135
     },
     {
       "concept": "dry",
-      "mean_similarity": 0.7042512893676758,
-      "std": 0.25024235248565674,
-      "n_languages": 141
+      "mean_similarity": 0.7260285019874573,
+      "std": 0.23907935619354248,
+      "n_languages": 135
     },
     {
-      "concept": "stand",
-      "mean_similarity": 0.7014991044998169,
-      "std": 0.22912782430648804,
-      "n_languages": 141
+      "concept": "skin",
+      "mean_similarity": 0.7253157496452332,
+      "std": 0.22186951339244843,
+      "n_languages": 135
     },
     {
-      "concept": "tooth",
-      "mean_similarity": 0.6952273845672607,
-      "std": 0.2660824954509735,
-      "n_languages": 141
-    },
-    {
-      "concept": "hot",
-      "mean_similarity": 0.6938229203224182,
-      "std": 0.23344168066978455,
-      "n_languages": 141
+      "concept": "mouth",
+      "mean_similarity": 0.7247607707977295,
+      "std": 0.2227497100830078,
+      "n_languages": 135
     },
     {
       "concept": "sand",
-      "mean_similarity": 0.6927469372749329,
-      "std": 0.29042676091194153,
-      "n_languages": 141
+      "mean_similarity": 0.7204389572143555,
+      "std": 0.28066858649253845,
+      "n_languages": 135
+    },
+    {
+      "concept": "stand",
+      "mean_similarity": 0.7202221155166626,
+      "std": 0.21716316044330597,
+      "n_languages": 135
+    },
+    {
+      "concept": "tooth",
+      "mean_similarity": 0.7178182005882263,
+      "std": 0.2584393620491028,
+      "n_languages": 135
+    },
+    {
+      "concept": "smoke",
+      "mean_similarity": 0.7171093225479126,
+      "std": 0.30089271068573,
+      "n_languages": 135
+    },
+    {
+      "concept": "long",
+      "mean_similarity": 0.7148284316062927,
+      "std": 0.17490075528621674,
+      "n_languages": 135
+    },
+    {
+      "concept": "hot",
+      "mean_similarity": 0.7062886953353882,
+      "std": 0.23125210404396057,
+      "n_languages": 135
     },
     {
       "concept": "come",
-      "mean_similarity": 0.6899185180664062,
-      "std": 0.19427573680877686,
-      "n_languages": 141
-    },
-    {
-      "concept": "hear",
-      "mean_similarity": 0.6856324672698975,
-      "std": 0.1942535936832428,
-      "n_languages": 141
+      "mean_similarity": 0.7054104804992676,
+      "std": 0.18463121354579926,
+      "n_languages": 135
     },
     {
       "concept": "all",
-      "mean_similarity": 0.6847307085990906,
-      "std": 0.17412333190441132,
-      "n_languages": 141
+      "mean_similarity": 0.7038270235061646,
+      "std": 0.15714570879936218,
+      "n_languages": 135
     },
     {
-      "concept": "good",
-      "mean_similarity": 0.6800252199172974,
-      "std": 0.16647547483444214,
-      "n_languages": 141
-    },
-    {
-      "concept": "egg",
-      "mean_similarity": 0.6782917380332947,
-      "std": 0.2750798463821411,
-      "n_languages": 141
-    },
-    {
-      "concept": "green",
-      "mean_similarity": 0.6760802268981934,
-      "std": 0.27551597356796265,
-      "n_languages": 141
+      "concept": "hear",
+      "mean_similarity": 0.6950460076332092,
+      "std": 0.19114328920841217,
+      "n_languages": 135
     },
     {
       "concept": "you",
-      "mean_similarity": 0.6741397380828857,
-      "std": 0.17597001791000366,
-      "n_languages": 141
+      "mean_similarity": 0.692423403263092,
+      "std": 0.16180558502674103,
+      "n_languages": 135
+    },
+    {
+      "concept": "good",
+      "mean_similarity": 0.6922404170036316,
+      "std": 0.16175629198551178,
+      "n_languages": 135
+    },
+    {
+      "concept": "green",
+      "mean_similarity": 0.6918136477470398,
+      "std": 0.27383095026016235,
+      "n_languages": 135
+    },
+    {
+      "concept": "egg",
+      "mean_similarity": 0.6914944052696228,
+      "std": 0.2723988890647888,
+      "n_languages": 135
     },
     {
       "concept": "many",
-      "mean_similarity": 0.6736496686935425,
-      "std": 0.1699564903974533,
-      "n_languages": 141
-    },
-    {
-      "concept": "bone",
-      "mean_similarity": 0.6720177531242371,
-      "std": 0.24356454610824585,
-      "n_languages": 141
+      "mean_similarity": 0.6849088072776794,
+      "std": 0.1650751680135727,
+      "n_languages": 135
     },
     {
       "concept": "fly",
-      "mean_similarity": 0.6664973497390747,
-      "std": 0.25587913393974304,
-      "n_languages": 141
-    },
-    {
-      "concept": "we",
-      "mean_similarity": 0.6659549474716187,
-      "std": 0.1389058381319046,
-      "n_languages": 141
+      "mean_similarity": 0.6831294298171997,
+      "std": 0.25207874178886414,
+      "n_languages": 135
     },
     {
       "concept": "root",
-      "mean_similarity": 0.6631194353103638,
-      "std": 0.2527751922607422,
-      "n_languages": 141
+      "mean_similarity": 0.6819312572479248,
+      "std": 0.2503359913825989,
+      "n_languages": 135
     },
     {
-      "concept": "seed",
-      "mean_similarity": 0.6573143005371094,
-      "std": 0.2538348436355591,
-      "n_languages": 141
+      "concept": "we",
+      "mean_similarity": 0.6786166429519653,
+      "std": 0.1261567622423172,
+      "n_languages": 135
+    },
+    {
+      "concept": "bone",
+      "mean_similarity": 0.6773631572723389,
+      "std": 0.2402476668357849,
+      "n_languages": 135
     },
     {
       "concept": "swim",
-      "mean_similarity": 0.6496590971946716,
-      "std": 0.27251142263412476,
-      "n_languages": 141
+      "mean_similarity": 0.6759770512580872,
+      "std": 0.267228901386261,
+      "n_languages": 135
+    },
+    {
+      "concept": "seed",
+      "mean_similarity": 0.6748300194740295,
+      "std": 0.25129956007003784,
+      "n_languages": 135
     },
     {
       "concept": "see",
-      "mean_similarity": 0.6427729725837708,
-      "std": 0.16742964088916779,
-      "n_languages": 141
+      "mean_similarity": 0.6589937806129456,
+      "std": 0.1582113355398178,
+      "n_languages": 135
     },
     {
       "concept": "burn",
-      "mean_similarity": 0.6426944732666016,
-      "std": 0.26588818430900574,
-      "n_languages": 141
+      "mean_similarity": 0.6575543284416199,
+      "std": 0.26290205121040344,
+      "n_languages": 135
     },
     {
       "concept": "nose",
-      "mean_similarity": 0.6386629343032837,
-      "std": 0.21947555243968964,
-      "n_languages": 141
-    },
-    {
-      "concept": "this",
-      "mean_similarity": 0.6315616369247437,
-      "std": 0.1633935421705246,
-      "n_languages": 141
+      "mean_similarity": 0.6539547443389893,
+      "std": 0.22058740258216858,
+      "n_languages": 135
     },
     {
       "concept": "grease",
-      "mean_similarity": 0.6266599893569946,
-      "std": 0.2195274829864502,
-      "n_languages": 141
+      "mean_similarity": 0.6423566937446594,
+      "std": 0.21480205655097961,
+      "n_languages": 135
     },
     {
       "concept": "full",
-      "mean_similarity": 0.6258107423782349,
-      "std": 0.1888108253479004,
-      "n_languages": 141
-    },
-    {
-      "concept": "breast",
-      "mean_similarity": 0.6233248114585876,
-      "std": 0.2508998215198517,
-      "n_languages": 141
-    },
-    {
-      "concept": "I",
-      "mean_similarity": 0.6231820583343506,
-      "std": 0.17435969412326813,
-      "n_languages": 141
+      "mean_similarity": 0.6407381296157837,
+      "std": 0.18580760061740875,
+      "n_languages": 135
     },
     {
       "concept": "knee",
-      "mean_similarity": 0.6217483878135681,
-      "std": 0.28593647480010986,
-      "n_languages": 141
+      "mean_similarity": 0.6395983099937439,
+      "std": 0.28465160727500916,
+      "n_languages": 135
+    },
+    {
+      "concept": "this",
+      "mean_similarity": 0.6392013430595398,
+      "std": 0.16111837327480316,
+      "n_languages": 135
+    },
+    {
+      "concept": "I",
+      "mean_similarity": 0.6387401819229126,
+      "std": 0.16396138072013855,
+      "n_languages": 135
+    },
+    {
+      "concept": "breast",
+      "mean_similarity": 0.6361891627311707,
+      "std": 0.24819360673427582,
+      "n_languages": 135
     },
     {
       "concept": "yellow",
-      "mean_similarity": 0.6197266578674316,
-      "std": 0.25838369131088257,
-      "n_languages": 141
-    },
-    {
-      "concept": "he",
-      "mean_similarity": 0.6195564866065979,
-      "std": 0.13835641741752625,
-      "n_languages": 141
-    },
-    {
-      "concept": "who",
-      "mean_similarity": 0.6179339289665222,
-      "std": 0.17514672875404358,
-      "n_languages": 141
-    },
-    {
-      "concept": "what",
-      "mean_similarity": 0.6131033301353455,
-      "std": 0.14204050600528717,
-      "n_languages": 141
+      "mean_similarity": 0.6333263516426086,
+      "std": 0.2582310438156128,
+      "n_languages": 135
     },
     {
       "concept": "not",
-      "mean_similarity": 0.6097816824913025,
-      "std": 0.16932711005210876,
-      "n_languages": 141
+      "mean_similarity": 0.6324490308761597,
+      "std": 0.15535271167755127,
+      "n_languages": 135
+    },
+    {
+      "concept": "he",
+      "mean_similarity": 0.6307283639907837,
+      "std": 0.13265028595924377,
+      "n_languages": 135
+    },
+    {
+      "concept": "who",
+      "mean_similarity": 0.6302084922790527,
+      "std": 0.17174464464187622,
+      "n_languages": 135
     },
     {
       "concept": "belly",
-      "mean_similarity": 0.607812762260437,
-      "std": 0.2124904841184616,
-      "n_languages": 141
+      "mean_similarity": 0.6249076128005981,
+      "std": 0.21097460389137268,
+      "n_languages": 135
+    },
+    {
+      "concept": "what",
+      "mean_similarity": 0.6231763362884521,
+      "std": 0.13608168065547943,
+      "n_languages": 135
     },
     {
       "concept": "know",
-      "mean_similarity": 0.6046674847602844,
-      "std": 0.14337565004825592,
-      "n_languages": 141
-    },
-    {
-      "concept": "horn",
-      "mean_similarity": 0.603387713432312,
-      "std": 0.23428113758563995,
-      "n_languages": 141
+      "mean_similarity": 0.615157425403595,
+      "std": 0.13653065264225006,
+      "n_languages": 135
     },
     {
       "concept": "neck",
-      "mean_similarity": 0.6015632748603821,
-      "std": 0.2226293683052063,
-      "n_languages": 141
+      "mean_similarity": 0.6141063570976257,
+      "std": 0.2222568392753601,
+      "n_languages": 135
+    },
+    {
+      "concept": "horn",
+      "mean_similarity": 0.6101921796798706,
+      "std": 0.23620250821113586,
+      "n_languages": 135
     },
     {
       "concept": "give",
-      "mean_similarity": 0.5817488431930542,
-      "std": 0.14352932572364807,
-      "n_languages": 141
-    },
-    {
-      "concept": "ash",
-      "mean_similarity": 0.5791488289833069,
-      "std": 0.2445714920759201,
-      "n_languages": 141
+      "mean_similarity": 0.5922126173973083,
+      "std": 0.13748252391815186,
+      "n_languages": 135
     },
     {
       "concept": "leaf",
-      "mean_similarity": 0.5747543573379517,
-      "std": 0.23064711689949036,
-      "n_languages": 141
-    },
-    {
-      "concept": "tail",
-      "mean_similarity": 0.5712376236915588,
-      "std": 0.20447209477424622,
-      "n_languages": 141
+      "mean_similarity": 0.5908672213554382,
+      "std": 0.2302701473236084,
+      "n_languages": 135
     },
     {
       "concept": "lie",
-      "mean_similarity": 0.5688772201538086,
-      "std": 0.22779884934425354,
-      "n_languages": 141
+      "mean_similarity": 0.5891698598861694,
+      "std": 0.2250189334154129,
+      "n_languages": 135
+    },
+    {
+      "concept": "ash",
+      "mean_similarity": 0.5887032151222229,
+      "std": 0.24349133670330048,
+      "n_languages": 135
+    },
+    {
+      "concept": "tail",
+      "mean_similarity": 0.5845931768417358,
+      "std": 0.2052733600139618,
+      "n_languages": 135
     },
     {
       "concept": "say",
-      "mean_similarity": 0.5688291192054749,
-      "std": 0.1677515208721161,
-      "n_languages": 141
+      "mean_similarity": 0.5800581574440002,
+      "std": 0.16268260776996613,
+      "n_languages": 135
     },
     {
       "concept": "round",
-      "mean_similarity": 0.5498002767562866,
-      "std": 0.17182011902332306,
-      "n_languages": 141
+      "mean_similarity": 0.5534518957138062,
+      "std": 0.17340482771396637,
+      "n_languages": 135
     },
     {
       "concept": "that",
-      "mean_similarity": 0.5267190337181091,
-      "std": 0.14242567121982574,
-      "n_languages": 141
+      "mean_similarity": 0.5326475501060486,
+      "std": 0.14211370050907135,
+      "n_languages": 135
     },
     {
       "concept": "bite",
-      "mean_similarity": 0.5200132727622986,
-      "std": 0.19404931366443634,
-      "n_languages": 141
+      "mean_similarity": 0.5258309841156006,
+      "std": 0.1946142464876175,
+      "n_languages": 135
     },
     {
       "concept": "liver",
-      "mean_similarity": 0.5124099850654602,
-      "std": 0.1987653523683548,
-      "n_languages": 141
+      "mean_similarity": 0.5178004503250122,
+      "std": 0.2027210146188736,
+      "n_languages": 135
     },
     {
       "concept": "bark",
-      "mean_similarity": 0.4951571524143219,
-      "std": 0.13643230497837067,
-      "n_languages": 141
+      "mean_similarity": 0.4946126639842987,
+      "std": 0.13529303669929504,
+      "n_languages": 135
     },
     {
       "concept": "claw",
-      "mean_similarity": 0.4858933687210083,
-      "std": 0.17631670832633972,
-      "n_languages": 141
+      "mean_similarity": 0.4854656755924225,
+      "std": 0.17630651593208313,
+      "n_languages": 135
     },
     {
       "concept": "feather",
-      "mean_similarity": 0.47645097970962524,
-      "std": 0.16606180369853973,
-      "n_languages": 141
+      "mean_similarity": 0.4766627550125122,
+      "std": 0.16819216310977936,
+      "n_languages": 135
     },
     {
       "concept": "louse",
-      "mean_similarity": 0.42939773201942444,
-      "std": 0.15181058645248413,
-      "n_languages": 141
+      "mean_similarity": 0.42956194281578064,
+      "std": 0.1500452160835266,
+      "n_languages": 135
     }
   ],
   "convergence_ranking_corrected": [
     {
       "concept": "night",
-      "mean_similarity": 0.8644152283668518,
-      "std": 0.22134160995483398,
-      "n_languages": 141
+      "mean_similarity": 0.9140201807022095,
+      "std": 0.10176105797290802,
+      "n_languages": 135
     },
     {
       "concept": "star",
-      "mean_similarity": 0.8525336980819702,
-      "std": 0.22922837734222412,
-      "n_languages": 141
-    },
-    {
-      "concept": "stone",
-      "mean_similarity": 0.8404846787452698,
-      "std": 0.23082564771175385,
-      "n_languages": 141
-    },
-    {
-      "concept": "water",
-      "mean_similarity": 0.8305618762969971,
-      "std": 0.19776418805122375,
-      "n_languages": 141
+      "mean_similarity": 0.8746845722198486,
+      "std": 0.1989450305700302,
+      "n_languages": 135
     },
     {
       "concept": "tree",
-      "mean_similarity": 0.826446533203125,
-      "std": 0.2716449201107025,
-      "n_languages": 141
+      "mean_similarity": 0.8718955516815186,
+      "std": 0.1989975869655609,
+      "n_languages": 135
     },
     {
-      "concept": "blood",
-      "mean_similarity": 0.8139137029647827,
-      "std": 0.29079872369766235,
-      "n_languages": 141
+      "concept": "stone",
+      "mean_similarity": 0.8712749481201172,
+      "std": 0.18192461133003235,
+      "n_languages": 135
+    },
+    {
+      "concept": "water",
+      "mean_similarity": 0.8682719469070435,
+      "std": 0.1288270652294159,
+      "n_languages": 135
     },
     {
       "concept": "woman",
-      "mean_similarity": 0.8103166222572327,
-      "std": 0.26095056533813477,
-      "n_languages": 141
-    },
-    {
-      "concept": "mountain",
-      "mean_similarity": 0.8013026118278503,
-      "std": 0.28795379400253296,
-      "n_languages": 141
+      "mean_similarity": 0.8443433046340942,
+      "std": 0.20774106681346893,
+      "n_languages": 135
     },
     {
       "concept": "fish",
-      "mean_similarity": 0.7990569472312927,
-      "std": 0.2953625023365021,
-      "n_languages": 141
+      "mean_similarity": 0.8402689695358276,
+      "std": 0.25282520055770874,
+      "n_languages": 135
+    },
+    {
+      "concept": "blood",
+      "mean_similarity": 0.8339890837669373,
+      "std": 0.26759299635887146,
+      "n_languages": 135
     },
     {
       "concept": "fire",
-      "mean_similarity": 0.795229434967041,
-      "std": 0.2749696671962738,
-      "n_languages": 141
+      "mean_similarity": 0.8338353633880615,
+      "std": 0.22775423526763916,
+      "n_languages": 135
+    },
+    {
+      "concept": "mountain",
+      "mean_similarity": 0.8326081037521362,
+      "std": 0.24658378958702087,
+      "n_languages": 135
     },
     {
       "concept": "cloud",
-      "mean_similarity": 0.7871502637863159,
-      "std": 0.2941848635673523,
-      "n_languages": 141
+      "mean_similarity": 0.8114011287689209,
+      "std": 0.27443990111351013,
+      "n_languages": 135
     },
     {
       "concept": "rain",
-      "mean_similarity": 0.7724202871322632,
-      "std": 0.3233591914176941,
-      "n_languages": 141
+      "mean_similarity": 0.8013973236083984,
+      "std": 0.29706069827079773,
+      "n_languages": 135
     },
     {
       "concept": "name",
-      "mean_similarity": 0.7530190944671631,
-      "std": 0.291276216506958,
-      "n_languages": 141
+      "mean_similarity": 0.7885580062866211,
+      "std": 0.25569748878479004,
+      "n_languages": 135
     },
     {
       "concept": "bird",
-      "mean_similarity": 0.7469932436943054,
-      "std": 0.3215145170688629,
-      "n_languages": 141
+      "mean_similarity": 0.7775968909263611,
+      "std": 0.2945118546485901,
+      "n_languages": 135
     },
     {
       "concept": "foot",
-      "mean_similarity": 0.7450688481330872,
-      "std": 0.2272365242242813,
-      "n_languages": 141
+      "mean_similarity": 0.7760116457939148,
+      "std": 0.16839566826820374,
+      "n_languages": 135
     },
     {
       "concept": "sun",
-      "mean_similarity": 0.7421804666519165,
-      "std": 0.2740046977996826,
-      "n_languages": 141
+      "mean_similarity": 0.7719482779502869,
+      "std": 0.24452345073223114,
+      "n_languages": 135
     },
     {
       "concept": "hand",
-      "mean_similarity": 0.7415719628334045,
-      "std": 0.27445438504219055,
-      "n_languages": 141
-    },
-    {
-      "concept": "small",
-      "mean_similarity": 0.7323095798492432,
-      "std": 0.21760480105876923,
-      "n_languages": 141
-    },
-    {
-      "concept": "moon",
-      "mean_similarity": 0.7272883653640747,
-      "std": 0.2828518748283386,
-      "n_languages": 141
+      "mean_similarity": 0.7650322318077087,
+      "std": 0.24806568026542664,
+      "n_languages": 135
     },
     {
       "concept": "dog",
-      "mean_similarity": 0.7225422263145447,
-      "std": 0.33774876594543457,
-      "n_languages": 141
+      "mean_similarity": 0.762243926525116,
+      "std": 0.3056566119194031,
+      "n_languages": 135
     },
     {
-      "concept": "man",
-      "mean_similarity": 0.7151758074760437,
-      "std": 0.28875499963760376,
-      "n_languages": 141
+      "concept": "moon",
+      "mean_similarity": 0.7488019466400146,
+      "std": 0.26056838035583496,
+      "n_languages": 135
     },
     {
       "concept": "path",
-      "mean_similarity": 0.7095906138420105,
-      "std": 0.22787104547023773,
-      "n_languages": 141
+      "mean_similarity": 0.7461363673210144,
+      "std": 0.1712559461593628,
+      "n_languages": 135
+    },
+    {
+      "concept": "small",
+      "mean_similarity": 0.7455652356147766,
+      "std": 0.19788029789924622,
+      "n_languages": 135
     },
     {
       "concept": "heart",
-      "mean_similarity": 0.7063028812408447,
-      "std": 0.29848426580429077,
-      "n_languages": 141
+      "mean_similarity": 0.7397850155830383,
+      "std": 0.2663043737411499,
+      "n_languages": 135
     },
     {
-      "concept": "new",
-      "mean_similarity": 0.7018358707427979,
-      "std": 0.25738614797592163,
-      "n_languages": 141
-    },
-    {
-      "concept": "cold",
-      "mean_similarity": 0.6976780295372009,
-      "std": 0.3186880946159363,
-      "n_languages": 141
+      "concept": "man",
+      "mean_similarity": 0.7329580187797546,
+      "std": 0.27596381306648254,
+      "n_languages": 135
     },
     {
       "concept": "person",
-      "mean_similarity": 0.690273106098175,
-      "std": 0.20429421961307526,
-      "n_languages": 141
+      "mean_similarity": 0.7287311553955078,
+      "std": 0.14696341753005981,
+      "n_languages": 135
+    },
+    {
+      "concept": "cold",
+      "mean_similarity": 0.7241036295890808,
+      "std": 0.2957552969455719,
+      "n_languages": 135
     },
     {
       "concept": "head",
-      "mean_similarity": 0.6901012659072876,
-      "std": 0.2546083927154541,
-      "n_languages": 141
+      "mean_similarity": 0.7159203886985779,
+      "std": 0.22807438671588898,
+      "n_languages": 135
     },
     {
       "concept": "die",
-      "mean_similarity": 0.6891446709632874,
-      "std": 0.26732033491134644,
-      "n_languages": 141
+      "mean_similarity": 0.714209794998169,
+      "std": 0.24159494042396545,
+      "n_languages": 135
     },
     {
-      "concept": "two",
-      "mean_similarity": 0.6723994016647339,
-      "std": 0.2688778340816498,
-      "n_languages": 141
-    },
-    {
-      "concept": "flesh",
-      "mean_similarity": 0.6627810597419739,
-      "std": 0.3407803475856781,
-      "n_languages": 141
-    },
-    {
-      "concept": "earth",
-      "mean_similarity": 0.6618490815162659,
-      "std": 0.21345162391662598,
-      "n_languages": 141
+      "concept": "new",
+      "mean_similarity": 0.7113037705421448,
+      "std": 0.24469983577728271,
+      "n_languages": 135
     },
     {
       "concept": "sit",
-      "mean_similarity": 0.6559649705886841,
-      "std": 0.2856658399105072,
-      "n_languages": 141
+      "mean_similarity": 0.6923732161521912,
+      "std": 0.24990111589431763,
+      "n_languages": 135
+    },
+    {
+      "concept": "two",
+      "mean_similarity": 0.6904609203338623,
+      "std": 0.2534644603729248,
+      "n_languages": 135
+    },
+    {
+      "concept": "flesh",
+      "mean_similarity": 0.6895288228988647,
+      "std": 0.31445685029029846,
+      "n_languages": 135
+    },
+    {
+      "concept": "earth",
+      "mean_similarity": 0.6835748553276062,
+      "std": 0.18526820838451385,
+      "n_languages": 135
     },
     {
       "concept": "sleep",
-      "mean_similarity": 0.6494573354721069,
-      "std": 0.3236111104488373,
-      "n_languages": 141
+      "mean_similarity": 0.6832188367843628,
+      "std": 0.29917749762535095,
+      "n_languages": 135
     },
     {
       "concept": "hair",
-      "mean_similarity": 0.6416639089584351,
-      "std": 0.36810731887817383,
-      "n_languages": 141
+      "mean_similarity": 0.6709930896759033,
+      "std": 0.35491839051246643,
+      "n_languages": 135
     },
     {
       "concept": "eye",
-      "mean_similarity": 0.641115128993988,
-      "std": 0.31204310059547424,
-      "n_languages": 141
+      "mean_similarity": 0.6671686768531799,
+      "std": 0.2884582281112671,
+      "n_languages": 135
     },
     {
       "concept": "drink",
-      "mean_similarity": 0.6392762064933777,
-      "std": 0.3504489064216614,
-      "n_languages": 141
+      "mean_similarity": 0.6617462038993835,
+      "std": 0.3363519012928009,
+      "n_languages": 135
     },
     {
       "concept": "walk",
-      "mean_similarity": 0.6366118788719177,
-      "std": 0.2737593650817871,
-      "n_languages": 141
+      "mean_similarity": 0.6540757417678833,
+      "std": 0.26425302028656006,
+      "n_languages": 135
     },
     {
       "concept": "kill",
-      "mean_similarity": 0.6242510080337524,
-      "std": 0.28305670619010925,
-      "n_languages": 141
-    },
-    {
-      "concept": "big",
-      "mean_similarity": 0.6204800605773926,
-      "std": 0.26572999358177185,
-      "n_languages": 141
-    },
-    {
-      "concept": "smoke",
-      "mean_similarity": 0.614474892616272,
-      "std": 0.38490939140319824,
-      "n_languages": 141
-    },
-    {
-      "concept": "tongue",
-      "mean_similarity": 0.612383246421814,
-      "std": 0.31380629539489746,
-      "n_languages": 141
-    },
-    {
-      "concept": "red",
-      "mean_similarity": 0.6106008887290955,
-      "std": 0.34499263763427734,
-      "n_languages": 141
-    },
-    {
-      "concept": "white",
-      "mean_similarity": 0.6085871458053589,
-      "std": 0.35371994972229004,
-      "n_languages": 141
+      "mean_similarity": 0.6494935750961304,
+      "std": 0.2613498568534851,
+      "n_languages": 135
     },
     {
       "concept": "ear",
-      "mean_similarity": 0.6076690554618835,
-      "std": 0.34475407004356384,
-      "n_languages": 141
+      "mean_similarity": 0.6441182494163513,
+      "std": 0.320657342672348,
+      "n_languages": 135
     },
     {
       "concept": "eat",
-      "mean_similarity": 0.6055774688720703,
-      "std": 0.3146713972091675,
-      "n_languages": 141
+      "mean_similarity": 0.6424720883369446,
+      "std": 0.28847724199295044,
+      "n_languages": 135
+    },
+    {
+      "concept": "big",
+      "mean_similarity": 0.6417790055274963,
+      "std": 0.24530307948589325,
+      "n_languages": 135
+    },
+    {
+      "concept": "red",
+      "mean_similarity": 0.6347777247428894,
+      "std": 0.31922245025634766,
+      "n_languages": 135
+    },
+    {
+      "concept": "tongue",
+      "mean_similarity": 0.6296985745429993,
+      "std": 0.30743178725242615,
+      "n_languages": 135
+    },
+    {
+      "concept": "smoke",
+      "mean_similarity": 0.6245757937431335,
+      "std": 0.38663533329963684,
+      "n_languages": 135
+    },
+    {
+      "concept": "white",
+      "mean_similarity": 0.6235977411270142,
+      "std": 0.3390507698059082,
+      "n_languages": 135
     },
     {
       "concept": "dry",
-      "mean_similarity": 0.5913915634155273,
-      "std": 0.341778039932251,
-      "n_languages": 141
+      "mean_similarity": 0.6234697699546814,
+      "std": 0.3247361183166504,
+      "n_languages": 135
     },
     {
       "concept": "sand",
-      "mean_similarity": 0.580049455165863,
-      "std": 0.3906480073928833,
-      "n_languages": 141
-    },
-    {
-      "concept": "mouth",
-      "mean_similarity": 0.5765809416770935,
-      "std": 0.32698696851730347,
-      "n_languages": 141
+      "mean_similarity": 0.6153337955474854,
+      "std": 0.3807850778102875,
+      "n_languages": 135
     },
     {
       "concept": "one",
-      "mean_similarity": 0.5755932331085205,
-      "std": 0.26615116000175476,
-      "n_languages": 141
+      "mean_similarity": 0.6059012413024902,
+      "std": 0.23320616781711578,
+      "n_languages": 135
+    },
+    {
+      "concept": "mouth",
+      "mean_similarity": 0.6009175181388855,
+      "std": 0.3124735951423645,
+      "n_languages": 135
     },
     {
       "concept": "stand",
-      "mean_similarity": 0.5726176500320435,
-      "std": 0.31519824266433716,
-      "n_languages": 141
-    },
-    {
-      "concept": "long",
-      "mean_similarity": 0.5718734264373779,
-      "std": 0.25257110595703125,
-      "n_languages": 141
+      "mean_similarity": 0.5959786176681519,
+      "std": 0.30206772685050964,
+      "n_languages": 135
     },
     {
       "concept": "tooth",
-      "mean_similarity": 0.5599427223205566,
-      "std": 0.37748584151268005,
-      "n_languages": 141
+      "mean_similarity": 0.5935460329055786,
+      "std": 0.362199068069458,
+      "n_languages": 135
     },
     {
-      "concept": "skin",
-      "mean_similarity": 0.5546808242797852,
-      "std": 0.3533632755279541,
-      "n_languages": 141
-    },
-    {
-      "concept": "hear",
-      "mean_similarity": 0.5434454679489136,
-      "std": 0.29857686161994934,
-      "n_languages": 141
-    },
-    {
-      "concept": "fly",
-      "mean_similarity": 0.5384247303009033,
-      "std": 0.3648582100868225,
-      "n_languages": 141
-    },
-    {
-      "concept": "come",
-      "mean_similarity": 0.5329451560974121,
-      "std": 0.2850252091884613,
-      "n_languages": 141
+      "concept": "long",
+      "mean_similarity": 0.5814874172210693,
+      "std": 0.24502603709697723,
+      "n_languages": 135
     },
     {
       "concept": "black",
-      "mean_similarity": 0.5305942296981812,
-      "std": 0.33897507190704346,
-      "n_languages": 141
+      "mean_similarity": 0.5749185681343079,
+      "std": 0.3070029616355896,
+      "n_languages": 135
     },
     {
-      "concept": "egg",
-      "mean_similarity": 0.530572235584259,
-      "std": 0.3910920023918152,
-      "n_languages": 141
+      "concept": "skin",
+      "mean_similarity": 0.5728079080581665,
+      "std": 0.344917893409729,
+      "n_languages": 135
     },
     {
-      "concept": "hot",
-      "mean_similarity": 0.5295191407203674,
-      "std": 0.3199731707572937,
-      "n_languages": 141
+      "concept": "fly",
+      "mean_similarity": 0.5618318915367126,
+      "std": 0.35941725969314575,
+      "n_languages": 135
     },
     {
       "concept": "root",
-      "mean_similarity": 0.5291836261749268,
-      "std": 0.3539518415927887,
-      "n_languages": 141
+      "mean_similarity": 0.559503436088562,
+      "std": 0.3459950089454651,
+      "n_languages": 135
+    },
+    {
+      "concept": "hear",
+      "mean_similarity": 0.5590465068817139,
+      "std": 0.28965163230895996,
+      "n_languages": 135
     },
     {
       "concept": "all",
-      "mean_similarity": 0.5286372303962708,
-      "std": 0.2598055601119995,
-      "n_languages": 141
-    },
-    {
-      "concept": "seed",
-      "mean_similarity": 0.5274480581283569,
-      "std": 0.36080244183540344,
-      "n_languages": 141
+      "mean_similarity": 0.5570364594459534,
+      "std": 0.2308879941701889,
+      "n_languages": 135
     },
     {
       "concept": "swim",
-      "mean_similarity": 0.5191571712493896,
-      "std": 0.37124669551849365,
-      "n_languages": 141
+      "mean_similarity": 0.5561243295669556,
+      "std": 0.3629096448421478,
+      "n_languages": 135
+    },
+    {
+      "concept": "come",
+      "mean_similarity": 0.5551059246063232,
+      "std": 0.271514356136322,
+      "n_languages": 135
+    },
+    {
+      "concept": "seed",
+      "mean_similarity": 0.5531823039054871,
+      "std": 0.35619479417800903,
+      "n_languages": 135
+    },
+    {
+      "concept": "egg",
+      "mean_similarity": 0.5526119470596313,
+      "std": 0.3834679424762726,
+      "n_languages": 135
+    },
+    {
+      "concept": "hot",
+      "mean_similarity": 0.5507988333702087,
+      "std": 0.3144431412220001,
+      "n_languages": 135
     },
     {
       "concept": "green",
-      "mean_similarity": 0.5037680864334106,
-      "std": 0.39488959312438965,
-      "n_languages": 141
+      "mean_similarity": 0.5319820642471313,
+      "std": 0.38265058398246765,
+      "n_languages": 135
     },
     {
       "concept": "you",
-      "mean_similarity": 0.5016180872917175,
-      "std": 0.27038806676864624,
-      "n_languages": 141
+      "mean_similarity": 0.5292001366615295,
+      "std": 0.24568895995616913,
+      "n_languages": 135
     },
     {
       "concept": "good",
-      "mean_similarity": 0.5000743269920349,
-      "std": 0.24062249064445496,
-      "n_languages": 141
+      "mean_similarity": 0.5206059217453003,
+      "std": 0.23225609958171844,
+      "n_languages": 135
     },
     {
       "concept": "many",
-      "mean_similarity": 0.49568700790405273,
-      "std": 0.25349414348602295,
-      "n_languages": 141
+      "mean_similarity": 0.514807939529419,
+      "std": 0.24150720238685608,
+      "n_languages": 135
     },
     {
       "concept": "we",
-      "mean_similarity": 0.4915507435798645,
-      "std": 0.21035224199295044,
-      "n_languages": 141
-    },
-    {
-      "concept": "bone",
-      "mean_similarity": 0.48684459924697876,
-      "std": 0.37475472688674927,
-      "n_languages": 141
-    },
-    {
-      "concept": "burn",
-      "mean_similarity": 0.4825340807437897,
-      "std": 0.33971843123435974,
-      "n_languages": 141
+      "mean_similarity": 0.5099753737449646,
+      "std": 0.1903461515903473,
+      "n_languages": 135
     },
     {
       "concept": "see",
-      "mean_similarity": 0.4745374917984009,
-      "std": 0.2501108944416046,
-      "n_languages": 141
+      "mean_similarity": 0.5021029114723206,
+      "std": 0.2317837029695511,
+      "n_languages": 135
+    },
+    {
+      "concept": "burn",
+      "mean_similarity": 0.49646738171577454,
+      "std": 0.33849048614501953,
+      "n_languages": 135
+    },
+    {
+      "concept": "bone",
+      "mean_similarity": 0.49435511231422424,
+      "std": 0.36986690759658813,
+      "n_languages": 135
     },
     {
       "concept": "knee",
-      "mean_similarity": 0.4666100740432739,
-      "std": 0.40202492475509644,
-      "n_languages": 141
+      "mean_similarity": 0.4919927716255188,
+      "std": 0.4007531404495239,
+      "n_languages": 135
     },
     {
       "concept": "grease",
-      "mean_similarity": 0.45708245038986206,
-      "std": 0.3258083760738373,
-      "n_languages": 141
+      "mean_similarity": 0.48476049304008484,
+      "std": 0.3153155446052551,
+      "n_languages": 135
     },
     {
       "concept": "I",
-      "mean_similarity": 0.4498722553253174,
-      "std": 0.23930929601192474,
-      "n_languages": 141
+      "mean_similarity": 0.4725527763366699,
+      "std": 0.22032123804092407,
+      "n_languages": 135
     },
     {
       "concept": "breast",
-      "mean_similarity": 0.4415684640407562,
-      "std": 0.36798709630966187,
-      "n_languages": 141
-    },
-    {
-      "concept": "this",
-      "mean_similarity": 0.43540188670158386,
-      "std": 0.2511749267578125,
-      "n_languages": 141
-    },
-    {
-      "concept": "nose",
-      "mean_similarity": 0.43210673332214355,
-      "std": 0.33545437455177307,
-      "n_languages": 141
+      "mean_similarity": 0.4625994861125946,
+      "std": 0.3611997961997986,
+      "n_languages": 135
     },
     {
       "concept": "belly",
-      "mean_similarity": 0.4286825954914093,
-      "std": 0.3149190843105316,
-      "n_languages": 141
+      "mean_similarity": 0.4592033922672272,
+      "std": 0.30843982100486755,
+      "n_languages": 135
+    },
+    {
+      "concept": "nose",
+      "mean_similarity": 0.4583700895309448,
+      "std": 0.3342491388320923,
+      "n_languages": 135
     },
     {
       "concept": "full",
-      "mean_similarity": 0.4253423810005188,
-      "std": 0.2819676101207733,
-      "n_languages": 141
+      "mean_similarity": 0.4550781846046448,
+      "std": 0.2722119688987732,
+      "n_languages": 135
     },
     {
-      "concept": "horn",
-      "mean_similarity": 0.4112224876880646,
-      "std": 0.33788764476776123,
-      "n_languages": 141
+      "concept": "this",
+      "mean_similarity": 0.44740578532218933,
+      "std": 0.24387027323246002,
+      "n_languages": 135
     },
     {
       "concept": "ash",
-      "mean_similarity": 0.4109092056751251,
-      "std": 0.3380061984062195,
-      "n_languages": 141
-    },
-    {
-      "concept": "who",
-      "mean_similarity": 0.4012383818626404,
-      "std": 0.25348782539367676,
-      "n_languages": 141
-    },
-    {
-      "concept": "he",
-      "mean_similarity": 0.39466026425361633,
-      "std": 0.2173730432987213,
-      "n_languages": 141
+      "mean_similarity": 0.4266158640384674,
+      "std": 0.33530083298683167,
+      "n_languages": 135
     },
     {
       "concept": "not",
-      "mean_similarity": 0.39300304651260376,
-      "std": 0.2499479353427887,
-      "n_languages": 141
+      "mean_similarity": 0.4249304234981537,
+      "std": 0.2331153303384781,
+      "n_languages": 135
+    },
+    {
+      "concept": "horn",
+      "mean_similarity": 0.42484351992607117,
+      "std": 0.3388490080833435,
+      "n_languages": 135
+    },
+    {
+      "concept": "who",
+      "mean_similarity": 0.42022034525871277,
+      "std": 0.2469397485256195,
+      "n_languages": 135
+    },
+    {
+      "concept": "he",
+      "mean_similarity": 0.41184765100479126,
+      "std": 0.20949193835258484,
+      "n_languages": 135
     },
     {
       "concept": "leaf",
-      "mean_similarity": 0.37999227643013,
-      "std": 0.3347858190536499,
-      "n_languages": 141
+      "mean_similarity": 0.40536361932754517,
+      "std": 0.332959920167923,
+      "n_languages": 135
     },
     {
       "concept": "yellow",
-      "mean_similarity": 0.3775133490562439,
-      "std": 0.3762361705303192,
-      "n_languages": 141
+      "mean_similarity": 0.4019511640071869,
+      "std": 0.368050217628479,
+      "n_languages": 135
     },
     {
       "concept": "neck",
-      "mean_similarity": 0.37547582387924194,
-      "std": 0.33799290657043457,
-      "n_languages": 141
+      "mean_similarity": 0.398003488779068,
+      "std": 0.335232675075531,
+      "n_languages": 135
     },
     {
       "concept": "lie",
-      "mean_similarity": 0.37322118878364563,
-      "std": 0.3138762414455414,
-      "n_languages": 141
+      "mean_similarity": 0.39553314447402954,
+      "std": 0.31338992714881897,
+      "n_languages": 135
     },
     {
       "concept": "what",
-      "mean_similarity": 0.3647545576095581,
-      "std": 0.2104720175266266,
-      "n_languages": 141
+      "mean_similarity": 0.3819434642791748,
+      "std": 0.19828666746616364,
+      "n_languages": 135
     },
     {
       "concept": "say",
-      "mean_similarity": 0.35522598028182983,
-      "std": 0.2405068427324295,
-      "n_languages": 141
+      "mean_similarity": 0.3750196695327759,
+      "std": 0.23091205954551697,
+      "n_languages": 135
     },
     {
       "concept": "know",
-      "mean_similarity": 0.35363030433654785,
-      "std": 0.20270812511444092,
-      "n_languages": 141
-    },
-    {
-      "concept": "round",
-      "mean_similarity": 0.33007901906967163,
-      "std": 0.2587079107761383,
-      "n_languages": 141
+      "mean_similarity": 0.37207624316215515,
+      "std": 0.194511279463768,
+      "n_languages": 135
     },
     {
       "concept": "tail",
-      "mean_similarity": 0.329742968082428,
-      "std": 0.30314910411834717,
-      "n_languages": 141
+      "mean_similarity": 0.3543452024459839,
+      "std": 0.3034915030002594,
+      "n_languages": 135
+    },
+    {
+      "concept": "round",
+      "mean_similarity": 0.3427545130252838,
+      "std": 0.2583060562610626,
+      "n_languages": 135
     },
     {
       "concept": "give",
-      "mean_similarity": 0.31749194860458374,
-      "std": 0.20888301730155945,
-      "n_languages": 141
-    },
-    {
-      "concept": "bite",
-      "mean_similarity": 0.26764872670173645,
-      "std": 0.2834303677082062,
-      "n_languages": 141
+      "mean_similarity": 0.3369719386100769,
+      "std": 0.2041715681552887,
+      "n_languages": 135
     },
     {
       "concept": "liver",
-      "mean_similarity": 0.2645648419857025,
-      "std": 0.2803899943828583,
-      "n_languages": 141
+      "mean_similarity": 0.28053387999534607,
+      "std": 0.28232938051223755,
+      "n_languages": 135
+    },
+    {
+      "concept": "bite",
+      "mean_similarity": 0.2804274559020996,
+      "std": 0.28429099917411804,
+      "n_languages": 135
     },
     {
       "concept": "that",
-      "mean_similarity": 0.24933762848377228,
-      "std": 0.2044433057308197,
-      "n_languages": 141
+      "mean_similarity": 0.26090317964553833,
+      "std": 0.20058386027812958,
+      "n_languages": 135
     },
     {
       "concept": "claw",
-      "mean_similarity": 0.20283208787441254,
-      "std": 0.21609780192375183,
-      "n_languages": 141
+      "mean_similarity": 0.2111559510231018,
+      "std": 0.21537265181541443,
+      "n_languages": 135
     },
     {
       "concept": "feather",
-      "mean_similarity": 0.18788029253482819,
-      "std": 0.2208111733198166,
-      "n_languages": 141
+      "mean_similarity": 0.19780875742435455,
+      "std": 0.2234811931848526,
+      "n_languages": 135
     },
     {
       "concept": "bark",
-      "mean_similarity": 0.1743086576461792,
-      "std": 0.17910997569561005,
-      "n_languages": 141
+      "mean_similarity": 0.18469439446926117,
+      "std": 0.1785220056772232,
+      "n_languages": 135
     },
     {
       "concept": "louse",
-      "mean_similarity": 0.11022182554006577,
-      "std": 0.16734564304351807,
-      "n_languages": 141
+      "mean_similarity": 0.12199315428733826,
+      "std": 0.16781260073184967,
+      "n_languages": 135
     }
   ]
 }

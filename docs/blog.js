@@ -2284,13 +2284,12 @@ function renderVectorOffsetExample(data) {
   const elDemo = document.getElementById("vectorOffsetDemo");
   const elFull = document.getElementById("vectorOffsetFull");
   if (!elDemo && !elFull) return;
-  if (!data || !data.vector_plot) {
+  const vp = data.vector_plot || data.joint_vector_plot;
+  if (!data || !vp) {
     if (elDemo) elDemo.innerHTML = "<p>No vector plot data available.</p>";
     if (elFull) elFull.innerHTML = "";
     return;
   }
-
-  const vp = data.vector_plot;
   const { xRange, yRange } = _vectorOffsetAxisRange(vp);
 
   // ─── Panel 1: Demo with 7 languages ────────────────────────
@@ -3128,6 +3127,254 @@ async function runExplorer() {
   }
 }
 
+// ── Carrier Sentence Robustness (decontextualized baseline) ──────────────────
+
+function renderCarrierBaseline(data) {
+  if (!data || !data.comparison) return;
+  const cmp = data.comparison;
+
+  const statsEl = document.getElementById("carrierBaselineStats");
+  if (statsEl) {
+    const sig = cmp.spearman_p < 0.05;
+    statsEl.innerHTML = [
+      { v: cmp.spearman_rho.toFixed(3), l: "Spearman ρ", s: sig },
+      { v: cmp.spearman_p.toExponential(2), l: "p-value", s: sig },
+      { v: cmp.mean_difference.toFixed(3), l: "Mean Difference" },
+      { v: data.num_concepts, l: "Concepts" },
+      { v: data.num_languages, l: "Languages" },
+    ].map(b => `<div class="stat-badge${b.s ? " significant" : ""}"><span class="stat-value">${b.v}</span><span class="stat-label">${b.l}</span></div>`).join("");
+  }
+
+  const ctx = cmp.contextualized_scores;
+  const dctx = cmp.decontextualized_scores;
+  const pc = data.per_concept || [];
+
+  const scatterEl = document.getElementById("carrierBaselineScatter");
+  if (scatterEl && pc.length) {
+    const cats = pc.map(p => SWADESH_CATEGORY[p.concept] || "Other");
+    const uniqueCats = [...new Set(cats)];
+    const traces = uniqueCats.map(cat => {
+      const idx = pc.map((p, i) => i).filter(i => cats[i] === cat);
+      return {
+        type: "scatter", mode: "markers",
+        x: idx.map(i => pc[i].contextualized),
+        y: idx.map(i => pc[i].decontextualized),
+        text: idx.map(i => pc[i].concept),
+        name: cat,
+        marker: { size: 8, color: CATEGORY_COLORS_BLOG[cat] || ACCENT, opacity: 0.8 },
+        hovertemplate: "<b>%{text}</b><br>Context: %{x:.3f}<br>Decontext: %{y:.3f}<extra></extra>",
+      };
+    });
+    const minV = 0.05, maxV = 1.0;
+    traces.push({
+      type: "scatter", mode: "lines",
+      x: [minV, maxV], y: [minV, maxV],
+      line: { color: "#94a3b8", dash: "dash", width: 1 },
+      showlegend: false, hoverinfo: "skip",
+    });
+    Plotly.newPlot(scatterEl, traces, baseLayout({
+      title: { text: `Contextualized vs Decontextualized (ρ = ${cmp.spearman_rho.toFixed(3)})`, font: { size: 13 } },
+      xaxis: { title: "Contextualized Convergence", range: [minV, maxV] },
+      yaxis: { title: "Decontextualized Convergence", range: [minV, maxV] },
+      height: 440, hovermode: "closest",
+      legend: { font: { size: 9 }, orientation: "h", y: -0.18 },
+    }), PLOTLY_CFG);
+  }
+
+  const slopeEl = document.getElementById("carrierBaselineSlopegraph");
+  if (slopeEl && ctx && dctx) {
+    const top20ctx = ctx.slice(0, 20);
+    const dctxMap = {};
+    dctx.forEach((d, i) => { dctxMap[d.concept] = i + 1; });
+    const concepts = top20ctx.map(c => c.concept);
+    const ctxRanks = top20ctx.map((_, i) => i + 1);
+    const dctxRanks = concepts.map(c => dctxMap[c] || 101);
+
+    const traces = concepts.map((c, i) => ({
+      type: "scatter", mode: "lines+markers+text",
+      x: [0, 1],
+      y: [ctxRanks[i], dctxRanks[i]],
+      text: [c, c],
+      textposition: ["middle left", "middle right"],
+      textfont: { size: 9, color: CATEGORY_COLORS_BLOG[SWADESH_CATEGORY[c] || "Other"] || "#64748b" },
+      marker: { size: 6, color: CATEGORY_COLORS_BLOG[SWADESH_CATEGORY[c] || "Other"] || ACCENT },
+      line: { color: CATEGORY_COLORS_BLOG[SWADESH_CATEGORY[c] || "Other"] || "#94a3b8", width: 1.5 },
+      showlegend: false,
+      hovertemplate: `<b>${c}</b><br>Context rank: ${ctxRanks[i]}<br>Decontext rank: ${dctxRanks[i]}<extra></extra>`,
+    }));
+    Plotly.newPlot(slopeEl, traces, baseLayout({
+      title: { text: "Top-20 Concept Ranking Stability", font: { size: 13 } },
+      xaxis: { tickvals: [0, 1], ticktext: ["Contextualized", "Decontextualized"], range: [-0.35, 1.35] },
+      yaxis: { title: "Rank", autorange: "reversed", dtick: 2 },
+      height: 440, showlegend: false,
+    }), PLOTLY_CFG);
+  }
+}
+
+// ── Layer-wise Emergence ─────────────────────────────────────────────────────
+
+function renderLayerwiseTrajectory(data) {
+  if (!data || !data.layers) return;
+  const layers = data.layers;
+  const summary = data.summary || {};
+
+  const statsEl = document.getElementById("layerwiseStats");
+  if (statsEl) {
+    statsEl.innerHTML = [
+      { v: data.num_layers, l: "Encoder Layers" },
+      { v: data.languages ? data.languages.length : "?", l: "Languages" },
+      { v: `Layer ${summary.convergence_emergence_layer}`, l: "Emergence Layer", s: true },
+      { v: `Layer ${summary.csm_phase_transition_layer}`, l: "CSM Phase Transition", s: true },
+      { v: summary.final_layer_convergence ? summary.final_layer_convergence.toFixed(2) : "?", l: "Final Convergence" },
+      { v: summary.final_layer_csm_centered ? summary.final_layer_csm_centered.toFixed(2) : "?", l: "Final CSM (centered)" },
+    ].map(b => `<div class="stat-badge${b.s ? " significant" : ""}"><span class="stat-value">${b.v}</span><span class="stat-label">${b.l}</span></div>`).join("");
+  }
+
+  const convEl = document.getElementById("layerwiseConvergence");
+  if (convEl) {
+    const xs = layers.map(l => l.layer);
+    const ys = layers.map(l => l.convergence_mean);
+    const errs = layers.map(l => l.convergence_std);
+    Plotly.newPlot(convEl, [{
+      type: "scatter", mode: "lines+markers",
+      x: xs, y: ys,
+      error_y: { type: "data", array: errs, visible: true, color: "#94a3b8" },
+      marker: { size: 8, color: ACCENT },
+      line: { color: ACCENT, width: 2.5 },
+      hovertemplate: "Layer %{x}<br>Convergence: %{y:.3f} ± %{error_y.array:.3f}<extra></extra>",
+    }], baseLayout({
+      title: { text: "Mean Swadesh Convergence by Layer", font: { size: 13 } },
+      xaxis: { title: "Encoder Layer", dtick: 1 },
+      yaxis: { title: "Mean Convergence" },
+      height: 440,
+      shapes: summary.convergence_emergence_layer != null ? [{
+        type: "line", x0: summary.convergence_emergence_layer, x1: summary.convergence_emergence_layer,
+        y0: 0, y1: 1, yref: "paper",
+        line: { color: "#22c55e", dash: "dot", width: 1.5 },
+      }] : [],
+      annotations: summary.convergence_emergence_layer != null ? [{
+        x: summary.convergence_emergence_layer, y: 1.02, yref: "paper",
+        text: "Emergence", showarrow: false,
+        font: { size: 10, color: "#22c55e" },
+      }] : [],
+    }), PLOTLY_CFG);
+  }
+
+  const csmEl = document.getElementById("layerwiseCSM");
+  if (csmEl) {
+    const xs = layers.map(l => l.layer);
+    Plotly.newPlot(csmEl, [
+      {
+        type: "scatter", mode: "lines+markers",
+        x: xs, y: layers.map(l => l.csm_raw_ratio),
+        name: "Raw Ratio", marker: { size: 7, color: "#94a3b8" },
+        line: { color: "#94a3b8", width: 2 },
+      },
+      {
+        type: "scatter", mode: "lines+markers",
+        x: xs, y: layers.map(l => l.csm_centered_ratio),
+        name: "Mean-Centered", marker: { size: 7, color: ACCENT },
+        line: { color: ACCENT, width: 2.5 },
+      },
+    ], baseLayout({
+      title: { text: "Conceptual Store Metric by Layer", font: { size: 13 } },
+      xaxis: { title: "Encoder Layer", dtick: 1 },
+      yaxis: { title: "Between/Within Ratio" },
+      height: 440,
+      shapes: summary.csm_phase_transition_layer != null ? [{
+        type: "line", x0: summary.csm_phase_transition_layer, x1: summary.csm_phase_transition_layer,
+        y0: 0, y1: 1, yref: "paper",
+        line: { color: "#f59e0b", dash: "dot", width: 1.5 },
+      }] : [],
+      annotations: summary.csm_phase_transition_layer != null ? [{
+        x: summary.csm_phase_transition_layer, y: 1.02, yref: "paper",
+        text: "Phase transition", showarrow: false,
+        font: { size: 10, color: "#f59e0b" },
+      }] : [],
+    }), PLOTLY_CFG);
+  }
+
+  const heatEl = document.getElementById("layerwiseHeatmap");
+  if (heatEl && data.concept_trajectories) {
+    const traj = data.concept_trajectories;
+    const concepts = Object.keys(traj).sort((a, b) => {
+      const aFinal = traj[a][String(data.num_layers - 1)] || 0;
+      const bFinal = traj[b][String(data.num_layers - 1)] || 0;
+      return bFinal - aFinal;
+    });
+    const zData = concepts.map(c => {
+      const row = [];
+      for (let l = 0; l < data.num_layers; l++) row.push(traj[c][String(l)] || 0);
+      return row;
+    });
+    const layerLabels = Array.from({ length: data.num_layers }, (_, i) => `L${i}`);
+    Plotly.newPlot(heatEl, [{
+      type: "heatmap",
+      z: zData, x: layerLabels, y: concepts,
+      colorscale: [[0, "#f8fafc"], [0.3, "#bfdbfe"], [0.6, "#3b82f6"], [1, "#1e3a5f"]],
+      hovertemplate: "<b>%{y}</b><br>Layer %{x}: %{z:.3f}<extra></extra>",
+      colorbar: { title: "Conv.", titleside: "right", thickness: 12 },
+    }], baseLayout({
+      title: { text: "Per-Concept Convergence Across Encoder Layers", font: { size: 13 } },
+      xaxis: { title: "Encoder Layer", dtick: 1 },
+      yaxis: { title: "", tickfont: { size: 8 }, autorange: "reversed" },
+      height: Math.max(740, concepts.length * 8),
+      margin: { l: 90, r: 50, t: 40, b: 50 },
+    }), PLOTLY_CFG);
+  }
+}
+
+// ── Controlled Non-Swadesh Comparison ────────────────────────────────────────
+
+function renderControlledComparison(data) {
+  if (!data || !data.comparison) return;
+  const cmp = data.comparison;
+
+  const statsEl = document.getElementById("controlledCompStats");
+  if (statsEl) {
+    const sig = cmp.p_value < 0.05;
+    const d = Math.abs(cmp.swadesh_mean - cmp.non_swadesh_mean) /
+      Math.sqrt((cmp.swadesh_std ** 2 + cmp.non_swadesh_std ** 2) / 2);
+    statsEl.innerHTML = [
+      { v: cmp.swadesh_mean.toFixed(2), l: "Swadesh Mean" },
+      { v: cmp.non_swadesh_mean.toFixed(2), l: "Non-Swadesh Mean" },
+      { v: cmp.U_statistic.toFixed(0), l: "Mann-Whitney U" },
+      { v: cmp.p_value.toFixed(3), l: "p-value", s: sig },
+      { v: d.toFixed(2), l: "Cohen's d" },
+      { v: data.swadesh.num_concepts, l: "Swadesh N" },
+      { v: data.non_swadesh.num_concepts, l: "Control N" },
+    ].map(b => `<div class="stat-badge${b.s ? " significant" : ""}"><span class="stat-value">${b.v}</span><span class="stat-label">${b.l}</span></div>`).join("");
+  }
+
+  const boxEl = document.getElementById("controlledCompBox");
+  if (boxEl && cmp.swadesh_sims && cmp.non_swadesh_sims) {
+    Plotly.newPlot(boxEl, [
+      { type: "box", y: cmp.swadesh_sims, name: "Swadesh", marker: { color: ACCENT }, boxmean: true },
+      { type: "box", y: cmp.non_swadesh_sims, name: "Controlled Non-Swadesh", marker: { color: "#64748b" }, boxmean: true },
+    ], baseLayout({
+      title: { text: "Controlled Comparison (Non-Loanword Baseline)", font: { size: 13 } },
+      yaxis: { title: "Convergence Score" },
+      height: 440, showlegend: false,
+    }), PLOTLY_CFG);
+  }
+
+  const histEl = document.getElementById("controlledCompHistogram");
+  if (histEl && cmp.swadesh_sims && cmp.non_swadesh_sims) {
+    Plotly.newPlot(histEl, [
+      { type: "histogram", x: cmp.swadesh_sims, name: "Swadesh", opacity: 0.6,
+        marker: { color: ACCENT }, nbinsx: 20 },
+      { type: "histogram", x: cmp.non_swadesh_sims, name: "Controlled", opacity: 0.6,
+        marker: { color: "#64748b" }, nbinsx: 20 },
+    ], baseLayout({
+      title: { text: "Score Distributions (Controlled)", font: { size: 13 } },
+      xaxis: { title: "Convergence Score" },
+      yaxis: { title: "Count" },
+      barmode: "overlay", height: 440,
+      legend: { font: { size: 10 }, orientation: "h", y: 1.08 },
+    }), PLOTLY_CFG);
+  }
+}
+
 // ── Main initialization ──────────────────────────────────────────────────────
 
 function safeRender(name, fn) {
@@ -3159,18 +3406,19 @@ async function init() {
     return;
   }
 
-  // Corpus fetch is independent — its failure must not block the pre-computed charts.
   const corpus = await fetchJSON("data/swadesh_corpus.json").catch(() => null);
+  const decontext = await fetchJSON("data/decontextualized_convergence.json").catch(() => null);
+  const layerwise = await fetchJSON("data/layerwise_metrics.json").catch(() => null);
+  const controlledComp = await fetchJSON("data/improved_swadesh_comparison.json").catch(() => null);
 
   console.log("Data loaded:", { sample: !!sample, swadesh: !!swadesh, phylo: !!phylo,
     comparison: !!comparison, colex: !!colex, store: !!store, offset: !!offset, color: !!color,
-    corpus: !!corpus });
+    corpus: !!corpus, decontext: !!decontext, layerwise: !!layerwise, controlledComp: !!controlledComp });
 
   // Section 3: Conceptual Manifold
   safeRender("translations", () => renderSampleTranslations(sample));
   if (sample) {
     sample.embedding_points = enrichFamily(sample.embedding_points);
-    // Render carrier sentence with highlighted {word}
     const carrierEl = document.getElementById("carrierSentence");
     if (carrierEl && sample.context_template) {
       carrierEl.innerHTML = sample.context_template.replace(
@@ -3208,6 +3456,11 @@ async function init() {
   safeRender("offset", () => renderOffsetInvariance(offset));
   safeRender("offsetHeatmap", () => renderOffsetFamilyHeatmap(offset));
   safeRender("colorCircle", () => renderColorCircle(color));
+
+  // Section 6.7–6.9: New analyses
+  if (decontext) safeRender("carrierBaseline", () => renderCarrierBaseline(decontext));
+  if (layerwise) safeRender("layerwise", () => renderLayerwiseTrajectory(layerwise));
+  if (controlledComp) safeRender("controlledComp", () => renderControlledComparison(controlledComp));
 
   document.querySelectorAll(".loading-placeholder").forEach(el => el.remove());
 

@@ -44,6 +44,9 @@
           <li><a href="#val-conceptual-store">Conceptual Store Metric</a></li>
           <li><a href="#val-offset">Semantic Offset Invariance</a></li>
           <li><a href="#val-color">Berlin &amp; Kay Color Circle</a></li>
+          <li><a href="#val-carrier">Carrier Sentence Robustness</a></li>
+          <li><a href="#val-layerwise">Layer-wise Emergence</a></li>
+          <li><a href="#val-controlled">Controlled Swadesh Comparison</a></li>
         </ol>
       </li>
       <li><a href="#discussion">Discussion</a></li>
@@ -99,7 +102,7 @@
       <li>Does NLLB's encoder contain a geometrically isolable, language-neutral conceptual store?</li>
       <li>Does NLLB's representation space implicitly encode the phylogenetic tree of human languages?</li>
       <li>Does the embedding space reflect universal conceptual associations independent of language?</li>
-      <li>Are semantic relationships between concepts (man&rarr;woman, big&rarr;small) translationally invariant across 40+ languages?</li>
+      <li>Are semantic relationships between concepts (man&rarr;woman, big&rarr;small) translationally invariant across 135 languages?</li>
     </ol>
   </section>
 
@@ -122,8 +125,8 @@
     <h3>Swadesh Stimulus Corpus</h3>
     <p>
       Our primary stimulus set is the Swadesh 100-item list &mdash; 101 core vocabulary concepts
-      (body parts, basic natural phenomena, low numerals, kinship terms) with translations in 40
-      NLLB-supported languages spanning 15 language families. Swadesh (1952) predicted that these
+      (body parts, basic natural phenomena, low numerals, kinship terms) with translations in 135
+      NLLB-supported languages spanning 19 language families. Swadesh (1952) predicted that these
       items are culturally stable and resistant to borrowing, making them markers of genealogical
       relationship across millennia. J&auml;ger (2018) formalized this into the ASJP database
       covering ~7,000 languages.
@@ -258,9 +261,9 @@
 
     <p>
       With single-concept intuition established, we scale up to the full Swadesh 100-item list.
-      For each of the 101 core vocabulary concepts, we embed every translation across all 40
-      languages (producing ~4,000 embeddings total), then compute the mean pairwise cosine similarity
-      across all 780 language pairs. Concepts with high mean similarity converge strongly across
+      For each of the 101 core vocabulary concepts, we embed every translation across all 135
+      languages (producing over 13,000 embeddings total), then compute the mean pairwise cosine similarity
+      across all language pairs. Concepts with high mean similarity converge strongly across
       languages &mdash; their representations are close in NLLB's embedding space regardless of
       which language expresses them.
     </p>
@@ -382,7 +385,7 @@
     <div class="method-card">
       <h4>Embedding Convergence</h4>
       <p>
-        For each concept, we embed its translation in all 40+ languages using word-in-context
+        For each concept, we embed its translation in all 135 languages using word-in-context
         extraction: the target word is placed in a carrier sentence, encoded by NLLB-200, and
         only the target word's subword token activations are mean-pooled. The convergence score
         is the mean pairwise cosine similarity across all language pairs (780+ pairs). Higher
@@ -426,7 +429,7 @@
     <p>
       If NLLB's encoder genuinely captures something about the relationships between languages,
       its embedding distance matrix should correlate with independently established measures
-      of linguistic relatedness. We test this by computing a 40&times;40 language pairwise
+      of linguistic relatedness.       We test this by computing a language pairwise
       cosine distance matrix averaged over all Swadesh concepts, then examining whether the
       resulting structure recovers known phylogenetic relationships.
     </p>
@@ -444,7 +447,7 @@
     <div class="hypothesis-box">
       <div class="hypothesis-label">Hypothesis 3 &mdash; The Phylogenetic Correlation</div>
       <p>
-        NLLB's cosine distance matrix, averaged over the 40 Swadesh-list concepts across 40+
+        NLLB's cosine distance matrix, averaged over the 101 Swadesh-list concepts across 135
         languages, will yield a statistically significant positive Mantel correlation (Spearman
         &rho; &gt; 0.3, p &lt; 0.01) with the ASJP pairwise phonetic distance matrix &mdash;
         demonstrating that a neural translation model has implicitly learned the phylogenetic
@@ -512,7 +515,7 @@
     <h3>Mantel Test</h3>
     <p>
       The Mantel test asks a simple question: <strong>do languages that sound alike
-      also get encoded alike?</strong> For every pair of the 71 languages in our dataset,
+      also get encoded alike?</strong> For every pair of the 88 languages with both NLLB and ASJP data,
       we have two numbers:
     </p>
     <ol>
@@ -712,7 +715,7 @@
       across languages than culturally specific vocabulary. We test this by comparing 101 Swadesh
       concepts against 60 non-Swadesh concepts (e.g., "government," "university," "airport,"
       "democracy") &mdash; modern, abstract, and culturally contingent terms. Both sets are
-      embedded across the same 40 languages, and a one-sided Mann-Whitney U test evaluates
+      embedded across the same languages, and a one-sided Mann-Whitney U test evaluates
       whether Swadesh concepts show significantly higher mean cross-lingual similarity.
     </p>
   </section>
@@ -822,7 +825,7 @@
       important: invariance that holds across unrelated families (Indo-European, Sino-Tibetan,
       Niger-Congo) is strong evidence for language-universal conceptual structure, while invariance
       restricted to related families may reflect shared etymology. No prior paper has tested
-      semantic offset invariance across 40+ languages in a translation model. The closest
+      semantic offset invariance across 135 languages in a translation model. The closest
       precedent is Mikolov et al.'s (2013) word2vec analogy work, which operated within a single language.
     </p>
   </section>
@@ -948,6 +951,143 @@
     </p>
   </div>
 
+  <section class="prose">
+    <!-- ── 6.7 Carrier Sentence Robustness ── -->
+    <h3 id="val-carrier">6.7 Carrier Sentence Robustness</h3>
+    <p>
+      All preceding analyses embed target words inside a fixed carrier sentence. Does this
+      carrier drive our convergence findings, or would bare words produce the same ranking?
+      We repeat the full embedding extraction and convergence analysis using
+      <em>decontextualized</em> embeddings &mdash; target words embedded in isolation,
+      without any surrounding context.
+    </p>
+    <p>
+      If the carrier sentence is merely providing a consistent frame (as intended) rather
+      than imposing structure, the contextualized and decontextualized convergence rankings
+      should be highly correlated. A low correlation would suggest that the carrier sentence,
+      not semantics, drives the observed patterns.
+    </p>
+  </section>
+
+  <div id="carrierBaselineResults" class="prose">
+    <div class="stat-row" id="carrierBaselineStats">
+      <div class="loading-placeholder"><span class="spinner"></span> Loading&hellip;</div>
+    </div>
+  </div>
+
+  <div class="figure">
+    <div class="figure-inner figure-row">
+      <div id="carrierBaselineScatter" class="chart chart-short">
+        <div class="loading-placeholder"><span class="spinner"></span> Loading&hellip;</div>
+      </div>
+      <div id="carrierBaselineSlopegraph" class="chart chart-short">
+        <div class="loading-placeholder"><span class="spinner"></span> Loading&hellip;</div>
+      </div>
+    </div>
+    <p class="figure-caption">
+      <strong>Figure 14.</strong> <em>Left:</em> Scatter of contextualized vs. decontextualized
+      convergence scores. Points near the identity line indicate concepts whose convergence is
+      insensitive to the carrier sentence. <em>Right:</em> Top-20 concepts under each condition,
+      showing minimal reranking of the highest-convergence items.
+    </p>
+  </div>
+
+  <section class="prose">
+    <!-- ── 6.8 Layer-wise Emergence ── -->
+    <h3 id="val-layerwise">6.8 Layer-wise Emergence of Semantic Structure</h3>
+    <p>
+      All preceding analyses use representations from the final (12th) encoder layer. But
+      <em>where</em> in the encoder stack does cross-lingual semantic structure emerge? We
+      repeat the convergence analysis at each of the 12 encoder layers on a diverse 39-language
+      subset.
+    </p>
+    <p>
+      If semantic convergence builds gradually across layers &mdash; with surface-level features
+      dominating early layers and abstract semantics dominating later ones &mdash; this would
+      parallel the "NLP pipeline" effect documented by Tenney et al. (2019) and provide a
+      developmental lens on the conceptual store hypothesis.
+    </p>
+  </section>
+
+  <div id="layerwiseResults" class="prose">
+    <div class="stat-row" id="layerwiseStats">
+      <div class="loading-placeholder"><span class="spinner"></span> Loading&hellip;</div>
+    </div>
+  </div>
+
+  <div class="figure">
+    <div class="figure-inner figure-row">
+      <div id="layerwiseConvergence" class="chart chart-short">
+        <div class="loading-placeholder"><span class="spinner"></span> Loading&hellip;</div>
+      </div>
+      <div id="layerwiseCSM" class="chart chart-short">
+        <div class="loading-placeholder"><span class="spinner"></span> Loading&hellip;</div>
+      </div>
+    </div>
+    <p class="figure-caption">
+      <strong>Figure 15a.</strong> <em>Left:</em> Mean Swadesh convergence by encoder layer.
+      Convergence increases monotonically with a sharp rise around layer 1. <em>Right:</em>
+      Conceptual Store Metric (raw and mean-centered) by layer, showing a phase transition
+      at layer 6.
+    </p>
+  </div>
+
+  <div class="figure">
+    <div class="figure-inner">
+      <div id="layerwiseHeatmap" class="chart chart-tall">
+        <div class="loading-placeholder"><span class="spinner"></span> Loading&hellip;</div>
+      </div>
+    </div>
+    <p class="figure-caption">
+      <strong>Figure 15b.</strong> Per-concept convergence heatmap across encoder layers.
+      Rows are Swadesh concepts (sorted by final-layer convergence); columns are encoder
+      layers 0&ndash;11. Concrete, perceptually grounded concepts (top) achieve high
+      convergence earlier than abstract or polysemous concepts (bottom).
+    </p>
+  </div>
+
+  <section class="prose">
+    <!-- ── 6.9 Controlled Swadesh Comparison ── -->
+    <h3 id="val-controlled">6.9 Controlled Non-Swadesh Comparison</h3>
+    <p>
+      The original Swadesh vs. non-Swadesh comparison (Section 6.2) is confounded by
+      <strong>loanword bias</strong>: modern terms like <em>telephone</em>, <em>democracy</em>,
+      and <em>hotel</em> share surface forms across dozens of languages due to cultural
+      borrowing, inflating their apparent convergence. To obtain a properly controlled
+      comparison, we constructed a second non-Swadesh set of frequency-matched, non-loanword
+      concrete nouns with cross-linguistic orthographic diversity comparable to the Swadesh set.
+    </p>
+    <p>
+      Under this controlled baseline, Swadesh concepts exhibit convergence commensurate with
+      or exceeding that of the matched controls &mdash; consistent with the hypothesis that
+      culturally stable, universally attested concepts develop robust cross-lingual representations
+      <em>despite</em> maximal surface-form diversity.
+    </p>
+  </section>
+
+  <div id="controlledCompResults" class="prose">
+    <div class="stat-row" id="controlledCompStats">
+      <div class="loading-placeholder"><span class="spinner"></span> Loading&hellip;</div>
+    </div>
+  </div>
+
+  <div class="figure">
+    <div class="figure-inner figure-row">
+      <div id="controlledCompBox" class="chart chart-short">
+        <div class="loading-placeholder"><span class="spinner"></span> Loading&hellip;</div>
+      </div>
+      <div id="controlledCompHistogram" class="chart chart-short">
+        <div class="loading-placeholder"><span class="spinner"></span> Loading&hellip;</div>
+      </div>
+    </div>
+    <p class="figure-caption">
+      <strong>Figure 16.</strong> Controlled Swadesh vs. non-Swadesh comparison using
+      frequency-matched, non-loanword concrete nouns. <em>Left:</em> Box plot. <em>Right:</em>
+      Overlapping histograms. Unlike the loanword-confounded comparison, this controlled
+      baseline shows Swadesh concepts converging at least as strongly as matched controls.
+    </p>
+  </div>
+
   <hr class="section-divider" />
 
   <!-- ════════════════════════════════════════════════════════════ -->
@@ -1010,24 +1150,37 @@
         have ASJP word lists. Languages without ASJP coverage are excluded from the Mantel test.
       </li>
       <li>
-        <strong>Fixed carrier sentence.</strong> All word-in-context embeddings use the template
-        <code>"I saw a {word} near the river."</code> This provides consistent contextual framing
-        but is semantically awkward for some targets (e.g., verbs like "die" or "sleep," mass nouns,
-        or abstract concepts). A multi-template approach with averaged embeddings would reduce
-        frame-specific bias.
+        <strong>Fixed carrier sentence.</strong> All word-in-context embeddings use a single
+        translated carrier sentence. Our decontextualized baseline (Section 6.7) shows high
+        rank correlation (&rho; = 0.867), confirming that the carrier does not drive the main
+        patterns. Nevertheless, a multi-template approach with averaged embeddings would further
+        reduce frame-specific bias.
       </li>
     </ul>
 
-    <h3>Next Steps</h3>
+    <h3>Layer-wise Developmental Parallels</h3>
     <p>
-      The infrastructure built here sets up several high-priority next experiments:
-      per-layer convergence trajectories (identifying the "computational ATL" layer),
+      The layer-wise trajectory analysis adds a developmental dimension to these structural
+      parallels. Semantic convergence increases monotonically across the 12 encoder layers,
+      with a sharp rise around layer 1 and the Conceptual Store Metric exhibiting a phase
+      transition at layer 6. This mirrors hierarchical processing in the human language network,
+      where primary auditory cortex encodes acoustic features, posterior temporal regions encode
+      phonological and lexical information, and the anterior temporal lobe hub integrates meaning
+      across modalities and languages. Concrete, perceptually grounded concepts achieve high
+      cross-lingual convergence earlier in the encoder stack than abstract or polysemous concepts,
+      suggesting a hierarchy of representational abstraction.
+    </p>
+
+    <h3>Future Directions</h3>
+    <p>
+      Several promising directions emerge from this work:
       per-head cross-attention decomposition (finding universal semantic alignment heads),
-      and resource-level asymmetry testing (the RHM prediction). The core empirical
-      story &mdash; Swadesh convergence, variance decomposition, Swadesh vs. non-Swadesh,
-      phylogenetic correlation (with real ASJP v20 phonetic distances), colexification
-      (with real CLICS&sup3; data), and offset invariance &mdash; is sufficient for a
-      conference paper or extended blog post.
+      resource-level asymmetry testing (the RHM prediction that L1&rarr;L2 translation
+      proceeds via conceptual mediation while L2&rarr;L1 can bypass it), and scaling
+      analyses across model sizes (from 600M to the full 3.3B NLLB-200). The core empirical
+      story &mdash; Swadesh convergence, variance decomposition, phylogenetic correlation,
+      colexification, offset invariance, layer-wise emergence, and carrier-sentence
+      robustness &mdash; provides a comprehensive probe of the encoder's conceptual geometry.
     </p>
   </section>
 

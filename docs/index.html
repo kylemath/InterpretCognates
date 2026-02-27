@@ -44,6 +44,7 @@
           <li><a href="#val-conceptual-store">Conceptual Store Metric</a></li>
           <li><a href="#val-offset">Semantic Offset Invariance</a></li>
           <li><a href="#val-color">Berlin &amp; Kay Color Circle</a></li>
+          <li><a href="#val-color-layers">Layer-wise Color Evolution</a></li>
           <li><a href="#val-carrier">Carrier Sentence Robustness</a></li>
           <li><a href="#val-layerwise">Layer-wise Emergence</a></li>
           <li><a href="#val-controlled">Controlled Swadesh Comparison</a></li>
@@ -838,19 +839,34 @@
 
   <div class="figure">
     <div class="figure-inner figure-row">
-      <div id="vectorOffsetDemo" class="chart vector-offset-panel">
+      <div id="offsetDemoPCA" class="chart vector-offset-panel">
         <div class="loading-placeholder"><span class="spinner"></span> Loading&hellip;</div>
       </div>
-      <div id="vectorOffsetFull" class="chart vector-offset-panel">
+      <div id="offsetDemoQuiver" class="chart vector-offset-panel">
         <div class="loading-placeholder"><span class="spinner"></span> Loading&hellip;</div>
       </div>
     </div>
     <p class="figure-caption">
-      <strong>Figure 11b.</strong> 2D PCA projection of concept embeddings for the most
-      translationally invariant pair. <em>Left:</em> Seven diverse languages shown individually
-      with labeled word pairs. <em>Right:</em> All languages overlaid &mdash; transparent arrows
-      accumulate to reveal the consensus direction. Grey dots show other Swadesh concepts in the
-      same PCA space for spatial reference.
+      <strong>Figure 11a.</strong> <em>Left:</em> Joint PCA of concept embeddings for the 5
+      most translationally invariant pairs across 135 languages. Faint arrows show individual
+      language vectors; bold arrows show cross-lingual centroids. Concept clusters are visible
+      as grey clouds. <em>Right:</em> The same offset vectors translated to a common origin,
+      revealing that each semantic relationship produces a tight, language-universal direction
+      despite surface-form diversity.
+    </p>
+  </div>
+
+  <div class="figure">
+    <div class="figure-inner">
+      <div id="offsetDemoBar" class="chart">
+        <div class="loading-placeholder"><span class="spinner"></span> Loading&hellip;</div>
+      </div>
+    </div>
+    <p class="figure-caption">
+      <strong>Figure 11b.</strong> Cross-lingual consistency of all 22 semantic offset pairs.
+      Top-5 pairs are color-coded to match the PCA panels above. Error bars show standard
+      deviation across languages. High consistency (&gt;0.8) indicates a language-universal
+      relationship; lower values suggest culture- or family-specific encoding.
     </p>
   </div>
 
@@ -860,12 +876,6 @@
         <div class="loading-placeholder"><span class="spinner"></span> Loading&hellip;</div>
       </div>
     </div>
-    <p class="figure-caption">
-      <strong>Figure 11.</strong> Cross-lingual consistency of semantic offset vectors for 15 concept
-      pairs. Higher values indicate the relationship is more translationally invariant. Error bars
-      show standard deviation across languages. Control pairs (good&rarr;new, dog&rarr;fish,
-      come&rarr;give) are expected to show lower invariance.
-    </p>
   </div>
 
   <section class="prose">
@@ -948,6 +958,49 @@
       Each small dot is one language&rsquo;s embedding of a color term; large dots show the cross-lingual
       mean. Transparency reveals where languages agree (dense clusters) vs. diverge (scattered points).
       Toggle overlays to explore family-level structure and the distribution of color term representations.
+    </p>
+  </div>
+
+  <section class="prose">
+    <h3 id="val-color-layers">6.6b Layer-wise Color Circle Evolution</h3>
+    <p>
+      The color circle in Figure 13 uses final-layer (layer 11) representations. But how does
+      this structure <em>emerge</em> across the encoder stack? The animation below shows
+      the same color term embeddings extracted from each of the 12 encoder layers, all projected
+      into the same PCA coordinate space (fit on the final-layer centroids). Use the slider to
+      scrub through layers manually, or press <strong>Animate</strong> to watch the
+      representational space self-organize in real time &mdash; scattered noise in early layers
+      coalescing into the tight, perceptually ordered color circle by the final layer.
+    </p>
+  </section>
+
+  <div class="figure">
+    <div class="figure-inner">
+      <div class="color-layer-controls" id="colorLayerControls" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center;margin-bottom:8px">
+        <label style="font-size:13px;font-weight:600;color:var(--fg-dim,#64748b)">Encoder Layer:</label>
+        <input type="range" id="colorLayerSlider" min="0" max="11" value="11" style="width:220px;accent-color:#c45a2c" />
+        <span id="colorLayerLabel" style="font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;min-width:52px">Layer 11</span>
+        <button class="toggleBtn small" id="colorLayerAnimateBtn" onclick="toggleColorLayerAnimation()" style="min-width:90px">&#9654; Animate</button>
+        <label style="font-size:12px;color:var(--fg-dim,#64748b)">
+          Speed:
+          <select id="colorLayerSpeed" style="font-size:12px">
+            <option value="1500">Slow</option>
+            <option value="800" selected>Medium</option>
+            <option value="350">Fast</option>
+          </select>
+        </label>
+      </div>
+      <div id="colorCircleLayers" class="chart">
+        <div class="loading-placeholder"><span class="spinner"></span> Loading&hellip;</div>
+      </div>
+    </div>
+    <p class="figure-caption">
+      <strong>Figure 13b.</strong> Layer-wise evolution of Berlin &amp; Kay color term
+      representations. All layers are projected into the same PCA space (fit on final-layer
+      centroids). Early layers show dispersed, unstructured points; by the final layer, color
+      terms self-organize into the perceptual color circle. The animation reveals a
+      <em>phase transition</em> around layers 5&ndash;7 where categorical structure snaps
+      into place &mdash; mirroring the conceptual store metric transition in Figure 15a.
     </p>
   </div>
 

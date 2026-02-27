@@ -1571,6 +1571,205 @@ function drawColorCircle3D() {
   }, { responsive: true });
 }
 
+// ── Layerwise Color Circle ───────────────────────────────────────────────────
+
+let _colorLayerData = null;
+let _colorLayerAnimTimer = null;
+let _colorLayerPlotted = false;
+let _colorLayerNorm = null;
+let _colorLayerAxisRange = null;
+
+function _normalizeColorLayers(data) {
+  // Each layer's PCA-projected coordinates have wildly different magnitudes
+  // (layer 10 can reach +-2000 while layer 11 is +-8). We center each layer
+  // at the origin and rescale to match the final layer's standard deviation,
+  // so the animation shows structural changes at consistent visual scale.
+  const stats = {};
+  for (const key of Object.keys(data.layers)) {
+    const pts = data.layers[key].per_language;
+    const n = pts.length;
+    let sx = 0, sy = 0;
+    pts.forEach(p => { sx += p.x; sy += p.y; });
+    const mx = sx / n, my = sy / n;
+    let vx = 0, vy = 0;
+    pts.forEach(p => { vx += (p.x - mx) ** 2; vy += (p.y - my) ** 2; });
+    const std = Math.sqrt((vx + vy) / (2 * n));
+    stats[key] = { mx, my, std: std > 1e-6 ? std : 1 };
+  }
+  const refStd = stats[String(data.num_layers - 1)].std;
+  for (const key of Object.keys(stats)) {
+    stats[key].scale = refStd / stats[key].std;
+  }
+  return stats;
+}
+
+function _computeNormalizedAxisRange(data, norms) {
+  let xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity;
+  for (const key of Object.keys(data.layers)) {
+    const norm = norms[key];
+    const ld = data.layers[key];
+    const update = (rawX, rawY) => {
+      const x = (rawX - norm.mx) * norm.scale;
+      const y = (rawY - norm.my) * norm.scale;
+      if (x < xMin) xMin = x;
+      if (x > xMax) xMax = x;
+      if (y < yMin) yMin = y;
+      if (y > yMax) yMax = y;
+    };
+    if (ld.per_language) ld.per_language.forEach(p => update(p.x, p.y));
+    if (ld.centroids) ld.centroids.forEach(c => update(c.x, c.y));
+  }
+  const xPad = (xMax - xMin) * 0.06;
+  const yPad = (yMax - yMin) * 0.06;
+  return { x: [-10, 6], y: [-6, 10] };
+}
+
+function renderColorCircleLayers(data) {
+  if (!data || !data.layers) return;
+  _colorLayerData = data;
+  _colorLayerNorm = _normalizeColorLayers(data);
+  _colorLayerAxisRange = _computeNormalizedAxisRange(data, _colorLayerNorm);
+  const slider = document.getElementById("colorLayerSlider");
+  if (slider) {
+    slider.max = data.num_layers - 1;
+    slider.value = data.num_layers - 1;
+    slider.addEventListener("input", () => {
+      updateColorLayerLabel(+slider.value);
+      drawColorCircleLayer(+slider.value);
+    });
+  }
+  updateColorLayerLabel(data.num_layers - 1);
+  drawColorCircleLayer(data.num_layers - 1);
+}
+
+function updateColorLayerLabel(layer) {
+  const lbl = document.getElementById("colorLayerLabel");
+  if (lbl) lbl.textContent = `Layer ${layer}`;
+}
+
+function drawColorCircleLayer(layerIdx) {
+  const data = _colorLayerData;
+  if (!data) return;
+  const el = document.getElementById("colorCircleLayers");
+  if (!el) return;
+
+  const ld = data.layers[String(layerIdx)];
+  if (!ld) return;
+
+  const traces = [];
+
+  const norm = _colorLayerNorm ? _colorLayerNorm[String(layerIdx)] : null;
+  const nx = (v) => norm ? (v - norm.mx) * norm.scale : v;
+  const ny = (v) => norm ? (v - norm.my) * norm.scale : v;
+
+  // Per-language scatter points, colored by actual color
+  if (ld.per_language) {
+    const byColor = {};
+    ld.per_language.forEach(p => {
+      const color = p.c || p.color;
+      if (!byColor[color]) byColor[color] = { x: [], y: [], text: [] };
+      byColor[color].x.push(nx(p.x));
+      byColor[color].y.push(ny(p.y));
+      const lang = p.l || p.lang;
+      const fam = p.f || p.family;
+      byColor[color].text.push(`${color} — ${langName(lang)} (${fam})`);
+    });
+
+    Object.entries(byColor).forEach(([color, d]) => {
+      traces.push({
+        type: "scatter", mode: "markers",
+        x: d.x, y: d.y, text: d.text,
+        name: color,
+        showlegend: false,
+        marker: {
+          size: 5,
+          color: COLOR_MAP[color.toLowerCase()] || "#6c757d",
+          opacity: 0.22,
+          line: { width: 0.4, color: COLOR_MAP_BORDER[color.toLowerCase()] || "#555" },
+        },
+        hovertemplate: "%{text}<br>PC1: %{x:.2f}, PC2: %{y:.2f}<extra></extra>",
+      });
+    });
+  }
+
+  // Centroids (large labeled dots)
+  if (ld.centroids) {
+    traces.push({
+      type: "scatter", mode: "markers+text",
+      x: ld.centroids.map(c => nx(c.x)),
+      y: ld.centroids.map(c => ny(c.y)),
+      text: ld.centroids.map(c => c.label),
+      textposition: "top center",
+      textfont: { size: 13, color: "#1a1a2e", family: "Inter, system-ui, sans-serif" },
+      name: "Mean centroid",
+      showlegend: true,
+      marker: {
+        size: 22,
+        color: ld.centroids.map(c => COLOR_MAP[c.label.toLowerCase()] || "#6c757d"),
+        line: { width: 2.5, color: "#1a1a2e" },
+      },
+      hovertemplate: "<b>%{text}</b> — Layer " + layerIdx + " mean<extra></extra>",
+    });
+  }
+
+  const title = `Color Circle — Layer ${layerIdx} / ${data.num_layers - 1}` +
+    ` · ${data.num_languages} languages`;
+
+  const ar = _colorLayerAxisRange;
+  const layoutUpdate = baseLayout({
+    height: 560,
+    title: { text: title, font: { size: 13 } },
+    xaxis: { title: "PC1", zeroline: true, zerolinecolor: "#e2e8f0",
+             range: ar ? ar.x.slice() : undefined, autorange: false },
+    yaxis: { title: "PC2", zeroline: true, zerolinecolor: "#e2e8f0",
+             range: ar ? ar.y.slice() : undefined, autorange: false },
+    margin: { l: 56, r: 24, t: 44, b: 50 },
+    legend: { font: { size: 10 }, tracegroupgap: 2, itemsizing: "constant" },
+    hovermode: "closest",
+  });
+
+  if (!_colorLayerPlotted) {
+    Plotly.newPlot(el, traces, layoutUpdate, PLOTLY_CFG);
+    _colorLayerPlotted = true;
+  } else {
+    Plotly.react(el, traces, layoutUpdate, PLOTLY_CFG);
+  }
+}
+
+function toggleColorLayerAnimation() {
+  const btn = document.getElementById("colorLayerAnimateBtn");
+  if (_colorLayerAnimTimer) {
+    clearInterval(_colorLayerAnimTimer);
+    _colorLayerAnimTimer = null;
+    if (btn) btn.innerHTML = "&#9654; Animate";
+    return;
+  }
+  if (!_colorLayerData) return;
+
+  const slider = document.getElementById("colorLayerSlider");
+  const speedSel = document.getElementById("colorLayerSpeed");
+  const ms = speedSel ? +speedSel.value : 800;
+  let layer = 0;
+  if (slider) slider.value = 0;
+  updateColorLayerLabel(0);
+  drawColorCircleLayer(0);
+
+  if (btn) btn.innerHTML = "&#9632; Stop";
+
+  _colorLayerAnimTimer = setInterval(() => {
+    layer++;
+    if (layer >= _colorLayerData.num_layers) {
+      clearInterval(_colorLayerAnimTimer);
+      _colorLayerAnimTimer = null;
+      if (btn) btn.innerHTML = "&#9654; Animate";
+      return;
+    }
+    if (slider) slider.value = layer;
+    updateColorLayerLabel(layer);
+    drawColorCircleLayer(layer);
+  }, ms);
+}
+
 // ── New section renderers ────────────────────────────────────────────────────
 
 function renderManifoldStats(data) {
@@ -2226,218 +2425,275 @@ function renderOffsetStats(data) {
   `;
 }
 
-function _vectorOffsetAxisRange(vp) {
-  let allX = [], allY = [];
-  vp.per_language.forEach(p => { allX.push(p.ax, p.bx); allY.push(p.ay, p.by); });
-  (vp.reference_concepts || []).forEach(r => { allX.push(r.x); allY.push(r.y); });
-  const pad = 0.25;
-  const xMin = Math.min(...allX), xMax = Math.max(...allX);
-  const yMin = Math.min(...allY), yMax = Math.max(...allY);
-  const xSpan = (xMax - xMin) || 1, ySpan = (yMax - yMin) || 1;
-  return {
-    xRange: [xMin - xSpan * pad, xMax + xSpan * pad],
-    yRange: [yMin - ySpan * pad, yMax + ySpan * pad],
-  };
-}
+// ── Offset Vector Demo — integrated 3-panel figure ──────────────────────────
 
-const DEMO_LANG_PREF = [
-  "eng_Latn", "zho_Hans", "arb_Arab", "hin_Deva",
-  "swh_Latn", "jpn_Jpan", "spa_Latn", "tur_Latn",
-  "fin_Latn", "kor_Hang", "yor_Latn", "tha_Thai",
-];
-
-function _pickDemoLangs(perLang, n) {
-  const available = new Set(perLang.map(p => p.lang));
-  const picked = [];
-  for (const code of DEMO_LANG_PREF) {
-    if (available.has(code)) picked.push(code);
-    if (picked.length >= n) break;
-  }
-  if (picked.length < n) {
-    for (const p of perLang) {
-      if (!picked.includes(p.lang)) picked.push(p.lang);
-      if (picked.length >= n) break;
-    }
-  }
-  return new Set(picked);
-}
-
-function _refConceptTraces(vp, showlegend) {
-  const refs = vp.reference_concepts || [];
-  if (!refs.length) return [];
-  return [{
-    type: "scatter",
-    mode: "markers+text",
-    x: refs.map(r => r.x),
-    y: refs.map(r => r.y),
-    text: refs.map(r => r.concept),
-    textposition: "middle right",
-    textfont: { size: 8.5, color: "#b0b0b0", family: "Inter, system-ui, sans-serif" },
-    marker: { size: 4.5, color: "#d4d4d4", symbol: "circle", line: { width: 0.5, color: "#c0c0c0" } },
-    name: "Other concepts",
-    showlegend: showlegend,
-    hovertemplate: "<b>%{text}</b><extra>Reference concept</extra>",
-  }];
-}
-
-function renderVectorOffsetExample(data) {
-  const elDemo = document.getElementById("vectorOffsetDemo");
-  const elFull = document.getElementById("vectorOffsetFull");
-  if (!elDemo && !elFull) return;
-  const vp = data.vector_plot || data.joint_vector_plot;
-  if (!data || !vp) {
-    if (elDemo) elDemo.innerHTML = "<p>No vector plot data available.</p>";
-    if (elFull) elFull.innerHTML = "";
+function renderOffsetVectorDemo(demo) {
+  const elPca = document.getElementById("offsetDemoPCA");
+  const elQuiver = document.getElementById("offsetDemoQuiver");
+  const elBar = document.getElementById("offsetDemoBar");
+  if (!demo || !demo.pairs || !demo.panel_a) {
+    [elPca, elQuiver, elBar].forEach(el => {
+      if (el) el.innerHTML = "<p>Offset vector demo data not available.</p>";
+    });
     return;
   }
-  const { xRange, yRange } = _vectorOffsetAxisRange(vp);
 
-  // ─── Panel 1: Demo with 7 languages ────────────────────────
-  if (elDemo) {
-    const demoSet = _pickDemoLangs(vp.per_language, 7);
-    const demoLangs = vp.per_language.filter(p => demoSet.has(p.lang));
-    const dTraces = _refConceptTraces(vp, false);
-    const dAnnotations = [];
+  const MAX_PAIRS = 7;
+  const pairs = demo.pairs.slice(0, MAX_PAIRS);
+  const pairLabels = new Set(pairs.map(p => p.label));
+  const concepts = demo.concepts;
+  const centroids = demo.centroids;
+  const panelA = demo.panel_a;
+  const panelB = demo.panel_b;
+  const centroidOffsets = demo.centroid_offsets;
+  const barData = demo.bar_chart;
+  const nLangs = demo.num_languages;
+  const demoLangs = new Set(demo.demo_langs || []);
 
-    demoLangs.forEach(p => {
-      const fam = p.family || LANG_FAMILY[p.lang] || "Unknown";
-      const col = familyColor(fam);
-      const name = langName(p.lang);
+  // ── (a) Joint PCA: all 5 pairs, concept clouds, centroid arrows ────────
+  if (elPca) {
+    const traces = [];
+    const annotations = [];
 
-      dTraces.push({
-        type: "scatter",
-        mode: "lines+markers",
-        x: [p.ax, p.bx],
-        y: [p.ay, p.by],
-        line: { color: col, width: 2.5 },
-        marker: { size: [7, 7], color: col },
-        name: name,
-        showlegend: true,
-        hoverinfo: "text",
-        text: [`${name}: ${vp.concept_a}`, `${name}: ${vp.concept_b}`],
+    // Ghost dots: concept positions for spatial context (subtle)
+    for (const concept of concepts) {
+      const xs = [], ys = [], hov = [];
+      panelA.forEach(l => {
+        const pt = l[concept];
+        if (pt) { xs.push(pt.x); ys.push(pt.y); hov.push(`${langName(l.lang)}: ${concept}`); }
       });
+      traces.push({
+        type: "scatter", mode: "markers",
+        x: xs, y: ys,
+        marker: { size: 2.5, color: "#ddd", opacity: 0.2 },
+        showlegend: false, hoverinfo: "text", text: hov,
+      });
+    }
 
-      dAnnotations.push({
-        x: p.bx, y: p.by,
-        ax: p.ax, ay: p.ay,
+    // First pass: individual language arrows (drawn first so centroids sit on top)
+    const langAlpha = 0.10;
+    pairs.forEach((pair, pi) => {
+      const ca = pair.concept_a, cb = pair.concept_b;
+      const col = pair.color;
+      const key = pair.label;
+      const colFaint = _hexToRgba(col, langAlpha);
+
+      const lxs = [], lys = [], ltexts = [];
+      panelA.forEach(l => {
+        if (!l[ca] || !l[cb]) return;
+        lxs.push(l[ca].x, l[cb].x, null);
+        lys.push(l[ca].y, l[cb].y, null);
+        ltexts.push(`${langName(l.lang)}: ${ca}`, `${langName(l.lang)}: ${cb}`, "");
+        annotations.push({
+          x: l[cb].x, y: l[cb].y, ax: l[ca].x, ay: l[ca].y,
+          xref: "x", yref: "y", axref: "x", ayref: "y",
+          showarrow: true, arrowhead: 2, arrowsize: 0.5, arrowwidth: 0.6,
+          arrowcolor: colFaint,
+        });
+      });
+      traces.push({
+        type: "scatter", mode: "lines",
+        x: lxs, y: lys,
+        line: { color: colFaint, width: 0.9 },
+        showlegend: false, legendgroup: key,
+        hoverinfo: "text", text: ltexts,
+      });
+    });
+
+    // Second pass: bold centroid arrows (drawn last, on top)
+    pairs.forEach((pair, pi) => {
+      const ca = pair.concept_a, cb = pair.concept_b;
+      const col = pair.color;
+      const key = pair.label;
+      const cA = centroids[ca], cB = centroids[cb];
+      if (cA && cB) {
+        // White outline for visibility against the individual arrows
+        traces.push({
+          type: "scatter", mode: "lines",
+          x: [cA.x, cB.x], y: [cA.y, cB.y],
+          line: { color: "white", width: 6 },
+          showlegend: false, legendgroup: key, hoverinfo: "skip",
+        });
+        traces.push({
+          type: "scatter", mode: "lines+markers",
+          x: [cA.x, cB.x], y: [cA.y, cB.y],
+          line: { color: col, width: 3 },
+          marker: { size: 7, color: col, symbol: "circle" },
+          name: `${ca}→${cb} (${pair.consistency.toFixed(2)})`,
+          legendgroup: key, showlegend: true,
+          hoverinfo: "text", text: [ca, cb],
+        });
+        annotations.push({
+          x: cB.x, y: cB.y, ax: cA.x, ay: cA.y,
+          xref: "x", yref: "y", axref: "x", ayref: "y",
+          showarrow: true, arrowhead: 3, arrowsize: 1.5, arrowwidth: 3,
+          arrowcolor: col,
+        });
+      }
+    });
+
+    // Concept labels at centroids
+    for (const concept of concepts) {
+      const c = centroids[concept];
+      if (!c) continue;
+      annotations.push({
+        x: c.x, y: c.y, xref: "x", yref: "y",
+        text: `<b>${concept}</b>`, showarrow: false,
+        font: { size: 9, color: "#333", family: "Inter, system-ui, sans-serif" },
+        bgcolor: "rgba(255,255,255,0.8)",
+        yshift: 12,
+      });
+    }
+
+    Plotly.newPlot(elPca, traces, baseLayout({
+      height: 520,
+      title: { text: `(a) Joint PCA: ${pairs.length} Offset Pairs × ${nLangs} Languages`, font: { size: 13 } },
+      xaxis: { title: "PC1", zeroline: true, zerolinecolor: "#eee", gridcolor: "#f8f8f8" },
+      yaxis: { title: "PC2", zeroline: true, zerolinecolor: "#eee", scaleanchor: "x", gridcolor: "#f8f8f8" },
+      legend: { font: { size: 9 }, x: 1, xanchor: "right", y: 1, yanchor: "top", bgcolor: "rgba(255,255,255,0.9)" },
+      hovermode: "closest",
+      annotations: annotations,
+    }), PLOTLY_CFG);
+  }
+
+  // ── (b) From-origin quiver: offset vectors emanate from (0,0) ─────────
+  if (elQuiver) {
+    const traces = [];
+    const annotations = [];
+    let allDx = [0], allDy = [0];
+    const qAlpha = 0.08;
+
+    // First pass: individual language offset arrows
+    pairs.forEach((pair, pi) => {
+      const key = pair.label;
+      const col = pair.color;
+      const colFaint = _hexToRgba(col, qAlpha);
+
+      const lxs = [], lys = [], ltexts = [];
+      panelB.forEach(l => {
+        const off = l.offsets[key];
+        if (!off) return;
+        allDx.push(off.dx); allDy.push(off.dy);
+        lxs.push(0, off.dx, null);
+        lys.push(0, off.dy, null);
+        ltexts.push("", `${langName(l.lang)}: ${key}`, "");
+        annotations.push({
+          x: off.dx, y: off.dy, ax: 0, ay: 0,
+          xref: "x", yref: "y", axref: "x", ayref: "y",
+          showarrow: true, arrowhead: 2, arrowsize: 0.4, arrowwidth: 0.5,
+          arrowcolor: colFaint,
+        });
+      });
+      traces.push({
+        type: "scatter", mode: "lines",
+        x: lxs, y: lys,
+        line: { color: colFaint, width: 0.8 },
+        showlegend: false, legendgroup: key,
+        hoverinfo: "text", text: ltexts,
+      });
+    });
+
+    // Second pass: bold centroid arrows on top
+    pairs.forEach((pair, pi) => {
+      const key = pair.label;
+      const col = pair.color;
+      const co = centroidOffsets[key];
+      if (!co) return;
+      allDx.push(co.dx); allDy.push(co.dy);
+
+      traces.push({
+        type: "scatter", mode: "lines",
+        x: [0, co.dx], y: [0, co.dy],
+        line: { color: "white", width: 5.5 },
+        showlegend: false, legendgroup: key, hoverinfo: "skip",
+      });
+      traces.push({
+        type: "scatter", mode: "lines+markers",
+        x: [0, co.dx], y: [0, co.dy],
+        line: { color: col, width: 2.5 },
+        marker: { size: [0, 7], color: col },
+        name: key, legendgroup: key, showlegend: true,
+        hoverinfo: "text", text: ["origin", key],
+      });
+      annotations.push({
+        x: co.dx, y: co.dy, ax: 0, ay: 0,
         xref: "x", yref: "y", axref: "x", ayref: "y",
         showarrow: true, arrowhead: 3, arrowsize: 1.4, arrowwidth: 2.5,
         arrowcolor: col,
       });
-
-      dAnnotations.push({
-        x: p.ax, y: p.ay, xref: "x", yref: "y",
-        text: `<b>${vp.concept_a}</b>`, showarrow: false,
-        font: { size: 9, color: col, family: "Inter, system-ui, sans-serif" },
-        xanchor: "right", xshift: -6, yanchor: "middle",
-      });
-      dAnnotations.push({
-        x: p.bx, y: p.by, xref: "x", yref: "y",
-        text: `<b>${vp.concept_b}</b>`, showarrow: false,
-        font: { size: 9, color: col, family: "Inter, system-ui, sans-serif" },
-        xanchor: "left", xshift: 6, yanchor: "middle",
+      annotations.push({
+        x: co.dx, y: co.dy, xref: "x", yref: "y",
+        text: `<b>${key}</b>`, showarrow: false,
+        font: { size: 9, color: col }, yshift: 14,
+        bgcolor: "rgba(255,255,255,0.85)",
       });
     });
 
-    Plotly.newPlot(elDemo, dTraces, baseLayout({
-      height: 540,
-      title: { text: "7 Languages — Individual Vectors", font: { size: 12 } },
-      xaxis: { title: "PC1", zeroline: true, zerolinecolor: "#e8e8e8", range: xRange, gridcolor: "#f5f5f5" },
-      yaxis: { title: "PC2", zeroline: true, zerolinecolor: "#e8e8e8", range: yRange, scaleanchor: "x", gridcolor: "#f5f5f5" },
-      legend: { font: { size: 9 }, x: 1, xanchor: "right", y: 1, yanchor: "top", bgcolor: "rgba(255,255,255,0.85)" },
+    const pad = 1.5;
+    const xr = [Math.min(...allDx) - pad, Math.max(...allDx) + pad];
+    const yr = [Math.min(...allDy) - pad, Math.max(...allDy) + pad];
+
+    Plotly.newPlot(elQuiver, traces, baseLayout({
+      height: 520,
+      title: { text: `(b) Offset Vectors from Common Origin`, font: { size: 13 } },
+      xaxis: { title: "ΔPC1", zeroline: true, zerolinecolor: "#ccc", zerolinewidth: 1, range: xr, gridcolor: "#f5f5f5" },
+      yaxis: { title: "ΔPC2", zeroline: true, zerolinecolor: "#ccc", zerolinewidth: 1, range: yr, scaleanchor: "x", gridcolor: "#f5f5f5" },
+      legend: { font: { size: 9 }, x: 1, xanchor: "right", y: 1, yanchor: "top", bgcolor: "rgba(255,255,255,0.9)" },
       hovermode: "closest",
-      annotations: dAnnotations,
+      annotations: annotations,
     }), PLOTLY_CFG);
   }
 
-  // ─── Panel 2: All languages, transparent accumulation + references ──
-  if (elFull) {
-    const fTraces = _refConceptTraces(vp, true);
-    const fAnnotations = [];
-    const seenFamilies = new Set();
-    const n = vp.per_language.length;
-    const alpha = Math.max(0.06, Math.min(0.22, 3.0 / n));
-
-    vp.per_language.forEach(p => {
-      const fam = p.family || LANG_FAMILY[p.lang] || "Unknown";
-      const hex = familyColor(fam);
-      const r = parseInt(hex.slice(1, 3), 16);
-      const g = parseInt(hex.slice(3, 5), 16);
-      const b = parseInt(hex.slice(5, 7), 16);
-      const col = `rgba(${r},${g},${b},${alpha.toFixed(2)})`;
-      const colLine = `rgba(${r},${g},${b},${(alpha * 1.3).toFixed(2)})`;
-      const showLegend = !seenFamilies.has(fam);
-      seenFamilies.add(fam);
-
-      fTraces.push({
-        type: "scatter",
-        mode: "lines+markers",
-        x: [p.ax, p.bx],
-        y: [p.ay, p.by],
-        line: { color: colLine, width: 1.5 },
-        marker: { size: [4, 3], color: col },
-        name: fam,
-        legendgroup: fam,
-        showlegend: showLegend,
-        hoverinfo: "text",
-        text: [`${langName(p.lang)}: ${vp.concept_a}`, `${langName(p.lang)}: ${vp.concept_b}`],
-      });
-
-      fAnnotations.push({
-        x: p.bx, y: p.by,
-        ax: p.ax, ay: p.ay,
-        xref: "x", yref: "y", axref: "x", ayref: "y",
-        showarrow: true, arrowhead: 2, arrowsize: 0.8, arrowwidth: 1.5,
-        arrowcolor: colLine, opacity: alpha * 1.5,
-      });
+  // ── (c) Consistency bar chart: all pairs, top-5 highlighted ────────────
+  if (elBar) {
+    const sorted = [...barData].sort((a, b) => b.mean_consistency - a.mean_consistency);
+    const labels = sorted.map(d => d.pair);
+    const values = sorted.map(d => d.mean_consistency);
+    const errors = sorted.map(d => d.std_consistency);
+    const colors = sorted.map(d => {
+      if (pairLabels.has(d.pair)) {
+        const pi = pairs.findIndex(p => p.label === d.pair);
+        return pi >= 0 ? pairs[pi].color : "#4e79a7";
+      }
+      return "#ccc";
     });
 
-    if (vp.centroid_a && vp.centroid_b) {
-      const ca = vp.centroid_a, cb = vp.centroid_b;
-      fTraces.push({
-        type: "scatter",
-        mode: "lines+markers",
-        x: [ca.x, cb.x],
-        y: [ca.y, cb.y],
-        line: { color: "#e63946", width: 3.5 },
-        marker: { size: [9, 9], color: "#e63946" },
-        name: "Centroid",
-        showlegend: true,
-        hovertemplate: "%{text}<extra>Centroid</extra>",
-        text: [vp.concept_a, vp.concept_b],
-      });
-      fAnnotations.push({
-        x: cb.x, y: cb.y,
-        ax: ca.x, ay: ca.y,
-        xref: "x", yref: "y", axref: "x", ayref: "y",
-        showarrow: true, arrowhead: 3, arrowsize: 1.8, arrowwidth: 3.5,
-        arrowcolor: "#e63946",
-      });
-      fAnnotations.push({
-        x: ca.x, y: ca.y, xref: "x", yref: "y",
-        text: `<b>${vp.concept_a}</b>`, showarrow: false,
-        font: { size: 11, color: "#e63946", family: "Inter, system-ui, sans-serif" },
-        xanchor: "right", xshift: -10, yanchor: "middle",
-      });
-      fAnnotations.push({
-        x: cb.x, y: cb.y, xref: "x", yref: "y",
-        text: `<b>${vp.concept_b}</b>`, showarrow: false,
-        font: { size: 11, color: "#e63946", family: "Inter, system-ui, sans-serif" },
-        xanchor: "left", xshift: 10, yanchor: "middle",
-      });
-    }
-
-    Plotly.newPlot(elFull, fTraces, baseLayout({
-      height: 540,
-      title: { text: `All ${n} Languages — Accumulated Vectors`, font: { size: 12 } },
-      xaxis: { title: "PC1", zeroline: true, zerolinecolor: "#e8e8e8", range: xRange, gridcolor: "#f5f5f5" },
-      yaxis: { title: "PC2", zeroline: true, zerolinecolor: "#e8e8e8", range: yRange, scaleanchor: "x", gridcolor: "#f5f5f5" },
-      legend: { font: { size: 9 }, x: 1, xanchor: "right", y: 1, yanchor: "top", bgcolor: "rgba(255,255,255,0.85)" },
-      hovermode: "closest",
-      annotations: fAnnotations,
+    Plotly.newPlot(elBar, [{
+      type: "bar", orientation: "h",
+      y: labels, x: values,
+      error_x: { type: "data", array: errors, visible: true, color: "#999", thickness: 1 },
+      marker: { color: colors, line: { width: 0.5, color: "#fff" } },
+      hovertemplate: "<b>%{y}</b><br>Consistency: %{x:.3f}<extra></extra>",
+    }], baseLayout({
+      height: Math.max(400, sorted.length * 22 + 80),
+      title: { text: "(c) Cross-Lingual Consistency — All Pairs", font: { size: 13 } },
+      xaxis: { title: "Mean Cosine Consistency", range: [0, 1.05], gridcolor: "#f0f0f0" },
+      yaxis: { autorange: "reversed", tickfont: { size: 10 } },
+      margin: { l: 120, r: 20, t: 40, b: 50 },
     }), PLOTLY_CFG);
   }
 }
+
+function _seededShuffle(arr, seed) {
+  const a = [...arr];
+  let s = seed;
+  for (let i = a.length - 1; i > 0; i--) {
+    s = (s * 16807 + 0) % 2147483647;
+    const j = s % (i + 1);
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function _hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha.toFixed(2)})`;
+}
+
+// Keep old function name as a no-op for backward compat
+function renderVectorOffsetExample() {}
 
 function renderOffsetFamilyHeatmap(data) {
   const el = document.getElementById("offsetFamilyHeatmap");
@@ -3410,6 +3666,8 @@ async function init() {
   const decontext = await fetchJSON("data/decontextualized_convergence.json").catch(() => null);
   const layerwise = await fetchJSON("data/layerwise_metrics.json").catch(() => null);
   const controlledComp = await fetchJSON("data/improved_swadesh_comparison.json").catch(() => null);
+  const offsetDemo = await fetchJSON("data/offset_vector_demo.json").catch(() => null);
+  const colorLayers = await fetchJSON("data/color_circle_layers.json").catch(() => null);
 
   console.log("Data loaded:", { sample: !!sample, swadesh: !!swadesh, phylo: !!phylo,
     comparison: !!comparison, colex: !!colex, store: !!store, offset: !!offset, color: !!color,
@@ -3452,10 +3710,13 @@ async function init() {
   safeRender("store", () => renderConceptualStore(store));
   safeRender("storeImprovement", () => renderConceptualStoreImprovement(store));
   safeRender("offsetStats", () => renderOffsetStats(offset));
-  safeRender("vectorOffset", () => renderVectorOffsetExample(offset));
+  safeRender("offsetDemo", () => renderOffsetVectorDemo(offsetDemo));
   safeRender("offset", () => renderOffsetInvariance(offset));
   safeRender("offsetHeatmap", () => renderOffsetFamilyHeatmap(offset));
   safeRender("colorCircle", () => renderColorCircle(color));
+
+  // Section 6.6b: Layerwise color circle
+  if (colorLayers) safeRender("colorCircleLayers", () => renderColorCircleLayers(colorLayers));
 
   // Section 6.7–6.9: New analyses
   if (decontext) safeRender("carrierBaseline", () => renderCarrierBaseline(decontext));

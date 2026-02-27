@@ -14,8 +14,12 @@ This choice is motivated by the observation that Transformer encoder representat
 The carrier sentence provides a minimal, semantically neutral context that activates the target word's lexical representation while minimizing confounds from sentential semantics.
 We then extract the encoder hidden states corresponding only to the target word's subword tokens, discarding activations from the carrier context.
 When a word is split into multiple subword tokens by the SentencePiece tokenizer, we mean-pool their activations to produce a single vector per concept--language pair.
-We note that this carrier sentence is English-derived and imposes structural assumptions (SVO order, articles, spatial prepositions) that are not typologically universal; we assess this confound in Section~5.
+Agglutinative and polysynthetic languages tend to produce longer subword sequences, as morphological markers (case, evidentiality, tense) are segmented into additional tokens whose mean-pooling may attenuate fine-grained lexical features.
+We note that this carrier sentence is English-derived and imposes structural assumptions (SVO order, articles, spatial prepositions) that are not typologically universal; we assess this confound in Sections~\ref{sec:results} and~5.
 All pre-computed embeddings are stored as JSON files to ensure full reproducibility of the analysis-to-figure pipeline.
+
+To assess the impact of the carrier sentence on our results, we additionally extract decontextualized embeddings by embedding each target word in isolation, without any surrounding context.
+This bare-word baseline tests whether the convergence patterns we report in Section~\ref{sec:results} are driven by the carrier sentence's syntactic scaffold or by the target word's intrinsic lexical representation.
 
 \subsection{Embedding Extraction and Correction}
 
@@ -24,6 +28,7 @@ We extract mean-pooled encoder hidden states from the final Transformer layer an
 
 First, we perform All-But-The-Top (ABTT) isotropy correction \citep{mu2018}: we subtract the global mean embedding computed over all concept--language pairs, then project out the top $k=3$ principal components of the centered matrix.
 This removes the dominant directions that encode frequency- and language-identity information rather than semantics, yielding a more isotropic embedding space in which cosine similarity more faithfully reflects semantic relatedness.
+The choice of $k=3$ is validated by a sensitivity analysis across a range of $k$ values (Section~\ref{sec:results}), which confirms that the convergence ranking is robust to this hyperparameter.
 
 Second, for analyses that require disentangling concept-level structure from language-level clustering, we apply per-language mean-centering: we subtract each language's centroid (its mean embedding across all \NumConcepts{} concepts) before computing PCA or pairwise distances.
 This correction factors out the systematic offset that each language occupies in the shared space and exposes the residual conceptual geometry shared across languages.

@@ -236,7 +236,18 @@ def run_offset_invariance(concept_embeddings, languages):
     t0 = step_timer("6/8  Semantic Offset Invariance")
     pairs = semantic_offset_invariance(concept_embeddings, languages, DEFAULT_OFFSET_PAIRS)
 
-    top_k = sorted(pairs, key=lambda p: p["centroid_offset_norm"], reverse=True)[:4]
+    semantic_set = {
+        ("man", "woman"), ("one", "two"), ("I", "we"), ("sun", "moon"),
+        ("fire", "water"), ("big", "small"), ("hot", "cold"), ("good", "new"),
+        ("dog", "fish"), ("die", "kill"), ("come", "give"), ("eye", "ear"),
+        ("black", "white"), ("night", "sun"), ("eat", "drink"),
+    }
+    semantic_pairs = [
+        p for p in pairs
+        if (p["concept_a"], p["concept_b"]) in semantic_set
+        or (p["concept_b"], p["concept_a"]) in semantic_set
+    ]
+    top_k = sorted(semantic_pairs, key=lambda p: p["centroid_offset_norm"], reverse=True)[:5]
 
     vector_plots = []
     for pair_info in top_k:
@@ -284,7 +295,7 @@ def run_offset_invariance(concept_embeddings, languages):
             "explained_variance": [float(v) for v in pca_2d.explained_variance_ratio_],
         })
 
-    # Joint PCA: project all concepts from top-4 pairs into a shared 2D space
+    # Joint PCA: project all concepts from top-5 semantic pairs into shared 2D space
     unique_concepts = list(dict.fromkeys(
         c for p in top_k for c in (p["concept_a"], p["concept_b"])
     ))

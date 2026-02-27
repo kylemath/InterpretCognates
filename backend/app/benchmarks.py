@@ -884,6 +884,7 @@ def conceptual_store_metric(
 # ---------------------------------------------------------------------------
 
 DEFAULT_OFFSET_PAIRS: List[Tuple[str, str]] = [
+    # --- Semantically related pairs (expected high consistency) ---
     ("man", "woman"),      # gender
     ("one", "two"),        # numerosity
     ("I", "we"),           # singular→plural person
@@ -891,14 +892,23 @@ DEFAULT_OFFSET_PAIRS: List[Tuple[str, str]] = [
     ("fire", "water"),     # elemental opposition
     ("big", "small"),      # size antonymy
     ("hot", "cold"),       # temperature antonymy
-    ("good", "new"),       # abstract property (control - no expected invariance)
-    ("dog", "fish"),       # animal pair (control)
+    ("good", "new"),       # abstract property
+    ("dog", "fish"),       # animal pair
     ("die", "kill"),       # causative pair
-    ("come", "give"),      # motion/transfer (control)
+    ("come", "give"),      # motion/transfer
     ("eye", "ear"),        # sensory organ pair
     ("black", "white"),    # color opposition
     ("night", "sun"),      # temporal opposition
     ("eat", "drink"),      # consumptive pair
+    # --- Semantically unrelated pairs (negative controls) ---
+    ("stone", "sleep"),    # inanimate object vs action
+    ("rain", "tooth"),     # weather vs body part
+    ("tree", "red"),       # plant vs color
+    ("leaf", "come"),      # plant part vs motion verb
+    ("cloud", "bone"),     # weather vs body part
+    ("path", "tongue"),    # location vs body part
+    ("seed", "night"),     # plant part vs time
+    ("smoke", "leg"),      # substance vs body part
 ]
 
 

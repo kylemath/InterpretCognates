@@ -22,6 +22,7 @@ def run_script(name):
 
 def main():
     ok = True
+    ok = run_script('precompute_revisions.py') and ok
     ok = run_script('generate_figures.py') and ok
     ok = run_script('generate_stats.py') and ok
 

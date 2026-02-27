@@ -37,8 +37,9 @@ MISSING_FIGS=0
 for fig in fig_swadesh_ranking fig_phylogenetic fig_swadesh_comparison \
            fig_colexification fig_conceptual_store fig_color_circle \
            fig_offset_combined fig_water_manifold \
-           fig_category_summary fig_isotropy_validation fig_mantel_scatter \
-           fig_concept_map fig_offset_vector_demo; do
+           fig_category_summary fig_category_detail fig_isotropy_validation \
+           fig_mantel_scatter fig_concept_map fig_offset_vector_demo \
+           fig_carrier_baseline fig_layerwise_trajectory; do
     if [ ! -f "figures/${fig}.pdf" ]; then
         echo "WARNING: figures/${fig}.pdf not found"
         MISSING_FIGS=$((MISSING_FIGS + 1))

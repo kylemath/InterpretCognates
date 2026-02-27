@@ -264,6 +264,63 @@ def main():
                 add(f'Cat{safe_cat}Mean', _fmt(np.mean(vals)))
                 add(f'Cat{safe_cat}Std', _fmt(np.std(vals)))
 
+    # --- Carrier baseline (decontextualized convergence) ---
+    print("Loading decontextualized_convergence.json …")
+    d = _load_json('decontextualized_convergence.json')
+    if d:
+        comp = d.get('comparison', {})
+        add('CarrierBaselineRho', _fmt(comp.get('spearman_rho', 0), 3))
+        add('CarrierBaselineP', _fmt_p(comp.get('spearman_p', 1.0)))
+        add('CarrierBaselineMeanDiff', _fmt(comp.get('mean_difference', 0), 3))
+        add('CarrierBaselineTstat', _fmt(comp.get('paired_t_stat', 0), 2))
+        add('CarrierBaselineTp', _fmt_p(comp.get('paired_t_p', 1.0)))
+
+    # --- Layerwise metrics ---
+    print("Loading layerwise_metrics.json …")
+    d = _load_json('layerwise_metrics.json')
+    if d:
+        add('LayerwiseNumLayers', _fmt(d.get('num_layers', 0)))
+        summary = d.get('summary', {})
+        add('LayerwiseEmergenceLayer', _fmt(summary.get('convergence_emergence_layer', '?')))
+        add('LayerwisePhaseTrans', _fmt(summary.get('csm_phase_transition_layer', '?')))
+        layers = d.get('layers', [])
+        if layers:
+            final = layers[-1]
+            add('LayerwiseFinalCSM', _fmt(final.get('csm_centered_ratio', 0)))
+            add('LayerwiseFinalConv', _fmt(final.get('convergence_mean', 0)))
+            input_layer = layers[0]
+            add('LayerwiseInputConv', _fmt(input_layer.get('convergence_mean', 0)))
+
+    # --- Isotropy sensitivity ---
+    print("Loading isotropy_sensitivity.json …")
+    d = _load_json('isotropy_sensitivity.json')
+    if d:
+        ref_k = d.get('reference_k', 3)
+        results = d.get('results', [])
+        pairwise = d.get('pairwise_correlations', {})
+        non_ref_rhos = []
+        if results:
+            ref_result = next((r for r in results if r['k'] == ref_k), None)
+            non_ref_rhos = [r.get('spearman_vs_k3', 1.0) for r in results
+                            if r['k'] != ref_k]
+            is_optimal = 'Yes'
+            if ref_result and non_ref_rhos:
+                ref_conv = ref_result.get('mean_convergence', 0)
+                best_conv = max(r.get('mean_convergence', 0) for r in results)
+                if ref_conv < best_conv * 0.95:
+                    is_optimal = 'No'
+            add('IsotropyKThreeOptimal', is_optimal)
+        if pairwise:
+            pw_vals = list(pairwise.values())
+            add('IsotropyMinRho', _fmt(min(pw_vals), 2))
+            add('IsotropyMaxRho', _fmt(max(pw_vals), 2))
+            add('IsotropyKRange', f'{min(pw_vals):.2f}--{max(pw_vals):.2f}')
+        elif non_ref_rhos:
+            add('IsotropyMinRho', _fmt(min(non_ref_rhos), 2))
+            add('IsotropyMaxRho', _fmt(max(non_ref_rhos), 2))
+            add('IsotropyKRange',
+                f'{min(non_ref_rhos):.2f}--{max(non_ref_rhos):.2f}')
+
     # --- Write stats.tex ---
     out_path = os.path.join(OUTPUT_DIR, 'stats.tex')
     with open(out_path, 'w') as f:

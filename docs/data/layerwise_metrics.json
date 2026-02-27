@@ -1,0 +1,264 @@
+{
+  "model": "nllb-200-distilled-600M",
+  "num_layers": 12,
+  "layers": [
+    {
+      "layer": 0,
+      "convergence_mean": 0.3585,
+      "convergence_std": 0.1266,
+      "csm_raw_ratio": 0.8201,
+      "csm_centered_ratio": 0.9366,
+      "top_5_concepts": [
+        "star",
+        "foot",
+        "night",
+        "stone",
+        "name"
+      ],
+      "bottom_5_concepts": [
+        "lie",
+        "that",
+        "bite",
+        "liver",
+        "louse"
+      ]
+    },
+    {
+      "layer": 1,
+      "convergence_mean": 0.3456,
+      "convergence_std": 0.1192,
+      "csm_raw_ratio": 0.8023,
+      "csm_centered_ratio": 0.9637,
+      "top_5_concepts": [
+        "foot",
+        "fish",
+        "hand",
+        "cloud",
+        "woman"
+      ],
+      "bottom_5_concepts": [
+        "yellow",
+        "claw",
+        "round",
+        "that",
+        "not"
+      ]
+    },
+    {
+      "layer": 2,
+      "convergence_mean": 0.3463,
+      "convergence_std": 0.1205,
+      "csm_raw_ratio": 0.8286,
+      "csm_centered_ratio": 0.9698,
+      "top_5_concepts": [
+        "mountain",
+        "name",
+        "rain",
+        "water",
+        "foot"
+      ],
+      "bottom_5_concepts": [
+        "neck",
+        "that",
+        "liver",
+        "not",
+        "give"
+      ]
+    },
+    {
+      "layer": 3,
+      "convergence_mean": 0.3667,
+      "convergence_std": 0.1219,
+      "csm_raw_ratio": 0.8668,
+      "csm_centered_ratio": 1.0133,
+      "top_5_concepts": [
+        "foot",
+        "sun",
+        "small",
+        "rain",
+        "blood"
+      ],
+      "bottom_5_concepts": [
+        "round",
+        "tail",
+        "feather",
+        "not",
+        "that"
+      ]
+    },
+    {
+      "layer": 4,
+      "convergence_mean": 0.3809,
+      "convergence_std": 0.1284,
+      "csm_raw_ratio": 0.9838,
+      "csm_centered_ratio": 1.148,
+      "top_5_concepts": [
+        "cloud",
+        "blood",
+        "mountain",
+        "water",
+        "woman"
+      ],
+      "bottom_5_concepts": [
+        "lie",
+        "say",
+        "give",
+        "yellow",
+        "louse"
+      ]
+    },
+    {
+      "layer": 5,
+      "convergence_mean": 0.4157,
+      "convergence_std": 0.137,
+      "csm_raw_ratio": 1.2567,
+      "csm_centered_ratio": 1.5067,
+      "top_5_concepts": [
+        "fire",
+        "fish",
+        "name",
+        "mountain",
+        "night"
+      ],
+      "bottom_5_concepts": [
+        "say",
+        "claw",
+        "lie",
+        "louse",
+        "that"
+      ]
+    },
+    {
+      "layer": 6,
+      "convergence_mean": 0.4867,
+      "convergence_std": 0.1522,
+      "csm_raw_ratio": 1.6264,
+      "csm_centered_ratio": 1.9677,
+      "top_5_concepts": [
+        "night",
+        "fish",
+        "woman",
+        "blood",
+        "fire"
+      ],
+      "bottom_5_concepts": [
+        "louse",
+        "round",
+        "give",
+        "claw",
+        "liver"
+      ]
+    },
+    {
+      "layer": 7,
+      "convergence_mean": 0.5303,
+      "convergence_std": 0.1624,
+      "csm_raw_ratio": 1.9103,
+      "csm_centered_ratio": 2.2975,
+      "top_5_concepts": [
+        "blood",
+        "stone",
+        "night",
+        "tree",
+        "star"
+      ],
+      "bottom_5_concepts": [
+        "claw",
+        "louse",
+        "bite",
+        "feather",
+        "bark"
+      ]
+    },
+    {
+      "layer": 8,
+      "convergence_mean": 0.549,
+      "convergence_std": 0.1675,
+      "csm_raw_ratio": 2.0311,
+      "csm_centered_ratio": 2.4433,
+      "top_5_concepts": [
+        "night",
+        "star",
+        "stone",
+        "water",
+        "tree"
+      ],
+      "bottom_5_concepts": [
+        "that",
+        "claw",
+        "feather",
+        "bark",
+        "louse"
+      ]
+    },
+    {
+      "layer": 9,
+      "convergence_mean": 0.5561,
+      "convergence_std": 0.1688,
+      "csm_raw_ratio": 2.0741,
+      "csm_centered_ratio": 2.4953,
+      "top_5_concepts": [
+        "night",
+        "star",
+        "stone",
+        "water",
+        "tree"
+      ],
+      "bottom_5_concepts": [
+        "that",
+        "claw",
+        "feather",
+        "bark",
+        "louse"
+      ]
+    },
+    {
+      "layer": 10,
+      "convergence_mean": 0.5583,
+      "convergence_std": 0.1694,
+      "csm_raw_ratio": 2.0875,
+      "csm_centered_ratio": 2.5114,
+      "top_5_concepts": [
+        "night",
+        "star",
+        "stone",
+        "water",
+        "tree"
+      ],
+      "bottom_5_concepts": [
+        "that",
+        "claw",
+        "feather",
+        "bark",
+        "louse"
+      ]
+    },
+    {
+      "layer": 11,
+      "convergence_mean": 0.559,
+      "convergence_std": 0.1695,
+      "csm_raw_ratio": 2.0916,
+      "csm_centered_ratio": 2.5163,
+      "top_5_concepts": [
+        "night",
+        "star",
+        "stone",
+        "water",
+        "tree"
+      ],
+      "bottom_5_concepts": [
+        "that",
+        "claw",
+        "feather",
+        "bark",
+        "louse"
+      ]
+    }
+  ],
+  "summary": {
+    "convergence_emergence_layer": 5,
+    "csm_phase_transition_layer": 4,
+    "final_layer_convergence": 0.559,
+    "final_layer_csm": 2.0916
+  }
+}

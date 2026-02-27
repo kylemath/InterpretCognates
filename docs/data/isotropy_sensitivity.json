@@ -1,0 +1,2085 @@
+{
+  "method": "isotropy_sensitivity_analysis",
+  "k_values": [
+    0,
+    1,
+    3,
+    5,
+    10
+  ],
+  "reference_k": 3,
+  "results": [
+    {
+      "k": 0,
+      "rankings": [
+        {
+          "concept": "night",
+          "mean_similarity": 0.893122
+        },
+        {
+          "concept": "star",
+          "mean_similarity": 0.889842
+        },
+        {
+          "concept": "stone",
+          "mean_similarity": 0.881597
+        },
+        {
+          "concept": "water",
+          "mean_similarity": 0.878101
+        },
+        {
+          "concept": "tree",
+          "mean_similarity": 0.870284
+        },
+        {
+          "concept": "woman",
+          "mean_similarity": 0.863075
+        },
+        {
+          "concept": "blood",
+          "mean_similarity": 0.859415
+        },
+        {
+          "concept": "fish",
+          "mean_similarity": 0.854726
+        },
+        {
+          "concept": "mountain",
+          "mean_similarity": 0.85227
+        },
+        {
+          "concept": "fire",
+          "mean_similarity": 0.849899
+        },
+        {
+          "concept": "cloud",
+          "mean_similarity": 0.841357
+        },
+        {
+          "concept": "rain",
+          "mean_similarity": 0.830069
+        },
+        {
+          "concept": "bird",
+          "mean_similarity": 0.824651
+        },
+        {
+          "concept": "foot",
+          "mean_similarity": 0.821985
+        },
+        {
+          "concept": "name",
+          "mean_similarity": 0.820156
+        },
+        {
+          "concept": "hand",
+          "mean_similarity": 0.819167
+        },
+        {
+          "concept": "small",
+          "mean_similarity": 0.811672
+        },
+        {
+          "concept": "man",
+          "mean_similarity": 0.805077
+        },
+        {
+          "concept": "sun",
+          "mean_similarity": 0.804774
+        },
+        {
+          "concept": "dog",
+          "mean_similarity": 0.80346
+        },
+        {
+          "concept": "moon",
+          "mean_similarity": 0.798226
+        },
+        {
+          "concept": "head",
+          "mean_similarity": 0.794878
+        },
+        {
+          "concept": "person",
+          "mean_similarity": 0.794442
+        },
+        {
+          "concept": "heart",
+          "mean_similarity": 0.794416
+        },
+        {
+          "concept": "new",
+          "mean_similarity": 0.793941
+        },
+        {
+          "concept": "cold",
+          "mean_similarity": 0.79064
+        },
+        {
+          "concept": "path",
+          "mean_similarity": 0.788766
+        },
+        {
+          "concept": "die",
+          "mean_similarity": 0.774273
+        },
+        {
+          "concept": "two",
+          "mean_similarity": 0.772375
+        },
+        {
+          "concept": "red",
+          "mean_similarity": 0.771148
+        },
+        {
+          "concept": "earth",
+          "mean_similarity": 0.766234
+        },
+        {
+          "concept": "sit",
+          "mean_similarity": 0.76584
+        },
+        {
+          "concept": "flesh",
+          "mean_similarity": 0.762987
+        },
+        {
+          "concept": "big",
+          "mean_similarity": 0.75519
+        },
+        {
+          "concept": "white",
+          "mean_similarity": 0.750634
+        },
+        {
+          "concept": "walk",
+          "mean_similarity": 0.749124
+        },
+        {
+          "concept": "hair",
+          "mean_similarity": 0.748839
+        },
+        {
+          "concept": "eye",
+          "mean_similarity": 0.745073
+        },
+        {
+          "concept": "sleep",
+          "mean_similarity": 0.742474
+        },
+        {
+          "concept": "ear",
+          "mean_similarity": 0.741924
+        },
+        {
+          "concept": "drink",
+          "mean_similarity": 0.735411
+        },
+        {
+          "concept": "tongue",
+          "mean_similarity": 0.73421
+        },
+        {
+          "concept": "kill",
+          "mean_similarity": 0.732036
+        },
+        {
+          "concept": "one",
+          "mean_similarity": 0.73186
+        },
+        {
+          "concept": "eat",
+          "mean_similarity": 0.718857
+        },
+        {
+          "concept": "skin",
+          "mean_similarity": 0.714316
+        },
+        {
+          "concept": "long",
+          "mean_similarity": 0.711202
+        },
+        {
+          "concept": "mouth",
+          "mean_similarity": 0.708847
+        },
+        {
+          "concept": "smoke",
+          "mean_similarity": 0.707939
+        },
+        {
+          "concept": "black",
+          "mean_similarity": 0.704265
+        },
+        {
+          "concept": "dry",
+          "mean_similarity": 0.704251
+        },
+        {
+          "concept": "stand",
+          "mean_similarity": 0.701499
+        },
+        {
+          "concept": "tooth",
+          "mean_similarity": 0.695227
+        },
+        {
+          "concept": "hot",
+          "mean_similarity": 0.693823
+        },
+        {
+          "concept": "sand",
+          "mean_similarity": 0.692747
+        },
+        {
+          "concept": "come",
+          "mean_similarity": 0.689919
+        },
+        {
+          "concept": "hear",
+          "mean_similarity": 0.685632
+        },
+        {
+          "concept": "all",
+          "mean_similarity": 0.684731
+        },
+        {
+          "concept": "good",
+          "mean_similarity": 0.680025
+        },
+        {
+          "concept": "egg",
+          "mean_similarity": 0.678292
+        },
+        {
+          "concept": "green",
+          "mean_similarity": 0.67608
+        },
+        {
+          "concept": "you",
+          "mean_similarity": 0.67414
+        },
+        {
+          "concept": "many",
+          "mean_similarity": 0.67365
+        },
+        {
+          "concept": "bone",
+          "mean_similarity": 0.672018
+        },
+        {
+          "concept": "fly",
+          "mean_similarity": 0.666497
+        },
+        {
+          "concept": "we",
+          "mean_similarity": 0.665955
+        },
+        {
+          "concept": "root",
+          "mean_similarity": 0.663119
+        },
+        {
+          "concept": "seed",
+          "mean_similarity": 0.657314
+        },
+        {
+          "concept": "swim",
+          "mean_similarity": 0.649659
+        },
+        {
+          "concept": "see",
+          "mean_similarity": 0.642773
+        },
+        {
+          "concept": "burn",
+          "mean_similarity": 0.642694
+        },
+        {
+          "concept": "nose",
+          "mean_similarity": 0.638663
+        },
+        {
+          "concept": "this",
+          "mean_similarity": 0.631562
+        },
+        {
+          "concept": "grease",
+          "mean_similarity": 0.62666
+        },
+        {
+          "concept": "full",
+          "mean_similarity": 0.625811
+        },
+        {
+          "concept": "breast",
+          "mean_similarity": 0.623325
+        },
+        {
+          "concept": "I",
+          "mean_similarity": 0.623182
+        },
+        {
+          "concept": "knee",
+          "mean_similarity": 0.621748
+        },
+        {
+          "concept": "yellow",
+          "mean_similarity": 0.619727
+        },
+        {
+          "concept": "he",
+          "mean_similarity": 0.619556
+        },
+        {
+          "concept": "who",
+          "mean_similarity": 0.617934
+        },
+        {
+          "concept": "what",
+          "mean_similarity": 0.613103
+        },
+        {
+          "concept": "not",
+          "mean_similarity": 0.609782
+        },
+        {
+          "concept": "belly",
+          "mean_similarity": 0.607813
+        },
+        {
+          "concept": "know",
+          "mean_similarity": 0.604667
+        },
+        {
+          "concept": "horn",
+          "mean_similarity": 0.603388
+        },
+        {
+          "concept": "neck",
+          "mean_similarity": 0.601563
+        },
+        {
+          "concept": "give",
+          "mean_similarity": 0.581749
+        },
+        {
+          "concept": "ash",
+          "mean_similarity": 0.579149
+        },
+        {
+          "concept": "leaf",
+          "mean_similarity": 0.574754
+        },
+        {
+          "concept": "tail",
+          "mean_similarity": 0.571238
+        },
+        {
+          "concept": "lie",
+          "mean_similarity": 0.568877
+        },
+        {
+          "concept": "say",
+          "mean_similarity": 0.568829
+        },
+        {
+          "concept": "round",
+          "mean_similarity": 0.5498
+        },
+        {
+          "concept": "that",
+          "mean_similarity": 0.526719
+        },
+        {
+          "concept": "bite",
+          "mean_similarity": 0.520013
+        },
+        {
+          "concept": "liver",
+          "mean_similarity": 0.51241
+        },
+        {
+          "concept": "bark",
+          "mean_similarity": 0.495157
+        },
+        {
+          "concept": "claw",
+          "mean_similarity": 0.485893
+        },
+        {
+          "concept": "feather",
+          "mean_similarity": 0.476451
+        },
+        {
+          "concept": "louse",
+          "mean_similarity": 0.429398
+        }
+      ],
+      "spearman_vs_k3": 0.990448,
+      "spearman_p": 5.233868384618319e-87,
+      "mean_convergence": 0.702911
+    },
+    {
+      "k": 1,
+      "rankings": [
+        {
+          "concept": "night",
+          "mean_similarity": 0.883553
+        },
+        {
+          "concept": "star",
+          "mean_similarity": 0.877406
+        },
+        {
+          "concept": "stone",
+          "mean_similarity": 0.867893
+        },
+        {
+          "concept": "water",
+          "mean_similarity": 0.862255
+        },
+        {
+          "concept": "tree",
+          "mean_similarity": 0.855672
+        },
+        {
+          "concept": "woman",
+          "mean_similarity": 0.845489
+        },
+        {
+          "concept": "blood",
+          "mean_similarity": 0.844248
+        },
+        {
+          "concept": "fish",
+          "mean_similarity": 0.83617
+        },
+        {
+          "concept": "mountain",
+          "mean_similarity": 0.835281
+        },
+        {
+          "concept": "fire",
+          "mean_similarity": 0.831676
+        },
+        {
+          "concept": "cloud",
+          "mean_similarity": 0.823288
+        },
+        {
+          "concept": "rain",
+          "mean_similarity": 0.810853
+        },
+        {
+          "concept": "bird",
+          "mean_similarity": 0.798765
+        },
+        {
+          "concept": "name",
+          "mean_similarity": 0.797777
+        },
+        {
+          "concept": "foot",
+          "mean_similarity": 0.796346
+        },
+        {
+          "concept": "hand",
+          "mean_similarity": 0.793302
+        },
+        {
+          "concept": "small",
+          "mean_similarity": 0.785218
+        },
+        {
+          "concept": "sun",
+          "mean_similarity": 0.783909
+        },
+        {
+          "concept": "dog",
+          "mean_similarity": 0.776487
+        },
+        {
+          "concept": "man",
+          "mean_similarity": 0.77511
+        },
+        {
+          "concept": "moon",
+          "mean_similarity": 0.77458
+        },
+        {
+          "concept": "heart",
+          "mean_similarity": 0.765045
+        },
+        {
+          "concept": "new",
+          "mean_similarity": 0.763239
+        },
+        {
+          "concept": "path",
+          "mean_similarity": 0.762374
+        },
+        {
+          "concept": "head",
+          "mean_similarity": 0.759952
+        },
+        {
+          "concept": "person",
+          "mean_similarity": 0.759719
+        },
+        {
+          "concept": "cold",
+          "mean_similarity": 0.759652
+        },
+        {
+          "concept": "die",
+          "mean_similarity": 0.745897
+        },
+        {
+          "concept": "two",
+          "mean_similarity": 0.73905
+        },
+        {
+          "concept": "earth",
+          "mean_similarity": 0.731439
+        },
+        {
+          "concept": "flesh",
+          "mean_similarity": 0.729585
+        },
+        {
+          "concept": "sit",
+          "mean_similarity": 0.729215
+        },
+        {
+          "concept": "red",
+          "mean_similarity": 0.717632
+        },
+        {
+          "concept": "hair",
+          "mean_similarity": 0.713114
+        },
+        {
+          "concept": "walk",
+          "mean_similarity": 0.71162
+        },
+        {
+          "concept": "sleep",
+          "mean_similarity": 0.711469
+        },
+        {
+          "concept": "eye",
+          "mean_similarity": 0.71042
+        },
+        {
+          "concept": "big",
+          "mean_similarity": 0.710287
+        },
+        {
+          "concept": "drink",
+          "mean_similarity": 0.703366
+        },
+        {
+          "concept": "white",
+          "mean_similarity": 0.703285
+        },
+        {
+          "concept": "ear",
+          "mean_similarity": 0.697173
+        },
+        {
+          "concept": "kill",
+          "mean_similarity": 0.696108
+        },
+        {
+          "concept": "tongue",
+          "mean_similarity": 0.693601
+        },
+        {
+          "concept": "eat",
+          "mean_similarity": 0.681097
+        },
+        {
+          "concept": "one",
+          "mean_similarity": 0.679771
+        },
+        {
+          "concept": "smoke",
+          "mean_similarity": 0.676784
+        },
+        {
+          "concept": "dry",
+          "mean_similarity": 0.666631
+        },
+        {
+          "concept": "long",
+          "mean_similarity": 0.664759
+        },
+        {
+          "concept": "mouth",
+          "mean_similarity": 0.664758
+        },
+        {
+          "concept": "skin",
+          "mean_similarity": 0.661104
+        },
+        {
+          "concept": "stand",
+          "mean_similarity": 0.658539
+        },
+        {
+          "concept": "sand",
+          "mean_similarity": 0.655181
+        },
+        {
+          "concept": "tooth",
+          "mean_similarity": 0.650132
+        },
+        {
+          "concept": "black",
+          "mean_similarity": 0.646374
+        },
+        {
+          "concept": "hot",
+          "mean_similarity": 0.639055
+        },
+        {
+          "concept": "hear",
+          "mean_similarity": 0.638237
+        },
+        {
+          "concept": "come",
+          "mean_similarity": 0.637594
+        },
+        {
+          "concept": "all",
+          "mean_similarity": 0.6327
+        },
+        {
+          "concept": "egg",
+          "mean_similarity": 0.629052
+        },
+        {
+          "concept": "fly",
+          "mean_similarity": 0.623806
+        },
+        {
+          "concept": "good",
+          "mean_similarity": 0.620042
+        },
+        {
+          "concept": "green",
+          "mean_similarity": 0.618643
+        },
+        {
+          "concept": "root",
+          "mean_similarity": 0.618474
+        },
+        {
+          "concept": "you",
+          "mean_similarity": 0.616633
+        },
+        {
+          "concept": "many",
+          "mean_similarity": 0.614329
+        },
+        {
+          "concept": "seed",
+          "mean_similarity": 0.614026
+        },
+        {
+          "concept": "bone",
+          "mean_similarity": 0.610293
+        },
+        {
+          "concept": "we",
+          "mean_similarity": 0.60782
+        },
+        {
+          "concept": "swim",
+          "mean_similarity": 0.606158
+        },
+        {
+          "concept": "burn",
+          "mean_similarity": 0.589308
+        },
+        {
+          "concept": "see",
+          "mean_similarity": 0.586694
+        },
+        {
+          "concept": "grease",
+          "mean_similarity": 0.570134
+        },
+        {
+          "concept": "knee",
+          "mean_similarity": 0.570036
+        },
+        {
+          "concept": "nose",
+          "mean_similarity": 0.569811
+        },
+        {
+          "concept": "this",
+          "mean_similarity": 0.566175
+        },
+        {
+          "concept": "I",
+          "mean_similarity": 0.565412
+        },
+        {
+          "concept": "breast",
+          "mean_similarity": 0.562739
+        },
+        {
+          "concept": "full",
+          "mean_similarity": 0.558988
+        },
+        {
+          "concept": "belly",
+          "mean_similarity": 0.548103
+        },
+        {
+          "concept": "who",
+          "mean_similarity": 0.545702
+        },
+        {
+          "concept": "he",
+          "mean_similarity": 0.544591
+        },
+        {
+          "concept": "horn",
+          "mean_similarity": 0.539333
+        },
+        {
+          "concept": "yellow",
+          "mean_similarity": 0.538989
+        },
+        {
+          "concept": "not",
+          "mean_similarity": 0.537522
+        },
+        {
+          "concept": "what",
+          "mean_similarity": 0.53032
+        },
+        {
+          "concept": "neck",
+          "mean_similarity": 0.526201
+        },
+        {
+          "concept": "ash",
+          "mean_similarity": 0.523069
+        },
+        {
+          "concept": "know",
+          "mean_similarity": 0.520988
+        },
+        {
+          "concept": "leaf",
+          "mean_similarity": 0.509834
+        },
+        {
+          "concept": "lie",
+          "mean_similarity": 0.503659
+        },
+        {
+          "concept": "say",
+          "mean_similarity": 0.497628
+        },
+        {
+          "concept": "give",
+          "mean_similarity": 0.493663
+        },
+        {
+          "concept": "tail",
+          "mean_similarity": 0.490739
+        },
+        {
+          "concept": "round",
+          "mean_similarity": 0.47656
+        },
+        {
+          "concept": "bite",
+          "mean_similarity": 0.435892
+        },
+        {
+          "concept": "that",
+          "mean_similarity": 0.434259
+        },
+        {
+          "concept": "liver",
+          "mean_similarity": 0.429795
+        },
+        {
+          "concept": "claw",
+          "mean_similarity": 0.39154
+        },
+        {
+          "concept": "bark",
+          "mean_similarity": 0.388208
+        },
+        {
+          "concept": "feather",
+          "mean_similarity": 0.380261
+        },
+        {
+          "concept": "louse",
+          "mean_similarity": 0.323006
+        }
+      ],
+      "spearman_vs_k3": 0.99661,
+      "spearman_p": 3.2474961213840215e-109,
+      "mean_convergence": 0.654947
+    },
+    {
+      "k": 3,
+      "rankings": [
+        {
+          "concept": "night",
+          "mean_similarity": 0.864415
+        },
+        {
+          "concept": "star",
+          "mean_similarity": 0.852534
+        },
+        {
+          "concept": "stone",
+          "mean_similarity": 0.840485
+        },
+        {
+          "concept": "water",
+          "mean_similarity": 0.830562
+        },
+        {
+          "concept": "tree",
+          "mean_similarity": 0.826447
+        },
+        {
+          "concept": "blood",
+          "mean_similarity": 0.813914
+        },
+        {
+          "concept": "woman",
+          "mean_similarity": 0.810317
+        },
+        {
+          "concept": "mountain",
+          "mean_similarity": 0.801303
+        },
+        {
+          "concept": "fish",
+          "mean_similarity": 0.799057
+        },
+        {
+          "concept": "fire",
+          "mean_similarity": 0.795229
+        },
+        {
+          "concept": "cloud",
+          "mean_similarity": 0.78715
+        },
+        {
+          "concept": "rain",
+          "mean_similarity": 0.77242
+        },
+        {
+          "concept": "name",
+          "mean_similarity": 0.753019
+        },
+        {
+          "concept": "bird",
+          "mean_similarity": 0.746993
+        },
+        {
+          "concept": "foot",
+          "mean_similarity": 0.745069
+        },
+        {
+          "concept": "sun",
+          "mean_similarity": 0.74218
+        },
+        {
+          "concept": "hand",
+          "mean_similarity": 0.741572
+        },
+        {
+          "concept": "small",
+          "mean_similarity": 0.73231
+        },
+        {
+          "concept": "moon",
+          "mean_similarity": 0.727288
+        },
+        {
+          "concept": "dog",
+          "mean_similarity": 0.722542
+        },
+        {
+          "concept": "man",
+          "mean_similarity": 0.715176
+        },
+        {
+          "concept": "path",
+          "mean_similarity": 0.709591
+        },
+        {
+          "concept": "heart",
+          "mean_similarity": 0.706303
+        },
+        {
+          "concept": "new",
+          "mean_similarity": 0.701836
+        },
+        {
+          "concept": "cold",
+          "mean_similarity": 0.697678
+        },
+        {
+          "concept": "person",
+          "mean_similarity": 0.690273
+        },
+        {
+          "concept": "head",
+          "mean_similarity": 0.690101
+        },
+        {
+          "concept": "die",
+          "mean_similarity": 0.689145
+        },
+        {
+          "concept": "two",
+          "mean_similarity": 0.672399
+        },
+        {
+          "concept": "flesh",
+          "mean_similarity": 0.662781
+        },
+        {
+          "concept": "earth",
+          "mean_similarity": 0.661849
+        },
+        {
+          "concept": "sit",
+          "mean_similarity": 0.655965
+        },
+        {
+          "concept": "sleep",
+          "mean_similarity": 0.649457
+        },
+        {
+          "concept": "hair",
+          "mean_similarity": 0.641664
+        },
+        {
+          "concept": "eye",
+          "mean_similarity": 0.641115
+        },
+        {
+          "concept": "drink",
+          "mean_similarity": 0.639276
+        },
+        {
+          "concept": "walk",
+          "mean_similarity": 0.636612
+        },
+        {
+          "concept": "kill",
+          "mean_similarity": 0.624251
+        },
+        {
+          "concept": "big",
+          "mean_similarity": 0.62048
+        },
+        {
+          "concept": "smoke",
+          "mean_similarity": 0.614475
+        },
+        {
+          "concept": "tongue",
+          "mean_similarity": 0.612383
+        },
+        {
+          "concept": "red",
+          "mean_similarity": 0.610601
+        },
+        {
+          "concept": "white",
+          "mean_similarity": 0.608587
+        },
+        {
+          "concept": "ear",
+          "mean_similarity": 0.607669
+        },
+        {
+          "concept": "eat",
+          "mean_similarity": 0.605577
+        },
+        {
+          "concept": "dry",
+          "mean_similarity": 0.591392
+        },
+        {
+          "concept": "sand",
+          "mean_similarity": 0.580049
+        },
+        {
+          "concept": "mouth",
+          "mean_similarity": 0.576581
+        },
+        {
+          "concept": "one",
+          "mean_similarity": 0.575593
+        },
+        {
+          "concept": "stand",
+          "mean_similarity": 0.572618
+        },
+        {
+          "concept": "long",
+          "mean_similarity": 0.571873
+        },
+        {
+          "concept": "tooth",
+          "mean_similarity": 0.559943
+        },
+        {
+          "concept": "skin",
+          "mean_similarity": 0.554681
+        },
+        {
+          "concept": "hear",
+          "mean_similarity": 0.543445
+        },
+        {
+          "concept": "fly",
+          "mean_similarity": 0.538425
+        },
+        {
+          "concept": "come",
+          "mean_similarity": 0.532945
+        },
+        {
+          "concept": "black",
+          "mean_similarity": 0.530594
+        },
+        {
+          "concept": "egg",
+          "mean_similarity": 0.530572
+        },
+        {
+          "concept": "hot",
+          "mean_similarity": 0.529519
+        },
+        {
+          "concept": "root",
+          "mean_similarity": 0.529184
+        },
+        {
+          "concept": "all",
+          "mean_similarity": 0.528637
+        },
+        {
+          "concept": "seed",
+          "mean_similarity": 0.527448
+        },
+        {
+          "concept": "swim",
+          "mean_similarity": 0.519157
+        },
+        {
+          "concept": "green",
+          "mean_similarity": 0.503768
+        },
+        {
+          "concept": "you",
+          "mean_similarity": 0.501618
+        },
+        {
+          "concept": "good",
+          "mean_similarity": 0.500074
+        },
+        {
+          "concept": "many",
+          "mean_similarity": 0.495687
+        },
+        {
+          "concept": "we",
+          "mean_similarity": 0.491551
+        },
+        {
+          "concept": "bone",
+          "mean_similarity": 0.486845
+        },
+        {
+          "concept": "burn",
+          "mean_similarity": 0.482534
+        },
+        {
+          "concept": "see",
+          "mean_similarity": 0.474537
+        },
+        {
+          "concept": "knee",
+          "mean_similarity": 0.46661
+        },
+        {
+          "concept": "grease",
+          "mean_similarity": 0.457082
+        },
+        {
+          "concept": "I",
+          "mean_similarity": 0.449872
+        },
+        {
+          "concept": "breast",
+          "mean_similarity": 0.441568
+        },
+        {
+          "concept": "this",
+          "mean_similarity": 0.435402
+        },
+        {
+          "concept": "nose",
+          "mean_similarity": 0.432107
+        },
+        {
+          "concept": "belly",
+          "mean_similarity": 0.428683
+        },
+        {
+          "concept": "full",
+          "mean_similarity": 0.425342
+        },
+        {
+          "concept": "horn",
+          "mean_similarity": 0.411222
+        },
+        {
+          "concept": "ash",
+          "mean_similarity": 0.410909
+        },
+        {
+          "concept": "who",
+          "mean_similarity": 0.401238
+        },
+        {
+          "concept": "he",
+          "mean_similarity": 0.39466
+        },
+        {
+          "concept": "not",
+          "mean_similarity": 0.393003
+        },
+        {
+          "concept": "leaf",
+          "mean_similarity": 0.379992
+        },
+        {
+          "concept": "yellow",
+          "mean_similarity": 0.377513
+        },
+        {
+          "concept": "neck",
+          "mean_similarity": 0.375476
+        },
+        {
+          "concept": "lie",
+          "mean_similarity": 0.373221
+        },
+        {
+          "concept": "what",
+          "mean_similarity": 0.364755
+        },
+        {
+          "concept": "say",
+          "mean_similarity": 0.355226
+        },
+        {
+          "concept": "know",
+          "mean_similarity": 0.35363
+        },
+        {
+          "concept": "round",
+          "mean_similarity": 0.330079
+        },
+        {
+          "concept": "tail",
+          "mean_similarity": 0.329743
+        },
+        {
+          "concept": "give",
+          "mean_similarity": 0.317492
+        },
+        {
+          "concept": "bite",
+          "mean_similarity": 0.267649
+        },
+        {
+          "concept": "liver",
+          "mean_similarity": 0.264565
+        },
+        {
+          "concept": "that",
+          "mean_similarity": 0.249338
+        },
+        {
+          "concept": "claw",
+          "mean_similarity": 0.202832
+        },
+        {
+          "concept": "feather",
+          "mean_similarity": 0.18788
+        },
+        {
+          "concept": "bark",
+          "mean_similarity": 0.174309
+        },
+        {
+          "concept": "louse",
+          "mean_similarity": 0.110222
+        }
+      ],
+      "spearman_vs_k3": 1.0,
+      "spearman_p": 0.0,
+      "mean_convergence": 0.559019
+    },
+    {
+      "k": 5,
+      "rankings": [
+        {
+          "concept": "night",
+          "mean_similarity": 0.846073
+        },
+        {
+          "concept": "star",
+          "mean_similarity": 0.833284
+        },
+        {
+          "concept": "stone",
+          "mean_similarity": 0.827739
+        },
+        {
+          "concept": "tree",
+          "mean_similarity": 0.81059
+        },
+        {
+          "concept": "water",
+          "mean_similarity": 0.809347
+        },
+        {
+          "concept": "blood",
+          "mean_similarity": 0.795565
+        },
+        {
+          "concept": "woman",
+          "mean_similarity": 0.782514
+        },
+        {
+          "concept": "mountain",
+          "mean_similarity": 0.780228
+        },
+        {
+          "concept": "fish",
+          "mean_similarity": 0.771495
+        },
+        {
+          "concept": "fire",
+          "mean_similarity": 0.768105
+        },
+        {
+          "concept": "cloud",
+          "mean_similarity": 0.762339
+        },
+        {
+          "concept": "rain",
+          "mean_similarity": 0.737888
+        },
+        {
+          "concept": "name",
+          "mean_similarity": 0.727649
+        },
+        {
+          "concept": "foot",
+          "mean_similarity": 0.714176
+        },
+        {
+          "concept": "sun",
+          "mean_similarity": 0.713652
+        },
+        {
+          "concept": "hand",
+          "mean_similarity": 0.713021
+        },
+        {
+          "concept": "bird",
+          "mean_similarity": 0.707398
+        },
+        {
+          "concept": "moon",
+          "mean_similarity": 0.692625
+        },
+        {
+          "concept": "small",
+          "mean_similarity": 0.691974
+        },
+        {
+          "concept": "dog",
+          "mean_similarity": 0.686469
+        },
+        {
+          "concept": "path",
+          "mean_similarity": 0.676782
+        },
+        {
+          "concept": "heart",
+          "mean_similarity": 0.672891
+        },
+        {
+          "concept": "new",
+          "mean_similarity": 0.664487
+        },
+        {
+          "concept": "man",
+          "mean_similarity": 0.662185
+        },
+        {
+          "concept": "cold",
+          "mean_similarity": 0.65807
+        },
+        {
+          "concept": "die",
+          "mean_similarity": 0.654788
+        },
+        {
+          "concept": "head",
+          "mean_similarity": 0.647615
+        },
+        {
+          "concept": "person",
+          "mean_similarity": 0.640931
+        },
+        {
+          "concept": "two",
+          "mean_similarity": 0.627707
+        },
+        {
+          "concept": "flesh",
+          "mean_similarity": 0.616044
+        },
+        {
+          "concept": "sleep",
+          "mean_similarity": 0.61218
+        },
+        {
+          "concept": "earth",
+          "mean_similarity": 0.611327
+        },
+        {
+          "concept": "sit",
+          "mean_similarity": 0.598539
+        },
+        {
+          "concept": "drink",
+          "mean_similarity": 0.595235
+        },
+        {
+          "concept": "eye",
+          "mean_similarity": 0.590751
+        },
+        {
+          "concept": "walk",
+          "mean_similarity": 0.588406
+        },
+        {
+          "concept": "kill",
+          "mean_similarity": 0.58276
+        },
+        {
+          "concept": "hair",
+          "mean_similarity": 0.580788
+        },
+        {
+          "concept": "smoke",
+          "mean_similarity": 0.569401
+        },
+        {
+          "concept": "big",
+          "mean_similarity": 0.562582
+        },
+        {
+          "concept": "tongue",
+          "mean_similarity": 0.559172
+        },
+        {
+          "concept": "white",
+          "mean_similarity": 0.549448
+        },
+        {
+          "concept": "eat",
+          "mean_similarity": 0.549345
+        },
+        {
+          "concept": "ear",
+          "mean_similarity": 0.544234
+        },
+        {
+          "concept": "dry",
+          "mean_similarity": 0.535528
+        },
+        {
+          "concept": "red",
+          "mean_similarity": 0.529371
+        },
+        {
+          "concept": "sand",
+          "mean_similarity": 0.52715
+        },
+        {
+          "concept": "one",
+          "mean_similarity": 0.514118
+        },
+        {
+          "concept": "mouth",
+          "mean_similarity": 0.512893
+        },
+        {
+          "concept": "stand",
+          "mean_similarity": 0.508882
+        },
+        {
+          "concept": "long",
+          "mean_similarity": 0.507016
+        },
+        {
+          "concept": "tooth",
+          "mean_similarity": 0.49695
+        },
+        {
+          "concept": "skin",
+          "mean_similarity": 0.480326
+        },
+        {
+          "concept": "hear",
+          "mean_similarity": 0.477368
+        },
+        {
+          "concept": "fly",
+          "mean_similarity": 0.47625
+        },
+        {
+          "concept": "root",
+          "mean_similarity": 0.471602
+        },
+        {
+          "concept": "seed",
+          "mean_similarity": 0.464051
+        },
+        {
+          "concept": "come",
+          "mean_similarity": 0.456774
+        },
+        {
+          "concept": "swim",
+          "mean_similarity": 0.456674
+        },
+        {
+          "concept": "egg",
+          "mean_similarity": 0.454196
+        },
+        {
+          "concept": "hot",
+          "mean_similarity": 0.453926
+        },
+        {
+          "concept": "all",
+          "mean_similarity": 0.453078
+        },
+        {
+          "concept": "black",
+          "mean_similarity": 0.445237
+        },
+        {
+          "concept": "good",
+          "mean_similarity": 0.422923
+        },
+        {
+          "concept": "green",
+          "mean_similarity": 0.421053
+        },
+        {
+          "concept": "many",
+          "mean_similarity": 0.414833
+        },
+        {
+          "concept": "you",
+          "mean_similarity": 0.413927
+        },
+        {
+          "concept": "we",
+          "mean_similarity": 0.406604
+        },
+        {
+          "concept": "burn",
+          "mean_similarity": 0.4056
+        },
+        {
+          "concept": "bone",
+          "mean_similarity": 0.401916
+        },
+        {
+          "concept": "knee",
+          "mean_similarity": 0.396032
+        },
+        {
+          "concept": "see",
+          "mean_similarity": 0.394969
+        },
+        {
+          "concept": "grease",
+          "mean_similarity": 0.382711
+        },
+        {
+          "concept": "I",
+          "mean_similarity": 0.376592
+        },
+        {
+          "concept": "breast",
+          "mean_similarity": 0.365268
+        },
+        {
+          "concept": "belly",
+          "mean_similarity": 0.345587
+        },
+        {
+          "concept": "this",
+          "mean_similarity": 0.342616
+        },
+        {
+          "concept": "nose",
+          "mean_similarity": 0.333215
+        },
+        {
+          "concept": "full",
+          "mean_similarity": 0.332432
+        },
+        {
+          "concept": "ash",
+          "mean_similarity": 0.329295
+        },
+        {
+          "concept": "horn",
+          "mean_similarity": 0.317874
+        },
+        {
+          "concept": "who",
+          "mean_similarity": 0.30418
+        },
+        {
+          "concept": "he",
+          "mean_similarity": 0.297918
+        },
+        {
+          "concept": "not",
+          "mean_similarity": 0.290707
+        },
+        {
+          "concept": "leaf",
+          "mean_similarity": 0.285863
+        },
+        {
+          "concept": "lie",
+          "mean_similarity": 0.280551
+        },
+        {
+          "concept": "neck",
+          "mean_similarity": 0.264993
+        },
+        {
+          "concept": "yellow",
+          "mean_similarity": 0.263064
+        },
+        {
+          "concept": "say",
+          "mean_similarity": 0.255138
+        },
+        {
+          "concept": "what",
+          "mean_similarity": 0.250971
+        },
+        {
+          "concept": "know",
+          "mean_similarity": 0.242653
+        },
+        {
+          "concept": "round",
+          "mean_similarity": 0.228297
+        },
+        {
+          "concept": "tail",
+          "mean_similarity": 0.219451
+        },
+        {
+          "concept": "give",
+          "mean_similarity": 0.193428
+        },
+        {
+          "concept": "bite",
+          "mean_similarity": 0.156457
+        },
+        {
+          "concept": "liver",
+          "mean_similarity": 0.142792
+        },
+        {
+          "concept": "that",
+          "mean_similarity": 0.118375
+        },
+        {
+          "concept": "claw",
+          "mean_similarity": 0.064868
+        },
+        {
+          "concept": "feather",
+          "mean_similarity": 0.057345
+        },
+        {
+          "concept": "bark",
+          "mean_similarity": 0.028831
+        },
+        {
+          "concept": "louse",
+          "mean_similarity": 0.01
+        }
+      ],
+      "spearman_vs_k3": 0.998672,
+      "spearman_p": 2.4374936405473945e-129,
+      "mean_convergence": 0.492758
+    },
+    {
+      "k": 10,
+      "rankings": [
+        {
+          "concept": "night",
+          "mean_similarity": 0.825819
+        },
+        {
+          "concept": "star",
+          "mean_similarity": 0.79011
+        },
+        {
+          "concept": "stone",
+          "mean_similarity": 0.766418
+        },
+        {
+          "concept": "tree",
+          "mean_similarity": 0.756645
+        },
+        {
+          "concept": "water",
+          "mean_similarity": 0.751508
+        },
+        {
+          "concept": "blood",
+          "mean_similarity": 0.738423
+        },
+        {
+          "concept": "woman",
+          "mean_similarity": 0.735472
+        },
+        {
+          "concept": "mountain",
+          "mean_similarity": 0.722333
+        },
+        {
+          "concept": "fish",
+          "mean_similarity": 0.716788
+        },
+        {
+          "concept": "fire",
+          "mean_similarity": 0.712864
+        },
+        {
+          "concept": "cloud",
+          "mean_similarity": 0.690183
+        },
+        {
+          "concept": "rain",
+          "mean_similarity": 0.676372
+        },
+        {
+          "concept": "sun",
+          "mean_similarity": 0.635728
+        },
+        {
+          "concept": "name",
+          "mean_similarity": 0.629719
+        },
+        {
+          "concept": "foot",
+          "mean_similarity": 0.625015
+        },
+        {
+          "concept": "bird",
+          "mean_similarity": 0.61692
+        },
+        {
+          "concept": "moon",
+          "mean_similarity": 0.61536
+        },
+        {
+          "concept": "hand",
+          "mean_similarity": 0.61165
+        },
+        {
+          "concept": "small",
+          "mean_similarity": 0.604315
+        },
+        {
+          "concept": "dog",
+          "mean_similarity": 0.588595
+        },
+        {
+          "concept": "path",
+          "mean_similarity": 0.584315
+        },
+        {
+          "concept": "man",
+          "mean_similarity": 0.567059
+        },
+        {
+          "concept": "heart",
+          "mean_similarity": 0.563655
+        },
+        {
+          "concept": "die",
+          "mean_similarity": 0.560108
+        },
+        {
+          "concept": "new",
+          "mean_similarity": 0.549971
+        },
+        {
+          "concept": "cold",
+          "mean_similarity": 0.547413
+        },
+        {
+          "concept": "person",
+          "mean_similarity": 0.520512
+        },
+        {
+          "concept": "head",
+          "mean_similarity": 0.520239
+        },
+        {
+          "concept": "two",
+          "mean_similarity": 0.50758
+        },
+        {
+          "concept": "sleep",
+          "mean_similarity": 0.506129
+        },
+        {
+          "concept": "earth",
+          "mean_similarity": 0.498422
+        },
+        {
+          "concept": "flesh",
+          "mean_similarity": 0.496413
+        },
+        {
+          "concept": "drink",
+          "mean_similarity": 0.485924
+        },
+        {
+          "concept": "sit",
+          "mean_similarity": 0.472974
+        },
+        {
+          "concept": "eye",
+          "mean_similarity": 0.471687
+        },
+        {
+          "concept": "hair",
+          "mean_similarity": 0.46564
+        },
+        {
+          "concept": "smoke",
+          "mean_similarity": 0.459985
+        },
+        {
+          "concept": "walk",
+          "mean_similarity": 0.458908
+        },
+        {
+          "concept": "kill",
+          "mean_similarity": 0.453187
+        },
+        {
+          "concept": "eat",
+          "mean_similarity": 0.425525
+        },
+        {
+          "concept": "tongue",
+          "mean_similarity": 0.415137
+        },
+        {
+          "concept": "dry",
+          "mean_similarity": 0.407887
+        },
+        {
+          "concept": "sand",
+          "mean_similarity": 0.403797
+        },
+        {
+          "concept": "big",
+          "mean_similarity": 0.399435
+        },
+        {
+          "concept": "ear",
+          "mean_similarity": 0.390439
+        },
+        {
+          "concept": "white",
+          "mean_similarity": 0.373365
+        },
+        {
+          "concept": "stand",
+          "mean_similarity": 0.362612
+        },
+        {
+          "concept": "mouth",
+          "mean_similarity": 0.362598
+        },
+        {
+          "concept": "red",
+          "mean_similarity": 0.349048
+        },
+        {
+          "concept": "long",
+          "mean_similarity": 0.341503
+        },
+        {
+          "concept": "tooth",
+          "mean_similarity": 0.333821
+        },
+        {
+          "concept": "fly",
+          "mean_similarity": 0.327448
+        },
+        {
+          "concept": "one",
+          "mean_similarity": 0.319578
+        },
+        {
+          "concept": "seed",
+          "mean_similarity": 0.311455
+        },
+        {
+          "concept": "hear",
+          "mean_similarity": 0.30694
+        },
+        {
+          "concept": "swim",
+          "mean_similarity": 0.305447
+        },
+        {
+          "concept": "root",
+          "mean_similarity": 0.300765
+        },
+        {
+          "concept": "skin",
+          "mean_similarity": 0.296326
+        },
+        {
+          "concept": "egg",
+          "mean_similarity": 0.291603
+        },
+        {
+          "concept": "come",
+          "mean_similarity": 0.276109
+        },
+        {
+          "concept": "all",
+          "mean_similarity": 0.272652
+        },
+        {
+          "concept": "hot",
+          "mean_similarity": 0.261427
+        },
+        {
+          "concept": "black",
+          "mean_similarity": 0.248858
+        },
+        {
+          "concept": "green",
+          "mean_similarity": 0.227282
+        },
+        {
+          "concept": "burn",
+          "mean_similarity": 0.224061
+        },
+        {
+          "concept": "you",
+          "mean_similarity": 0.223857
+        },
+        {
+          "concept": "knee",
+          "mean_similarity": 0.215242
+        },
+        {
+          "concept": "many",
+          "mean_similarity": 0.207543
+        },
+        {
+          "concept": "good",
+          "mean_similarity": 0.207256
+        },
+        {
+          "concept": "we",
+          "mean_similarity": 0.199249
+        },
+        {
+          "concept": "see",
+          "mean_similarity": 0.196222
+        },
+        {
+          "concept": "bone",
+          "mean_similarity": 0.185369
+        },
+        {
+          "concept": "grease",
+          "mean_similarity": 0.178202
+        },
+        {
+          "concept": "I",
+          "mean_similarity": 0.171802
+        },
+        {
+          "concept": "breast",
+          "mean_similarity": 0.150242
+        },
+        {
+          "concept": "ash",
+          "mean_similarity": 0.136437
+        },
+        {
+          "concept": "belly",
+          "mean_similarity": 0.135153
+        },
+        {
+          "concept": "this",
+          "mean_similarity": 0.112334
+        },
+        {
+          "concept": "full",
+          "mean_similarity": 0.10822
+        },
+        {
+          "concept": "nose",
+          "mean_similarity": 0.102046
+        },
+        {
+          "concept": "horn",
+          "mean_similarity": 0.094895
+        },
+        {
+          "concept": "leaf",
+          "mean_similarity": 0.057883
+        },
+        {
+          "concept": "lie",
+          "mean_similarity": 0.052016
+        },
+        {
+          "concept": "who",
+          "mean_similarity": 0.048368
+        },
+        {
+          "concept": "not",
+          "mean_similarity": 0.030304
+        },
+        {
+          "concept": "he",
+          "mean_similarity": 0.023576
+        },
+        {
+          "concept": "yellow",
+          "mean_similarity": 0.01
+        },
+        {
+          "concept": "neck",
+          "mean_similarity": 0.01
+        },
+        {
+          "concept": "what",
+          "mean_similarity": 0.01
+        },
+        {
+          "concept": "say",
+          "mean_similarity": 0.01
+        },
+        {
+          "concept": "know",
+          "mean_similarity": 0.01
+        },
+        {
+          "concept": "round",
+          "mean_similarity": 0.01
+        },
+        {
+          "concept": "tail",
+          "mean_similarity": 0.01
+        },
+        {
+          "concept": "give",
+          "mean_similarity": 0.01
+        },
+        {
+          "concept": "bite",
+          "mean_similarity": 0.01
+        },
+        {
+          "concept": "liver",
+          "mean_similarity": 0.01
+        },
+        {
+          "concept": "that",
+          "mean_similarity": 0.01
+        },
+        {
+          "concept": "claw",
+          "mean_similarity": 0.01
+        },
+        {
+          "concept": "feather",
+          "mean_similarity": 0.01
+        },
+        {
+          "concept": "bark",
+          "mean_similarity": 0.01
+        },
+        {
+          "concept": "louse",
+          "mean_similarity": 0.01
+        }
+      ],
+      "spearman_vs_k3": 0.991345,
+      "spearman_p": 4.057728775518116e-89,
+      "mean_convergence": 0.346749
+    }
+  ],
+  "pairwise_correlations": {
+    "k0_k1": 0.9885,
+    "k0_k3": 0.9904,
+    "k0_k5": 0.9888,
+    "k0_k10": 0.9811,
+    "k1_k3": 0.9966,
+    "k1_k5": 0.9949,
+    "k1_k10": 0.9879,
+    "k3_k5": 0.9987,
+    "k3_k10": 0.9913,
+    "k5_k10": 0.9908
+  }
+}

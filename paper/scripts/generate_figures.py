@@ -15,6 +15,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib.colors import to_rgba
+import matplotlib.patheffects as pe
 import numpy as np
 import seaborn as sns
 from scipy.cluster.hierarchy import dendrogram, linkage
@@ -35,6 +36,7 @@ mpl.rcParams.update({
     'savefig.dpi': 300,
     'savefig.bbox': 'tight',
     'savefig.pad_inches': 0.05,
+    'pdf.fonttype': 42,
 })
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -187,7 +189,9 @@ def _load_json(name):
 
 
 # ---------------------------------------------------------------------------
-# Figure 1 — Swadesh convergence ranking (scatter: phonetic sim vs embedding)
+# Figure 1 — Swadesh convergence ranking: two-panel scatter showing
+#             (a) orthographic similarity and (b) phonological similarity
+#             vs embedding convergence
 # ---------------------------------------------------------------------------
 def fig_swadesh_ranking(data, corpus_data, outdir):
     ranking = data.get('convergence_ranking_corrected',
@@ -201,62 +205,92 @@ def fig_swadesh_ranking(data, corpus_data, outdir):
                    if l.get('code', '').endswith('_Latn')] if corpus_data else []
 
     ortho_scores = {}
+    phon_scores = {}
     for concept, translations in concepts_dict.items():
         forms = [translations.get(l, '') for l in latin_langs
                  if translations.get(l, '')]
         if len(forms) < 2:
             ortho_scores[concept] = 0.0
+            phon_scores[concept] = 0.0
             continue
         sample = forms[:40]
-        pairs = []
+        o_pairs, p_pairs = [], []
         for i in range(len(sample)):
             for j in range(i + 1, len(sample)):
-                pairs.append(_levenshtein(sample[i].lower(),
-                                          sample[j].lower()))
-        ortho_scores[concept] = np.mean(pairs) if pairs else 0.0
+                o_pairs.append(_levenshtein(sample[i].lower(),
+                                            sample[j].lower()))
+                p_pairs.append(_levenshtein(
+                    _phonetic_normalize(sample[i]),
+                    _phonetic_normalize(sample[j])))
+        ortho_scores[concept] = np.mean(o_pairs) if o_pairs else 0.0
+        phon_scores[concept] = np.mean(p_pairs) if p_pairs else 0.0
 
-    concepts, conv_vals, ortho_vals, cats, colors = [], [], [], [], []
+    concepts, conv_vals, ortho_vals, phon_vals, cats = [], [], [], [], []
     for r in ranking:
         c = r['concept']
+        if c not in ortho_scores:
+            continue
         concepts.append(c)
         conv_vals.append(r['mean_similarity'])
         ortho_vals.append(ortho_scores.get(c, 0.0))
-        cat = _concept_category(c)
-        cats.append(cat)
-        colors.append(CATEGORY_COLORS.get(cat, '#999999'))
+        phon_vals.append(phon_scores.get(c, 0.0))
+        cats.append(_concept_category(c))
 
     conv_arr = np.array(conv_vals)
     ortho_arr = np.array(ortho_vals)
+    phon_arr = np.array(phon_vals)
+    colors = [CATEGORY_COLORS.get(cat, '#999999') for cat in cats]
 
-    fig, ax = plt.subplots(figsize=(FULL_W, FULL_W * 0.72))
+    fig, axes = plt.subplots(1, 2, figsize=(FULL_W, FULL_W * 0.42),
+                             sharey=True)
 
-    for cat in CATEGORY_COLORS:
-        idx = [i for i, cc in enumerate(cats) if cc == cat]
-        if not idx:
-            continue
-        ax.scatter([ortho_arr[i] for i in idx],
-                   [conv_arr[i] for i in idx],
-                   c=CATEGORY_COLORS[cat], s=36, alpha=0.85,
-                   edgecolors='white', linewidths=0.4,
-                   label=cat, zorder=3)
+    def _draw_panel(ax, x_arr, conv, title, xlabel):
+        for cat in CATEGORY_COLORS:
+            idx = [i for i, cc in enumerate(cats) if cc == cat]
+            if not idx:
+                continue
+            ax.scatter([x_arr[i] for i in idx],
+                       [conv[i] for i in idx],
+                       c=CATEGORY_COLORS[cat], s=28, alpha=0.82,
+                       edgecolors='white', linewidths=0.3,
+                       label=cat, zorder=3)
 
-    for i, c in enumerate(concepts):
-        ax.annotate(c, (ortho_arr[i], conv_arr[i]),
-                    fontsize=5.5, alpha=0.8,
-                    textcoords='offset points', xytext=(4, 4), zorder=4)
+        slope, intercept, r_val, _, _ = sp_stats.linregress(x_arr, conv)
+        x_fit = np.linspace(x_arr.min(), x_arr.max(), 50)
+        ax.plot(x_fit, slope * x_fit + intercept, 'k--', linewidth=1.0,
+                alpha=0.6, label=f'$R^2 = {r_val**2:.3f}$')
 
-    slope, intercept, r_val, _, _ = sp_stats.linregress(ortho_arr, conv_arr)
-    x_fit = np.linspace(ortho_arr.min(), ortho_arr.max(), 50)
-    ax.plot(x_fit, slope * x_fit + intercept, 'k--', linewidth=1.0, alpha=0.6,
-            label=f'$R^2 = {r_val**2:.3f}$')
+        resid = conv - (slope * x_arr + intercept)
+        thresh = np.percentile(np.abs(resid), 90)
+        for i, c in enumerate(concepts):
+            if abs(resid[i]) > thresh:
+                ax.annotate(c, (x_arr[i], conv[i]),
+                            fontsize=5, alpha=0.75,
+                            textcoords='offset points', xytext=(3, 3),
+                            zorder=4)
 
-    ax.set_xlabel('Mean Cross-Lingual Orthographic Similarity (Latin-script)')
-    ax.set_ylabel('Embedding Convergence (Isotropy-Corrected)')
-    ax.legend(fontsize=6, loc='upper left', ncol=2, framealpha=0.9,
-              handletextpad=0.3, columnspacing=0.5)
-    ax.grid(True, alpha=0.15, linewidth=0.4)
+        ax.set_xlabel(xlabel, fontsize=8)
+        ax.set_title(title, fontsize=9)
+        ax.grid(True, alpha=0.15, linewidth=0.4)
 
-    fig.tight_layout()
+    _draw_panel(axes[0], ortho_arr, conv_arr,
+                '(a) Orthographic Similarity',
+                'Mean Orthographic Similarity (Latin-script)')
+    axes[0].set_ylabel('Embedding Convergence (Isotropy-Corrected)',
+                        fontsize=8)
+
+    _draw_panel(axes[1], phon_arr, conv_arr,
+                '(b) Phonological Similarity',
+                'Mean Phonological Similarity (Latin-script)')
+
+    handles = [mpl.patches.Patch(facecolor=c, label=cat)
+               for cat, c in CATEGORY_COLORS.items()
+               if cat in set(cats)]
+    fig.legend(handles=handles, fontsize=5.5, loc='lower center',
+               ncol=len(handles), bbox_to_anchor=(0.5, -0.03),
+               framealpha=0.9, handletextpad=0.3, columnspacing=0.5)
+
+    fig.tight_layout(rect=[0, 0.06, 1, 1])
     fig.savefig(os.path.join(outdir, 'fig_swadesh_ranking.pdf'))
     plt.close(fig)
     print("  -> fig_swadesh_ranking.pdf")
@@ -292,14 +326,19 @@ def fig_phylogenetic(data, outdir):
         dist_ordered = dist_matrix
         labels_ordered = languages
 
-    row_height = max(8.0, n * 0.12)
+    row_height = min(9.0, max(6.5, n * 0.065))
     fig = plt.figure(figsize=(FULL_W * 1.5, row_height))
-    gs = fig.add_gridspec(1, 2, width_ratios=[2.2, 3], wspace=0.15)
+    gs = fig.add_gridspec(1, 2, width_ratios=[1.8, 3.5], wspace=0.30)
 
-    # --- Panel (a): Heatmap — no axis labels (dendrogram provides ordering) ---
+    # --- Panel (a): Heatmap — similarity (1 - dist), white-to-red cmap ---
     ax_heat = fig.add_subplot(gs[0])
-    im = ax_heat.imshow(dist_ordered, cmap='viridis', aspect='auto')
-    ax_heat.set_title('(a) Pairwise Embedding Distances', fontsize=10, pad=8)
+    dmax = dist_ordered.max()
+    sim_ordered = 1.0 - dist_ordered / dmax if dmax > 0 else 1.0 - dist_ordered
+    cmap_wr = mpl.colors.LinearSegmentedColormap.from_list(
+        'white_red', ['#ffffff', '#d62728'], N=256)
+    im = ax_heat.imshow(sim_ordered, cmap=cmap_wr, aspect='auto',
+                        vmin=0, vmax=1)
+    ax_heat.set_title('(a) Pairwise Embedding Coherence', fontsize=10, pad=8)
     ax_heat.set_xticks([])
     ax_heat.set_yticks([])
     plt.colorbar(im, ax=ax_heat, fraction=0.046, pad=0.04)
@@ -336,7 +375,7 @@ def fig_phylogenetic(data, outdir):
         return _cluster_color(cid)
 
     dendro = dendrogram(Z, orientation='right', labels=display_labels,
-                        ax=ax_dend, leaf_font_size=5.5,
+                        ax=ax_dend, leaf_font_size=4.2,
                         link_color_func=link_color_func)
 
     ylbls = ax_dend.get_ymajorticklabels()
@@ -346,7 +385,9 @@ def fig_phylogenetic(data, outdir):
 
     ax_dend.set_title('(b) Hierarchical Clustering', fontsize=10, pad=8)
     ax_dend.set_xlabel('Distance', fontsize=9)
-    ax_dend.tick_params(axis='y', which='major', pad=2)
+    ax_dend.tick_params(axis='y', which='major', pad=4)
+    ax_dend.yaxis.set_tick_params(length=0)
+    fig.subplots_adjust(right=0.98)
 
     # Family legend
     families_present = {}
@@ -560,8 +601,8 @@ def fig_conceptual_store(data, outdir):
 
 
 # ---------------------------------------------------------------------------
-# Figure 6 — Berlin & Kay color circle (2D PCA scatter with per-language
-#             points, convex hulls, and centroids)
+# Figure 6 — Berlin & Kay color circle: (a) 2D PCA with hulls,
+#             (b) 3D PCA showing luminance axis on PC3
 # ---------------------------------------------------------------------------
 def fig_color_circle(data, outdir):
     centroids = data.get('centroids', [])
@@ -577,26 +618,45 @@ def fig_color_circle(data, outdir):
         'orange': '#FF8C00', 'grey': '#808080',
     }
 
-    fig, ax = plt.subplots(figsize=(FULL_W, FULL_W * 0.75))
-
-    lang_by_color = {}
-    for pt in per_language:
-        lang_by_color.setdefault(pt['color'], []).append((pt['x'], pt['y']))
-
     draw_order = [
         'green', 'blue', 'grey', 'yellow', 'brown',
         'red', 'purple', 'pink', 'orange', 'black', 'white',
     ]
 
+    label_offsets_2d = {
+        'black': (-18, -4), 'white': (-18, -4), 'red': (10, -2),
+        'green': (10, 2), 'yellow': (10, 2), 'blue': (10, 2),
+        'brown': (10, -2), 'purple': (10, 2), 'pink': (10, 2),
+        'orange': (10, -2), 'grey': (-22, 2),
+    }
+
+    label_colors = {
+        'white': '#666666', 'yellow': '#B8860B',
+    }
+
+    lang_by_color_2d = {}
+    lang_by_color_3d = {}
+    for pt in per_language:
+        lang_by_color_2d.setdefault(pt['color'], []).append(
+            (pt['x'], pt['y']))
+        lang_by_color_3d.setdefault(pt['color'], []).append(
+            (pt['x'], pt['y'], pt.get('z', 0)))
+
+    fig = plt.figure(figsize=(FULL_W, FULL_W * 0.42))
+    gs = fig.add_gridspec(1, 2, width_ratios=[1, 1], wspace=0.25)
+
+    # --- Panel (a): 2D PCA with convex hulls ---
+    ax = fig.add_subplot(gs[0])
+
     for color_name in draw_order:
-        pts = lang_by_color.get(color_name, [])
+        pts = lang_by_color_2d.get(color_name, [])
         if not pts:
             continue
         base = actual_colors.get(color_name, '#888888')
         xs_lang = [p[0] for p in pts]
         ys_lang = [p[1] for p in pts]
 
-        ax.scatter(xs_lang, ys_lang, c=base, s=8, alpha=0.25,
+        ax.scatter(xs_lang, ys_lang, c=base, s=6, alpha=0.20,
                    edgecolors='none', zorder=1, rasterized=True)
 
         if len(pts) >= 3:
@@ -605,39 +665,65 @@ def fig_color_circle(data, outdir):
                 hull = ConvexHull(arr)
                 hull_pts = arr[hull.vertices]
                 hull_pts = np.vstack([hull_pts, hull_pts[0]])
-                fill_rgba = to_rgba(base, alpha=0.08)
-                edge_rgba = to_rgba(base, alpha=0.45)
+                fill_rgba = to_rgba(base, alpha=0.06)
+                edge_rgba = to_rgba(base, alpha=0.40)
                 ax.fill(hull_pts[:, 0], hull_pts[:, 1],
                         color=fill_rgba, zorder=1)
                 ax.plot(hull_pts[:, 0], hull_pts[:, 1],
-                        color=edge_rgba, linewidth=0.8, zorder=2)
+                        color=edge_rgba, linewidth=0.7, zorder=2)
             except Exception:
                 pass
-
-    label_offsets = {
-        'black': (-8, -10), 'white': (-8, -10), 'red': (6, -8),
-        'green': (6, 6), 'yellow': (6, 6), 'blue': (6, 6),
-        'brown': (6, -8), 'purple': (6, 6), 'pink': (6, 6),
-        'orange': (6, -8), 'grey': (-28, 6),
-    }
 
     for c in centroids:
         lbl = c['label']
         cx, cy = c['x'], c['y']
         base = actual_colors.get(lbl, '#888888')
-        ec = 'black' if lbl in ('white', 'yellow') else 'none'
-        ax.scatter(cx, cy, c=base, s=160, edgecolors=ec, linewidths=1.0,
-                   zorder=5)
-        offset = label_offsets.get(lbl, (6, 6))
+        txt_color = label_colors.get(lbl, base)
+        offset = label_offsets_2d.get(lbl, (10, 0))
         ax.annotate(lbl, (cx, cy), textcoords='offset points',
-                    xytext=offset, fontsize=7, fontweight='bold', zorder=6)
+                    xytext=offset, fontsize=6, fontweight='bold', zorder=6,
+                    color=txt_color,
+                    path_effects=[pe.withStroke(linewidth=2, foreground='white')])
 
-    ax.set_xlabel('PCA Dimension 1')
-    ax.set_ylabel('PCA Dimension 2')
+    ax.set_xlabel('PC1')
+    ax.set_ylabel('PC2')
+    ax.set_title('(a) 2D Chromatic Plane', fontsize=9)
     ax.set_aspect('equal', adjustable='datalim')
-    ax.grid(True, alpha=0.2, linewidth=0.4)
+    ax.grid(True, alpha=0.15, linewidth=0.4)
 
-    fig.savefig(os.path.join(outdir, 'fig_color_circle.pdf'))
+    # --- Panel (b): 3D PCA showing luminance on PC3 ---
+    ax3d = fig.add_subplot(gs[1], projection='3d')
+
+    for color_name in draw_order:
+        pts = lang_by_color_3d.get(color_name, [])
+        if not pts:
+            continue
+        base = actual_colors.get(color_name, '#888888')
+        xs = [p[0] for p in pts]
+        ys = [p[1] for p in pts]
+        zs = [p[2] for p in pts]
+        ax3d.scatter(xs, ys, zs, c=base, s=6, alpha=0.18,
+                     edgecolors='none', rasterized=True)
+
+    for c in centroids:
+        lbl = c['label']
+        cx, cy, cz = c['x'], c['y'], c.get('z', 0)
+        base = actual_colors.get(lbl, '#888888')
+        txt_color = label_colors.get(lbl, base)
+        ax3d.text(cx + 0.8, cy, cz, f'  {lbl}', fontsize=5.5,
+                  fontweight='bold', zorder=6, color=txt_color,
+                  path_effects=[pe.withStroke(linewidth=2, foreground='white')])
+
+    ax3d.set_xlabel('PC1', fontsize=7, labelpad=1)
+    ax3d.set_ylabel('PC2', fontsize=7, labelpad=1)
+    ax3d.set_zlabel('PC3 (luminance)', fontsize=7, labelpad=1)
+    ax3d.set_title('(b) 3D with Luminance Axis', fontsize=9)
+    ax3d.tick_params(labelsize=5.5)
+    ax3d.view_init(elev=25, azim=-60)
+    ax3d.dist = 11.5
+
+    fig.savefig(os.path.join(outdir, 'fig_color_circle.pdf'),
+                bbox_inches='tight', pad_inches=0.05)
     plt.close(fig)
     print("  -> fig_color_circle.pdf")
 
@@ -651,10 +737,16 @@ def fig_offset_combined(data, outdir):
         print("  [WARN] Missing offset invariance data.")
         return
 
-    sorted_pairs = sorted(pairs, key=lambda p: p['mean_consistency'])
-    pair_labels = [f"{p['concept_a']}–{p['concept_b']}" for p in sorted_pairs]
-    means = [p['mean_consistency'] for p in sorted_pairs]
-    stds = [p['std_consistency'] for p in sorted_pairs]
+    sorted_all = sorted(pairs, key=lambda p: p['mean_consistency'])
+    N_SHOW = min(8, len(sorted_all) // 2)
+    bottom = sorted_all[:N_SHOW]
+    top = sorted_all[-N_SHOW:]
+    display_pairs = bottom + top
+    gap_index = N_SHOW
+
+    pair_labels = [f"{p['concept_a']}–{p['concept_b']}" for p in display_pairs]
+    means = [p['mean_consistency'] for p in display_pairs]
+    stds = [p['std_consistency'] for p in display_pairs]
 
     all_families = set()
     for p in pairs:
@@ -662,8 +754,8 @@ def fig_offset_combined(data, outdir):
             all_families.add(entry.get('family', 'Unknown'))
     all_families = sorted(all_families)
 
-    matrix = np.zeros((len(sorted_pairs), len(all_families)))
-    for i, p in enumerate(sorted_pairs):
+    matrix = np.zeros((len(display_pairs), len(all_families)))
+    for i, p in enumerate(display_pairs):
         fam_scores = {}
         for entry in p.get('per_language', []):
             fam = entry.get('family', 'Unknown')
@@ -674,37 +766,71 @@ def fig_offset_combined(data, outdir):
             if fam in fam_scores:
                 matrix[i, j] = np.mean(fam_scores[fam])
 
-    fig, (ax_bar, ax_heat) = plt.subplots(
-        1, 2, figsize=(FULL_W, 4.0),
-        gridspec_kw={'width_ratios': [1, 2.8], 'wspace': 0.05},
-        sharey=True)
+    n = len(display_pairs)
+    GAP = 0.8
+    y_pos = np.arange(n, dtype=float)
+    y_pos[gap_index:] += GAP
 
-    n = len(pair_labels)
-    y_pos = np.arange(n)
+    fig = plt.figure(figsize=(FULL_W, 4.5), constrained_layout=True)
+    gs = fig.add_gridspec(1, 3, width_ratios=[1, 2.8, 0.08], wspace=0.05)
+    ax_bar = fig.add_subplot(gs[0, 0])
+    ax_heat = fig.add_subplot(gs[0, 1])
+    ax_cb = fig.add_subplot(gs[0, 2])
 
-    ax_bar.barh(y_pos, means, xerr=stds, height=0.6,
-                color='#377eb8', edgecolor='none', alpha=0.85,
-                error_kw=dict(ecolor='grey', capsize=2, capthick=0.8,
-                              linewidth=0.8))
+    colors = ['#d62728'] * N_SHOW + ['#377eb8'] * N_SHOW
+    for i in range(n):
+        ax_bar.barh(y_pos[i], means[i], xerr=[[0], [stds[i]]], height=0.55,
+                    color=colors[i], edgecolor='none', alpha=0.85,
+                    error_kw=dict(ecolor='grey', capsize=2, capthick=0.8,
+                                  linewidth=0.8))
+
     ax_bar.set_yticks(y_pos)
     ax_bar.set_yticklabels(pair_labels, fontsize=6)
     ax_bar.set_xlabel('Consistency Score')
     ax_bar.set_xlim(0, 1.05)
-    ax_bar.axvline(np.mean(means), color='k', linestyle='--', linewidth=0.8,
-                   label=f'Mean = {np.mean(means):.2f}')
+    ax_bar.set_ylim(y_pos[0] - 0.5, y_pos[-1] + 0.5)
+
+    overall_mean = np.mean([p['mean_consistency'] for p in sorted_all])
+    ax_bar.axvline(overall_mean, color='k', linestyle='--', linewidth=0.8,
+                   label=f'Mean = {overall_mean:.2f}')
+
+    gap_y = (y_pos[gap_index - 1] + y_pos[gap_index]) / 2
+    ax_bar.axhline(gap_y, color='grey', linestyle=':', linewidth=0.6, alpha=0.5)
+    n_omitted = len(sorted_all) - 2 * N_SHOW
+    if n_omitted > 0:
+        ax_bar.text(0.52, gap_y, f'... {n_omitted} pairs omitted ...',
+                    ha='center', va='center', fontsize=5.5, color='grey',
+                    style='italic')
+
+    ax_bar.annotate('worst', xy=(0.02, y_pos[N_SHOW // 2]), fontsize=6,
+                    color='#d62728', fontweight='bold', va='center')
+    ax_bar.annotate('best', xy=(0.02, y_pos[N_SHOW + N_SHOW // 2]), fontsize=6,
+                    color='#377eb8', fontweight='bold', va='center')
     ax_bar.legend(fontsize=6, loc='lower right')
     ax_bar.set_title('(a) Cross-Lingual Consistency', fontsize=9)
 
-    im = ax_heat.imshow(matrix, cmap='YlOrRd', aspect='auto',
-                        extent=[-0.5, len(all_families) - 0.5,
-                                n - 0.5, -0.5])
-    ax_heat.set_xticks(range(len(all_families)))
+    nf = len(all_families)
+    cmap = plt.cm.YlOrRd
+    norm = plt.Normalize(vmin=0, vmax=1)
+    for i in range(n):
+        for j in range(nf):
+            rect = plt.Rectangle((j - 0.5, y_pos[i] - 0.275), 1, 0.55,
+                                 facecolor=cmap(norm(matrix[i, j])),
+                                 edgecolor='white', linewidth=0.3)
+            ax_heat.add_patch(rect)
+
+    ax_heat.set_xlim(-0.5, nf - 0.5)
+    ax_heat.set_ylim(y_pos[0] - 0.5, y_pos[-1] + 0.5)
+    ax_heat.set_yticks(y_pos)
+    ax_heat.set_yticklabels([])
+    ax_heat.set_xticks(range(nf))
     ax_heat.set_xticklabels(all_families, rotation=90, fontsize=5)
     ax_heat.set_title('(b) Per-Family Consistency', fontsize=9)
-    plt.colorbar(im, ax=ax_heat, fraction=0.03, pad=0.02,
-                 label='Consistency')
+    ax_heat.axhline(gap_y, color='grey', linestyle=':', linewidth=0.6, alpha=0.5)
 
-    fig.tight_layout()
+    sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+    sm.set_array([])
+    fig.colorbar(sm, cax=ax_cb, label='Consistency')
     fig.savefig(os.path.join(outdir, 'fig_offset_combined.pdf'))
     plt.close(fig)
     print("  -> fig_offset_combined.pdf")
@@ -713,6 +839,55 @@ def fig_offset_combined(data, outdir):
 # ---------------------------------------------------------------------------
 # Figure 8 — Water manifold: 3D PCA scatter + similarity heatmap
 # ---------------------------------------------------------------------------
+
+_WATER_LABELS = {
+    'spa_Latn': 'agua',
+    'fra_Latn': 'eau',
+    'deu_Latn': 'Wasser',
+    'rus_Cyrl': 'вода (ru)',
+    'pol_Latn': 'woda',
+    'hin_Deva': 'पानी (hi)',
+    'pes_Arab': 'آب (fa)',
+    'ell_Grek': 'νερό (el)',
+    'zho_Hans': '水 (zh)',
+    'jpn_Jpan': '水 (ja)',
+    'kor_Hang': '물 (ko)',
+    'arb_Arab': 'ماء (ar)',
+    'heb_Hebr': 'מים (he)',
+    'tur_Latn': 'su',
+    'vie_Latn': 'nước',
+    'tha_Thai': 'น้ำ (th)',
+    'ind_Latn': 'air',
+    'tgl_Latn': 'tubig',
+    'swh_Latn': 'maji',
+    'yor_Latn': 'omi',
+    'fin_Latn': 'vesi',
+    'tam_Taml': 'நீர் (ta)',
+    'tel_Telu': 'నీరు (te)',
+    'amh_Ethi': 'wuha (am)',
+    'kaz_Cyrl': 'су (kk)',
+    'afr_Latn': 'water',
+    'lit_Latn': 'vanduo',
+    'gle_Latn': 'uisce',
+    'als_Latn': 'ujë',
+}
+
+
+def _get_unicode_font():
+    """Load a Unicode font by explicit file path for reliable multi-script rendering."""
+    from matplotlib.font_manager import FontProperties
+    candidates = [
+        '/System/Library/Fonts/Supplemental/Arial Unicode.ttf',
+        '/Library/Fonts/Arial Unicode.ttf',
+        '/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf',
+        '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+    ]
+    for path in candidates:
+        if os.path.isfile(path):
+            return FontProperties(fname=path)
+    return FontProperties(family='sans-serif')
+
+
 def fig_water_manifold(data, outdir):
     pts = data.get('embedding_points', [])
     sim = data.get('similarity_matrix', [])
@@ -726,8 +901,7 @@ def fig_water_manifold(data, outdir):
     for t in translations:
         lang_to_word[t['lang']] = t.get('word', t.get('text', t['lang']))
 
-    from matplotlib.font_manager import FontProperties
-    _uni_font = FontProperties(family='Arial Unicode MS')
+    _uni_font = _get_unicode_font()
 
     xs = [p['x'] for p in pts]
     ys = [p['y'] for p in pts]
@@ -738,47 +912,60 @@ def fig_water_manifold(data, outdir):
     fam_cmap = mpl.colormaps.get_cmap('tab20').resampled(len(unique_fam))
     fam_colors = {f: fam_cmap(i) for i, f in enumerate(unique_fam)}
 
-    fig = plt.figure(figsize=(FULL_W, 4.2))
-    gs = fig.add_gridspec(1, 2, width_ratios=[1.1, 1], wspace=0.30)
+    # Vertical layout: (a) 3D scatter on top, (b) square heatmap below
+    fig = plt.figure(figsize=(FULL_W, 10.5))
+    gs = fig.add_gridspec(2, 1, height_ratios=[1, 1.15], hspace=0.35)
 
+    # --- Panel (a): 3D PCA scatter ---
     ax3d = fig.add_subplot(gs[0], projection='3d')
     for f in unique_fam:
         idx = [i for i, ff in enumerate(families) if ff == f]
         ax3d.scatter([xs[i] for i in idx], [ys[i] for i in idx],
-                     [zs[i] for i in idx], c=[fam_colors[f]], s=30,
-                     label=f, edgecolors='none', alpha=0.85)
+                     [zs[i] for i in idx], c=[fam_colors[f]], s=50,
+                     label=f, edgecolors='white', linewidths=0.3,
+                     alpha=0.9)
 
     for i, lbl in enumerate(labels):
-        word = lang_to_word.get(lbl, lbl[:7])
-        ax3d.text(xs[i], ys[i], zs[i], f'  {word}', fontsize=3.5,
-                  alpha=0.75, zorder=4, fontproperties=_uni_font)
+        word = _WATER_LABELS.get(lbl, lang_to_word.get(lbl, lbl[:7]))
+        ax3d.text(xs[i], ys[i], zs[i], f'  {word}', fontsize=5.5,
+                  alpha=0.8, zorder=4, fontproperties=_uni_font)
 
-    ax3d.set_xlabel('PC1', fontsize=7, labelpad=2)
-    ax3d.set_ylabel('PC2', fontsize=7, labelpad=2)
-    ax3d.set_zlabel('PC3', fontsize=7, labelpad=2)
-    ax3d.set_title('(a) 3D PCA of "water"', fontsize=9)
-    ax3d.tick_params(labelsize=6)
+    ax3d.set_xlabel('PC1', fontsize=9, labelpad=4)
+    ax3d.set_ylabel('PC2', fontsize=9, labelpad=4)
+    ax3d.set_zlabel('PC3', fontsize=9, labelpad=4)
+    ax3d.set_title('(a) 3D PCA of "water"', fontsize=11, pad=10)
+    ax3d.tick_params(labelsize=7)
     ax3d.view_init(elev=22, azim=-55)
-    ax3d.dist = 12
-    ax3d.legend(fontsize=4.5, loc='upper left', ncol=2, framealpha=0.7,
-                handletextpad=0.2, columnspacing=0.4, borderpad=0.3,
-                bbox_to_anchor=(-0.02, 0.98))
+    ax3d.dist = 11
 
+    ax3d.legend(fontsize=6, loc='upper left', ncol=3, framealpha=0.85,
+                handletextpad=0.3, columnspacing=0.6, borderpad=0.4,
+                bbox_to_anchor=(0.0, -0.02), frameon=True,
+                edgecolor='#cccccc', fancybox=False)
+
+    # --- Panel (b): square similarity heatmap ---
     ax_heat = fig.add_subplot(gs[1])
     sim_arr = np.array(sim)
-    im = ax_heat.imshow(sim_arr, cmap='RdYlBu', aspect='auto',
-                        vmin=np.min(sim_arr), vmax=1.0)
-    word_labels = [lang_to_word.get(l, l[:7]) for l in labels]
-    ax_heat.set_xticks(range(len(labels)))
-    ax_heat.set_xticklabels(word_labels, rotation=90, fontsize=5,
+    cmap_wr = mpl.colors.LinearSegmentedColormap.from_list(
+        'white_red', ['#ffffff', '#d62728'], N=256)
+    im = ax_heat.imshow(sim_arr, cmap=cmap_wr, aspect='equal',
+                        vmin=np.min(sim_arr), vmax=np.max(sim_arr))
+
+    word_labels = [_WATER_LABELS.get(l, lang_to_word.get(l, l[:7]))
+                   for l in labels]
+
+    n = len(labels)
+    ax_heat.set_xticks(range(n))
+    ax_heat.set_xticklabels(word_labels, rotation=90, ha='center',
+                            fontsize=6.5, fontproperties=_uni_font)
+    ax_heat.set_yticks(range(n))
+    ax_heat.set_yticklabels(word_labels, fontsize=6.5,
                             fontproperties=_uni_font)
-    ax_heat.set_yticks(range(len(labels)))
-    ax_heat.set_yticklabels(word_labels, fontsize=5,
-                            fontproperties=_uni_font)
-    ax_heat.set_title('(b) Pairwise Similarity', fontsize=9)
+    ax_heat.set_title('(b) Pairwise Similarity', fontsize=11, pad=8)
+    ax_heat.tick_params(axis='x', pad=2)
+    ax_heat.tick_params(axis='y', pad=2)
     plt.colorbar(im, ax=ax_heat, fraction=0.046, pad=0.04)
 
-    fig.subplots_adjust(bottom=0.18)
     fig.savefig(os.path.join(outdir, 'fig_water_manifold.pdf'),
                 bbox_inches='tight', pad_inches=0.05)
     plt.close(fig)
@@ -1078,9 +1265,12 @@ def fig_category_detail(data, outdir):
 
 
 # ---------------------------------------------------------------------------
-# Figure 11 — Isotropy validation: raw vs corrected scatter + top-20
+# Figure 11 — Isotropy validation (combined 3-panel):
+#   (a) raw vs corrected scatter
+#   (b) top-10 + bottom-10 bar comparison
+#   (c) k-sensitivity
 # ---------------------------------------------------------------------------
-def fig_isotropy_validation(data, outdir):
+def fig_isotropy_validation(data, outdir, sensitivity_data=None):
     raw = data.get('convergence_ranking_raw', [])
     corrected = data.get('convergence_ranking_corrected', [])
     if not raw or not corrected:
@@ -1096,8 +1286,15 @@ def fig_isotropy_validation(data, outdir):
 
     rho, p_val = sp_stats.spearmanr(raw_vals, cor_vals)
 
-    fig, axes = plt.subplots(1, 2, figsize=(FULL_W, 3.0))
+    has_sens = (sensitivity_data is not None
+                and sensitivity_data.get('results'))
+    ncols = 3 if has_sens else 2
+    ratios = [1, 1.2, 0.8] if has_sens else [1, 1.2]
 
+    fig, axes = plt.subplots(1, ncols, figsize=(FULL_W, 3.4),
+                             gridspec_kw={'width_ratios': ratios})
+
+    # --- Panel (a): scatter raw vs corrected ---
     ax = axes[0]
     cats = [_concept_category(c) for c in concepts]
     colors = [CATEGORY_COLORS.get(cat, '#999999') for cat in cats]
@@ -1106,33 +1303,94 @@ def fig_isotropy_validation(data, outdir):
     lims = [min(raw_vals.min(), cor_vals.min()) - 0.02,
             max(raw_vals.max(), cor_vals.max()) + 0.02]
     ax.plot(lims, lims, 'k:', linewidth=0.8, alpha=0.5)
-    ax.set_xlabel('Raw Convergence')
-    ax.set_ylabel('Corrected Convergence')
-    ax.set_title(f'(a) Spearman $\\rho$ = {rho:.3f}', fontsize=9)
+    ax.set_xlabel('Raw Convergence', fontsize=7)
+    ax.set_ylabel('Corrected Convergence', fontsize=7)
+    ax.set_title(f'(a) Spearman $\\rho$ = {rho:.3f}', fontsize=8)
+    ax.tick_params(labelsize=6)
 
+    # --- Panel (b): top-10 + bottom-10 comparison ---
     ax = axes[1]
-    top20_raw = sorted(raw, key=lambda r: r['mean_similarity'],
-                       reverse=True)[:20]
-    top20_cor = sorted(corrected, key=lambda r: r['mean_similarity'],
-                       reverse=True)[:20]
-    raw_top_set = {r['concept'] for r in top20_raw}
-    cor_top_set = {r['concept'] for r in top20_cor}
-    all_top = sorted(raw_top_set | cor_top_set,
-                     key=lambda c: cor_map.get(c, 0), reverse=True)
+    N_SHOW = 10
+    top_cor = sorted(corrected, key=lambda r: r['mean_similarity'],
+                     reverse=True)[:N_SHOW]
+    bot_cor = sorted(corrected, key=lambda r: r['mean_similarity'])[:N_SHOW]
 
-    y_pos = np.arange(len(all_top))
-    raw_bars = [raw_map.get(c, 0) for c in all_top]
-    cor_bars = [cor_map.get(c, 0) for c in all_top]
-    ax.barh(y_pos - 0.2, raw_bars, height=0.35, color='#377eb8',
+    show_concepts = ([r['concept'] for r in top_cor]
+                     + ['---']
+                     + [r['concept'] for r in reversed(bot_cor)])
+    n = len(show_concepts)
+    y_pos = np.arange(n)
+
+    raw_bars, cor_bars, bar_colors = [], [], []
+    for c in show_concepts:
+        if c == '---':
+            raw_bars.append(0)
+            cor_bars.append(0)
+            bar_colors.append('none')
+        else:
+            raw_bars.append(raw_map.get(c, 0))
+            cor_bars.append(cor_map.get(c, 0))
+            bar_colors.append(CATEGORY_COLORS.get(
+                _concept_category(c), '#999999'))
+
+    ax.barh(y_pos - 0.18, raw_bars, height=0.32, color='#377eb8',
             alpha=0.7, label='Raw')
-    ax.barh(y_pos + 0.2, cor_bars, height=0.35, color='#e41a1c',
+    ax.barh(y_pos + 0.18, cor_bars, height=0.32, color='#e41a1c',
             alpha=0.7, label='Corrected')
+
+    sep_idx = show_concepts.index('---')
+    ax.axhline(sep_idx, color='grey', linewidth=0.6, linestyle='-',
+               alpha=0.4)
+    ax.text(ax.get_xlim()[0] + 0.01, sep_idx, '  ...', fontsize=6,
+            va='center', color='grey', style='italic')
+
+    labels = [c if c != '---' else '' for c in show_concepts]
     ax.set_yticks(y_pos)
-    ax.set_yticklabels(all_top, fontsize=6)
+    ax.set_yticklabels(labels, fontsize=5.5)
     ax.invert_yaxis()
-    ax.set_xlabel('Convergence Score')
-    ax.set_title('(b) Top-20 Comparison', fontsize=9)
-    ax.legend(fontsize=6, loc='lower right')
+    ax.set_xlabel('Convergence Score', fontsize=7)
+    ax.set_title(f'(b) Top & Bottom {N_SHOW}', fontsize=8)
+    ax.legend(fontsize=5.5, loc='center right')
+    ax.tick_params(labelsize=6)
+
+    # --- Panel (c): k-sensitivity (if data available) ---
+    if has_sens:
+        ax = axes[2]
+        results = sensitivity_data['results']
+        ref_k = sensitivity_data.get('reference_k', 3)
+        ks = [r['k'] for r in results]
+        rhos = [r.get('spearman_vs_k3', 1.0) for r in results]
+
+        ax.plot(ks, rhos, 'o-', color='#377eb8', markersize=5,
+                linewidth=1.3, zorder=3)
+
+        if ref_k in ks:
+            ri = ks.index(ref_k)
+            ax.scatter([ref_k], [rhos[ri]], marker='*', s=60,
+                       color='#e41a1c', zorder=5, linewidths=0.3,
+                       edgecolors='darkred',
+                       label=f'k = {ref_k} (reference)')
+
+        ax.axhline(0.95, color='grey', linestyle='--', linewidth=0.6,
+                   alpha=0.5, label='$\\rho$ = 0.95')
+
+        non_ref = [r for k, r in zip(ks, rhos) if k != ref_k]
+        if non_ref:
+            rho_min, rho_max = min(non_ref), max(non_ref)
+            ax.text(0.95, 0.05,
+                    f'Range: {rho_min:.2f}\u2013{rho_max:.2f}',
+                    transform=ax.transAxes, fontsize=6,
+                    ha='right', va='bottom',
+                    bbox=dict(boxstyle='round,pad=0.25', facecolor='white',
+                              edgecolor='grey', alpha=0.8))
+
+        ax.set_xlabel('k (components removed)', fontsize=7)
+        ax.set_ylabel('Spearman $\\rho$ vs $k$=3', fontsize=7)
+        ax.set_title('(c) $k$-Sensitivity', fontsize=8)
+        ax.legend(fontsize=5, loc='lower left')
+        ax.grid(True, alpha=0.15, linewidth=0.4)
+        ax.set_ylim(None, 1.02)
+        ax.tick_params(labelsize=6)
 
     fig.tight_layout()
     fig.savefig(os.path.join(outdir, 'fig_isotropy_validation.pdf'))
@@ -1388,8 +1646,10 @@ def fig_offset_vector_demo(data, outdir):
     concepts = jp['concepts']
     centroids = jp['centroids']
     per_language = jp['per_language']
+    n_pairs = len(pairs)
 
-    pair_colors = ['#d62728', '#1f77b4', '#2ca02c', '#9467bd']
+    pair_colors = ['#d62728', '#1f77b4', '#2ca02c', '#9467bd', '#ff7f0e',
+                   '#8c564b', '#e377c2', '#17becf'][:n_pairs]
     _all_markers = ['o', '*', 'D', 's', '^', 'v', 'P', 'X', 'h', 'd']
     concept_markers = {c: _all_markers[i % len(_all_markers)]
                        for i, c in enumerate(concepts)}
@@ -1405,13 +1665,12 @@ def fig_offset_vector_demo(data, outdir):
     for concept in concepts:
         xs = [per_language[l]['points'][concept]['x'] for l in sample]
         ys = [per_language[l]['points'][concept]['y'] for l in sample]
-        ax.scatter(xs, ys, s=8, alpha=0.25, c='#aaaaaa',
+        ax.scatter(xs, ys, s=4, alpha=0.18, c='#cccccc',
                    marker=concept_markers[concept], edgecolors='none')
 
     for pi, pair in enumerate(pairs):
         ca, cb = pair['concept_a'], pair['concept_b']
         col = pair_colors[pi]
-        norm = pair['centroid_offset_norm']
         cax, cay = centroids[ca]['x'], centroids[ca]['y']
         cbx, cby = centroids[cb]['x'], centroids[cb]['y']
 
@@ -1420,7 +1679,7 @@ def fig_offset_vector_demo(data, outdir):
             ax.annotate('', xy=(pts[cb]['x'], pts[cb]['y']),
                         xytext=(pts[ca]['x'], pts[ca]['y']),
                         arrowprops=dict(arrowstyle='->', color=col,
-                                        lw=0.4, alpha=0.15))
+                                        lw=0.4, alpha=0.12))
 
         ax.annotate('', xy=(cbx, cby), xytext=(cax, cay),
                     arrowprops=dict(arrowstyle='->', color=col,
@@ -1430,12 +1689,12 @@ def fig_offset_vector_demo(data, outdir):
     for concept in concepts:
         cx = centroids[concept]['x']
         cy = centroids[concept]['y']
-        ax.scatter(cx, cy, s=100, marker=concept_markers[concept],
-                   c='white', edgecolors='black', linewidths=0.8, zorder=8)
-        ax.annotate(concept, (cx, cy), fontsize=6, fontweight='bold',
-                    ha='center', va='bottom', xytext=(0, 5),
+        ax.scatter(cx, cy, s=28, marker=concept_markers[concept],
+                   c='white', edgecolors='black', linewidths=0.6, zorder=8)
+        ax.annotate(concept, (cx, cy), fontsize=5.5, fontweight='bold',
+                    ha='center', va='bottom', xytext=(0, 4),
                     textcoords='offset points', zorder=9,
-                    bbox=dict(boxstyle='round,pad=0.15', fc='white',
+                    bbox=dict(boxstyle='round,pad=0.12', fc='white',
                               ec='none', alpha=0.8))
 
     legend_elements = []
@@ -1444,13 +1703,13 @@ def fig_offset_vector_demo(data, outdir):
         norm = pair['centroid_offset_norm']
         legend_elements.append(mpl.lines.Line2D(
             [], [], color=pair_colors[pi], lw=2,
-            label=f'{ca}→{cb} ({norm:.1f})'))
-    ax.legend(handles=legend_elements, fontsize=5.5, loc='best',
+            label=f'{ca}\u2192{cb} ({norm:.1f})'))
+    ax.legend(handles=legend_elements, fontsize=5, loc='best',
               framealpha=0.85, handletextpad=0.4, borderpad=0.4,
-              title='Pair (|d|)', title_fontsize=6)
+              title='Pair (|d|)', title_fontsize=5.5)
     ax.set_xlabel('PC1', fontsize=8)
     ax.set_ylabel('PC2', fontsize=8)
-    ax.set_title('(a) Joint PCA: top-4 offset pairs', fontsize=9)
+    ax.set_title(f'(a) Joint PCA: top-{n_pairs} offset pairs', fontsize=9)
     ax.grid(True, alpha=0.2, linewidth=0.5)
 
     # --- Panel (b): Offset vectors from common origin ---
@@ -1460,7 +1719,6 @@ def fig_offset_vector_demo(data, outdir):
     for pi, pair in enumerate(pairs):
         ca, cb = pair['concept_a'], pair['concept_b']
         col = pair_colors[pi]
-        norm = pair['centroid_offset_norm']
 
         centroid_dx = centroids[cb]['x'] - centroids[ca]['x']
         centroid_dy = centroids[cb]['y'] - centroids[ca]['y']
@@ -1472,15 +1730,15 @@ def fig_offset_vector_demo(data, outdir):
             all_dx.append(dx)
             all_dy.append(dy)
             ax.arrow(0, 0, dx, dy, head_width=0.18, head_length=0.12,
-                     fc=col, ec=col, alpha=0.18, linewidth=0.5)
+                     fc=col, ec=col, alpha=0.15, linewidth=0.4)
 
         all_dx.append(centroid_dx)
         all_dy.append(centroid_dy)
         ax.arrow(0, 0, centroid_dx, centroid_dy,
                  head_width=0.35, head_length=0.18,
-                 fc=col, ec='black', linewidth=2.0, zorder=5)
-        ax.annotate(f'{ca}→{cb}',
-                    (centroid_dx, centroid_dy), fontsize=5.5,
+                 fc=col, ec=col, linewidth=2.0, zorder=5)
+        ax.annotate(f'{ca}\u2192{cb}',
+                    (centroid_dx, centroid_dy), fontsize=5,
                     fontweight='bold', ha='center', va='bottom',
                     xytext=(0, 4), textcoords='offset points', zorder=6,
                     bbox=dict(boxstyle='round,pad=0.12', fc='white',
@@ -1497,13 +1755,262 @@ def fig_offset_vector_demo(data, outdir):
     ax.axvline(0, color='grey', linewidth=0.3)
     ax.set_xlabel('$\\Delta$PC1', fontsize=8)
     ax.set_ylabel('$\\Delta$PC2', fontsize=8)
-    ax.set_title('(b) Offset vectors (all 4 pairs)', fontsize=9)
+    ax.set_title(f'(b) Offset vectors (all {n_pairs} pairs)', fontsize=9)
     ax.grid(True, alpha=0.2, linewidth=0.5)
 
     fig.tight_layout()
     fig.savefig(os.path.join(outdir, 'fig_offset_vector_demo.pdf'))
     plt.close(fig)
     print("  -> fig_offset_vector_demo.pdf")
+
+
+# ---------------------------------------------------------------------------
+# Figure 15 — Carrier baseline: contextualized vs decontextualized
+# ---------------------------------------------------------------------------
+def fig_carrier_baseline(data, outdir):
+    per_concept = data.get('per_concept', [])
+    comparison = data.get('comparison', {})
+    if not per_concept:
+        print("  [WARN] Missing carrier baseline per-concept data.")
+        return
+
+    concepts = [p['concept'] for p in per_concept]
+    ctx = np.array([p['contextualized'] for p in per_concept])
+    dctx = np.array([p['decontextualized'] for p in per_concept])
+    rho = comparison.get('spearman_rho', 0)
+    cats = [_concept_category(c) for c in concepts]
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(FULL_W, 3.5))
+
+    # Panel (a): Scatter — contextualized vs decontextualized
+    for cat in CATEGORY_COLORS:
+        idx = [i for i, cc in enumerate(cats) if cc == cat]
+        if not idx:
+            continue
+        ax1.scatter([dctx[i] for i in idx], [ctx[i] for i in idx],
+                    c=CATEGORY_COLORS[cat], s=24, alpha=0.8,
+                    edgecolors='white', linewidths=0.3,
+                    label=cat, zorder=3)
+
+    lims = [min(ctx.min(), dctx.min()) - 0.02,
+            max(ctx.max(), dctx.max()) + 0.02]
+    ax1.plot(lims, lims, 'k:', linewidth=0.8, alpha=0.5)
+
+    slope, intercept, _, _, _ = sp_stats.linregress(dctx, ctx)
+    x_fit = np.linspace(lims[0], lims[1], 50)
+    ax1.plot(x_fit, slope * x_fit + intercept, '--', color='#377eb8',
+             linewidth=1.0, alpha=0.7)
+
+    diffs = np.abs(ctx - dctx)
+    threshold = np.percentile(diffs, 90)
+    for i, c in enumerate(concepts):
+        if diffs[i] >= threshold:
+            ax1.annotate(c, (dctx[i], ctx[i]), fontsize=5, alpha=0.8,
+                         textcoords='offset points', xytext=(3, 3))
+
+    ax1.text(0.03, 0.97, f'$\\rho_s$ = {rho:.3f}',
+             transform=ax1.transAxes, fontsize=8, verticalalignment='top',
+             bbox=dict(boxstyle='round,pad=0.3', facecolor='white',
+                       edgecolor='grey', alpha=0.8))
+    ax1.set_xlabel('Decontextualized Convergence')
+    ax1.set_ylabel('Contextualized Convergence')
+    ax1.set_title('(a) Carrier Sentence Effect', fontsize=9)
+    ax1.legend(fontsize=5, ncol=2, loc='lower right', framealpha=0.85)
+    ax1.grid(True, alpha=0.15, linewidth=0.4)
+
+    # Panel (b): Dumbbell chart for top-20 concepts
+    sorted_idx = np.argsort(ctx)[::-1][:20]
+    concepts_top = [concepts[i] for i in sorted_idx]
+    ctx_top = ctx[sorted_idx]
+    dctx_top = dctx[sorted_idx]
+    cats_top = [cats[i] for i in sorted_idx]
+    cat_cols_top = [CATEGORY_COLORS.get(c, '#999999') for c in cats_top]
+
+    y_pos = np.arange(len(sorted_idx))
+    for j in range(len(sorted_idx)):
+        ax2.plot([ctx_top[j], dctx_top[j]], [y_pos[j], y_pos[j]],
+                 color=cat_cols_top[j], linewidth=1.0, alpha=0.5, zorder=2)
+    ax2.scatter(ctx_top, y_pos, c=cat_cols_top, s=24,
+                edgecolors='white', linewidths=0.3, zorder=3)
+    ax2.scatter(dctx_top, y_pos, c=cat_cols_top, s=24, marker='D',
+                edgecolors='white', linewidths=0.3, zorder=3)
+
+    ax2.scatter([], [], c='grey', s=24, label='Contextualized')
+    ax2.scatter([], [], c='grey', s=24, marker='D', label='Decontextualized')
+    ax2.set_yticks(y_pos)
+    ax2.set_yticklabels(concepts_top, fontsize=5.5)
+    ax2.invert_yaxis()
+    ax2.set_xlabel('Convergence Score')
+    ax2.set_title('(b) Top-20 Concepts', fontsize=9)
+    ax2.legend(fontsize=5.5, loc='lower right', markerscale=1.3)
+    ax2.grid(True, axis='x', alpha=0.15, linewidth=0.4)
+
+    fig.tight_layout()
+    fig.savefig(os.path.join(outdir, 'fig_carrier_baseline.pdf'))
+    plt.close(fig)
+    print("  -> fig_carrier_baseline.pdf")
+
+
+# ---------------------------------------------------------------------------
+# Figure 16 — Layerwise trajectory: convergence, CSM, and concept heatmap
+# ---------------------------------------------------------------------------
+def fig_layerwise_trajectory(data, outdir):
+    layers = data.get('layers', [])
+    summary = data.get('summary', {})
+    if not layers:
+        print("  [WARN] Missing layerwise metrics data.")
+        return
+
+    layer_idx = [l['layer'] for l in layers]
+    conv_means = np.array([l['convergence_mean'] for l in layers])
+    conv_stds = np.array([l['convergence_std'] for l in layers])
+    csm_raw = [l.get('csm_raw_ratio', 0) for l in layers]
+    csm_centered = [l.get('csm_centered_ratio', 0) for l in layers]
+    emergence = summary.get('convergence_emergence_layer')
+    phase_trans = summary.get('csm_phase_transition_layer')
+
+    concept_data = data.get('concept_trajectories', {})
+    if not concept_data:
+        for le in layers:
+            pc = le.get('per_concept', {})
+            if isinstance(pc, dict):
+                for c, v in pc.items():
+                    concept_data.setdefault(c, {})[le['layer']] = v
+            elif isinstance(pc, list):
+                for item in pc:
+                    c = item.get('concept', '')
+                    v = item.get('convergence', item.get('score', 0))
+                    if c:
+                        concept_data.setdefault(c, {})[le['layer']] = v
+    if not concept_data:
+        for le in layers:
+            for key in ('top_5_concepts', 'bottom_5_concepts'):
+                for item in le.get(key, []):
+                    if isinstance(item, dict):
+                        c = item.get('concept', '')
+                        v = item.get('convergence', 0)
+                        if c and v:
+                            concept_data.setdefault(c, {})[le['layer']] = v
+
+    has_heatmap = bool(concept_data)
+    ncols = 3 if has_heatmap else 2
+    width_ratios = [1, 1, 1.2] if has_heatmap else [1, 1]
+
+    fig, axes = plt.subplots(1, ncols, figsize=(FULL_W, 3.2),
+                              gridspec_kw={'width_ratios': width_ratios})
+
+    # Panel (a): Convergence trajectory with error band
+    ax = axes[0]
+    ax.plot(layer_idx, conv_means, 'o-', color='#377eb8',
+            markersize=4, linewidth=1.5, zorder=3)
+    ax.fill_between(layer_idx, conv_means - conv_stds,
+                    conv_means + conv_stds, alpha=0.18, color='#377eb8')
+    if emergence is not None:
+        ax.axvline(emergence, color='#e41a1c', linestyle='--',
+                   linewidth=1.0, alpha=0.7,
+                   label=f'Emergence (L{emergence})')
+        ax.legend(fontsize=6, loc='upper left')
+    ax.set_xlabel('Layer')
+    ax.set_ylabel('Mean Convergence')
+    ax.set_title('(a) Convergence', fontsize=9)
+    ax.grid(True, alpha=0.15, linewidth=0.4)
+
+    # Panel (b): CSM trajectory (raw + centered)
+    ax = axes[1]
+    ax.plot(layer_idx, csm_raw, 'o--', color='#377eb8', markersize=3,
+            linewidth=1.2, label='Raw')
+    ax.plot(layer_idx, csm_centered, 'o-', color='#e41a1c', markersize=3,
+            linewidth=1.2, label='Centered')
+    if phase_trans is not None:
+        ax.axvline(phase_trans, color='#999999', linestyle='--',
+                   linewidth=1.0, alpha=0.7,
+                   label=f'Phase trans. (L{phase_trans})')
+    ax.set_xlabel('Layer')
+    ax.set_ylabel('CSM Ratio')
+    ax.set_title('(b) Conceptual Store', fontsize=9)
+    ax.legend(fontsize=5.5, loc='upper left')
+    ax.grid(True, alpha=0.15, linewidth=0.4)
+
+    # Panel (c): Per-concept heatmap across layers
+    if has_heatmap:
+        ax = axes[2]
+        final_layer = max(layer_idx)
+        all_concepts = sorted(
+            concept_data.keys(),
+            key=lambda c: concept_data[c].get(final_layer, 0),
+            reverse=True)
+        n_show = min(35, len(all_concepts))
+        n_half = n_show // 2
+        shown = all_concepts[:n_half] + all_concepts[-(n_show - n_half):]
+        shown = list(dict.fromkeys(shown))
+
+        matrix = np.zeros((len(shown), len(layer_idx)))
+        for i, c in enumerate(shown):
+            for j, li in enumerate(layer_idx):
+                matrix[i, j] = concept_data[c].get(li, 0)
+
+        im = ax.imshow(matrix, cmap='magma', aspect='auto',
+                        interpolation='nearest')
+        ax.set_xticks(range(len(layer_idx)))
+        ax.set_xticklabels([str(l) for l in layer_idx], fontsize=5)
+        ax.set_yticks(range(len(shown)))
+        ax.set_yticklabels(shown, fontsize=4)
+        ax.set_xlabel('Layer')
+        ax.set_title('(c) Per-Concept', fontsize=9)
+        plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+
+    fig.tight_layout()
+    fig.savefig(os.path.join(outdir, 'fig_layerwise_trajectory.pdf'))
+    plt.close(fig)
+    print("  -> fig_layerwise_trajectory.pdf")
+
+
+# ---------------------------------------------------------------------------
+# Figure 17 — Isotropy sensitivity: ranking stability across k values
+# ---------------------------------------------------------------------------
+def fig_isotropy_sensitivity(data, outdir):
+    results = data.get('results', [])
+    ref_k = data.get('reference_k', 3)
+    if not results:
+        print("  [WARN] Missing isotropy sensitivity data.")
+        return
+
+    ks = [r['k'] for r in results]
+    rhos = [r.get('spearman_vs_k3', 1.0) for r in results]
+
+    fig, ax = plt.subplots(figsize=(COL_W, 2.5))
+
+    ax.plot(ks, rhos, 'o-', color='#377eb8', markersize=6,
+            linewidth=1.5, zorder=3)
+
+    if ref_k in ks:
+        ri = ks.index(ref_k)
+        ax.scatter([ref_k], [rhos[ri]], marker='*', s=150,
+                   color='#e41a1c', zorder=5,
+                   label=f'k = {ref_k} (reference)')
+
+    ax.axhline(0.95, color='grey', linestyle='--', linewidth=0.8,
+               alpha=0.6, label='$\\rho$ = 0.95')
+
+    non_ref = [r for k, r in zip(ks, rhos) if k != ref_k]
+    if non_ref:
+        rho_min, rho_max = min(non_ref), max(non_ref)
+        ax.text(0.97, 0.05, f'Range: {rho_min:.2f}\u2013{rho_max:.2f}',
+                transform=ax.transAxes, fontsize=7,
+                ha='right', va='bottom',
+                bbox=dict(boxstyle='round,pad=0.3', facecolor='white',
+                          edgecolor='grey', alpha=0.8))
+
+    ax.set_xlabel('k (isotropy correction)')
+    ax.set_ylabel('Spearman $\\rho$ vs $k$=3')
+    ax.legend(fontsize=6, loc='lower left')
+    ax.grid(True, alpha=0.15, linewidth=0.4)
+    ax.set_ylim(None, 1.02)
+
+    fig.tight_layout()
+    fig.savefig(os.path.join(outdir, 'fig_isotropy_sensitivity.pdf'))
+    plt.close(fig)
+    print("  -> fig_isotropy_sensitivity.pdf")
 
 
 # ---------------------------------------------------------------------------
@@ -1529,8 +2036,10 @@ def main():
         fig_phylogenetic(d, FIG_DIR)
 
     # Figure 3
-    print("[3/14] Swadesh vs non-Swadesh comparison …")
-    d = _load_json('swadesh_comparison.json')
+    print("[3/18] Swadesh vs non-Swadesh comparison …")
+    d = _load_json('improved_swadesh_comparison.json')
+    if d is None:
+        d = _load_json('swadesh_comparison.json')
     if d:
         fig_swadesh_comparison(d, FIG_DIR)
 
@@ -1583,11 +2092,12 @@ def main():
     if d:
         fig_category_detail(d, FIG_DIR)
 
-    # Figure 11
-    print("[11/15] Isotropy validation …")
+    # Figure 11 (combined with isotropy sensitivity)
+    print("[11/15] Isotropy validation (combined) …")
     d = _load_json('swadesh_convergence.json')
+    d_sens = _load_json('isotropy_sensitivity.json')
     if d:
-        fig_isotropy_validation(d, FIG_DIR)
+        fig_isotropy_validation(d, FIG_DIR, sensitivity_data=d_sens)
 
     # Figure 12
     print("[12/14] Mantel scatter …")
@@ -1602,10 +2112,22 @@ def main():
         fig_concept_map(d, FIG_DIR)
 
     # Figure 14
-    print("[14/14] Offset vector demo …")
+    print("[14/18] Offset vector demo …")
     d = _load_json('offset_invariance.json')
     if d:
         fig_offset_vector_demo(d, FIG_DIR)
+
+    # Figure 15 — Carrier baseline (decontextualized comparison)
+    print("[15/18] Carrier baseline …")
+    d = _load_json('decontextualized_convergence.json')
+    if d:
+        fig_carrier_baseline(d, FIG_DIR)
+
+    # Figure 16 — Layerwise trajectory
+    print("[16/18] Layerwise trajectory …")
+    d = _load_json('layerwise_metrics.json')
+    if d:
+        fig_layerwise_trajectory(d, FIG_DIR)
 
     print("\nDone.")
 

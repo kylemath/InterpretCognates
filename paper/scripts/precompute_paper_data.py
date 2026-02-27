@@ -751,11 +751,42 @@ def main() -> None:
             "explained_variance": [float(v) for v in pca.explained_variance_ratio_],
         }
 
+    # Build single-pair vector_plot for the blog's interactive renderer.
+    # Pick the highest-consistency pair and flatten to the array format the JS expects.
+    vector_plot = None
+    if joint_plot and joint_plot["pairs"]:
+        best = max(joint_plot["pairs"], key=lambda p: p["mean_consistency"])
+        ca, cb = best["concept_a"], best["concept_b"]
+        vp_per_lang = []
+        for lang_code, lang_data in joint_plot["per_language"].items():
+            pts = lang_data.get("points", {})
+            if ca in pts and cb in pts:
+                vp_per_lang.append({
+                    "lang": lang_code,
+                    "family": lang_data.get("family", "Unknown"),
+                    "ax": pts[ca]["x"], "ay": pts[ca]["y"],
+                    "bx": pts[cb]["x"], "by": pts[cb]["y"],
+                })
+        ref_concepts = [
+            {"concept": c, "x": joint_plot["centroids"][c]["x"],
+             "y": joint_plot["centroids"][c]["y"]}
+            for c in joint_plot["concepts"] if c not in (ca, cb)
+        ]
+        vector_plot = {
+            "concept_a": ca, "concept_b": cb,
+            "centroid_a": joint_plot["centroids"].get(ca),
+            "centroid_b": joint_plot["centroids"].get(cb),
+            "per_language": vp_per_lang,
+            "reference_concepts": ref_concepts,
+            "explained_variance": joint_plot.get("explained_variance"),
+        }
+
     _write_json(DOCS_DATA_DIR / "offset_invariance.json", {
         "num_pairs": len(pairs),
         "num_languages": len(langs),
         "pairs": pairs,
         "joint_vector_plot": joint_plot,
+        "vector_plot": vector_plot,
     })
 
     print("Computing color circle …")

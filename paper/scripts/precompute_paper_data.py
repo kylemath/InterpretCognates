@@ -641,6 +641,33 @@ def main() -> None:
         mantel["languages"] = asjp_langs
         mantel["asjp_distance_matrix"] = asjp_dist.tolist()
         mantel["embedding_distance_subset"] = emb_subset.tolist()
+    concept_maps = bm.family_concept_maps(sw_emb_ctx, langs)
+
+    # 3D PCA of language centroids for interactive blog toggle
+    lang_family = {}
+    for fam_name, fam_data in concept_maps.get("families", {}).items():
+        for l in fam_data.get("languages", []):
+            lang_family[l] = fam_name
+
+    n = len(langs)
+    D2 = np.nan_to_num(emb_dist.astype(np.float64) ** 2, nan=0.0, posinf=0.0, neginf=0.0)
+    H = np.eye(n) - np.ones((n, n)) / n
+    G = np.nan_to_num(-0.5 * H @ D2 @ H, nan=0.0, posinf=0.0, neginf=0.0)
+    eigvals, eigvecs = np.linalg.eigh(G)
+    idx = np.argsort(eigvals)[::-1]
+    pos_idx = [i for i in idx if eigvals[i] > 1e-10]
+
+    def _pca_points(component_indices):
+        coords = np.nan_to_num(eigvecs[:, component_indices] * np.sqrt(eigvals[component_indices]), nan=0.0)
+        return [{"label": l, "lang": l, "family": lang_family.get(l, "Unknown"),
+                 "x": round(float(coords[i, 0]), 4),
+                 "y": round(float(coords[i, 1]), 4),
+                 "z": round(float(coords[i, 2]), 4) if coords.shape[1] > 2 else 0.0}
+                for i, l in enumerate(langs)]
+
+    pca_raw = _pca_points(pos_idx[:3]) if len(pos_idx) >= 3 else []
+    pca_centered = _pca_points(pos_idx[1:4]) if len(pos_idx) >= 4 else pca_raw
+
     _write_json(DOCS_DATA_DIR / "phylogenetic.json", {
         "num_languages": len(langs),
         "languages": langs,
@@ -648,8 +675,9 @@ def main() -> None:
         "mds": mds,
         "dendrogram": dendro,
         "mantel_test": mantel,
-        # `generate_figures.py` also expects concept maps under this key.
-        "concept_maps": bm.family_concept_maps(sw_emb_ctx, langs),
+        "concept_maps": concept_maps,
+        "pca_raw": pca_raw,
+        "pca_centered": pca_centered,
     })
 
     print("Computing colexification analysis …")

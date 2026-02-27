@@ -25,11 +25,15 @@ mkdir -p "$ARXIV_DIR/output"
 cp output/stats.tex "$ARXIV_DIR/output/"
 
 mkdir -p "$ARXIV_DIR/figures"
-for fig in figures/*.pdf; do
+REFERENCED_FIGS=$(grep -roh 'figures/fig_[a-z_]*\.pdf' sections/*.tex main.tex | sort -u)
+for fig in $REFERENCED_FIGS; do
     if [ -f "$fig" ]; then
         cp "$fig" "$ARXIV_DIR/figures/"
+    else
+        echo "WARNING: $fig referenced in .tex but not found!"
     fi
 done
+echo "Included $(echo "$REFERENCED_FIGS" | wc -l | tr -d ' ') figures (only those referenced in .tex files)"
 
 if [ -f "build/main.bbl" ]; then
     cp build/main.bbl "$ARXIV_DIR/main.bbl"

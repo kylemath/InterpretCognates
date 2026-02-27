@@ -50536,5 +50536,2169 @@
       0.04584426060318947,
       0.037499621510505676
     ]
-  }
+  },
+  "pca_raw": [
+    {
+      "label": "eng_Latn",
+      "lang": "eng_Latn",
+      "family": "IE: Germanic",
+      "x": -0.1208,
+      "y": 0.0556,
+      "z": -0.0652
+    },
+    {
+      "label": "spa_Latn",
+      "lang": "spa_Latn",
+      "family": "IE: Romance",
+      "x": -0.1312,
+      "y": -0.0534,
+      "z": 0.0158
+    },
+    {
+      "label": "fra_Latn",
+      "lang": "fra_Latn",
+      "family": "IE: Romance",
+      "x": -0.0888,
+      "y": -0.0364,
+      "z": 0.0079
+    },
+    {
+      "label": "deu_Latn",
+      "lang": "deu_Latn",
+      "family": "IE: Germanic",
+      "x": -0.0801,
+      "y": -0.0168,
+      "z": -0.0367
+    },
+    {
+      "label": "ita_Latn",
+      "lang": "ita_Latn",
+      "family": "IE: Romance",
+      "x": -0.1596,
+      "y": -0.0632,
+      "z": 0.0191
+    },
+    {
+      "label": "por_Latn",
+      "lang": "por_Latn",
+      "family": "IE: Romance",
+      "x": -0.1406,
+      "y": -0.0294,
+      "z": 0.0116
+    },
+    {
+      "label": "rus_Cyrl",
+      "lang": "rus_Cyrl",
+      "family": "IE: Slavic",
+      "x": -0.0757,
+      "y": -0.0083,
+      "z": -0.0201
+    },
+    {
+      "label": "pol_Latn",
+      "lang": "pol_Latn",
+      "family": "IE: Slavic",
+      "x": -0.0875,
+      "y": -0.0468,
+      "z": -0.0101
+    },
+    {
+      "label": "hin_Deva",
+      "lang": "hin_Deva",
+      "family": "IE: Indo-Iranian",
+      "x": -0.0584,
+      "y": 0.0153,
+      "z": -0.0323
+    },
+    {
+      "label": "pes_Arab",
+      "lang": "pes_Arab",
+      "family": "IE: Indo-Iranian",
+      "x": -0.0356,
+      "y": 0.0084,
+      "z": -0.0267
+    },
+    {
+      "label": "ell_Grek",
+      "lang": "ell_Grek",
+      "family": "Unknown",
+      "x": -0.0799,
+      "y": -0.0077,
+      "z": -0.0157
+    },
+    {
+      "label": "ron_Latn",
+      "lang": "ron_Latn",
+      "family": "IE: Romance",
+      "x": -0.0947,
+      "y": -0.0452,
+      "z": 0.017
+    },
+    {
+      "label": "nld_Latn",
+      "lang": "nld_Latn",
+      "family": "IE: Germanic",
+      "x": -0.0805,
+      "y": -0.0085,
+      "z": -0.0455
+    },
+    {
+      "label": "swe_Latn",
+      "lang": "swe_Latn",
+      "family": "IE: Germanic",
+      "x": -0.0744,
+      "y": -0.0099,
+      "z": -0.0397
+    },
+    {
+      "label": "ben_Beng",
+      "lang": "ben_Beng",
+      "family": "IE: Indo-Iranian",
+      "x": -0.0436,
+      "y": 0.0214,
+      "z": -0.0311
+    },
+    {
+      "label": "zho_Hans",
+      "lang": "zho_Hans",
+      "family": "Sino-Tibetan",
+      "x": -0.0271,
+      "y": 0.0132,
+      "z": 0.003
+    },
+    {
+      "label": "jpn_Jpan",
+      "lang": "jpn_Jpan",
+      "family": "Japonic & Koreanic",
+      "x": -0.0389,
+      "y": -0.0212,
+      "z": -0.005
+    },
+    {
+      "label": "kor_Hang",
+      "lang": "kor_Hang",
+      "family": "Japonic & Koreanic",
+      "x": -0.0181,
+      "y": 0.0103,
+      "z": -0.0372
+    },
+    {
+      "label": "arb_Arab",
+      "lang": "arb_Arab",
+      "family": "Afro-Asiatic",
+      "x": -0.0706,
+      "y": 0.0002,
+      "z": -0.0385
+    },
+    {
+      "label": "heb_Hebr",
+      "lang": "heb_Hebr",
+      "family": "Afro-Asiatic",
+      "x": -0.0642,
+      "y": -0.0129,
+      "z": -0.01
+    },
+    {
+      "label": "tur_Latn",
+      "lang": "tur_Latn",
+      "family": "Turkic",
+      "x": -0.0686,
+      "y": -0.0149,
+      "z": -0.0037
+    },
+    {
+      "label": "vie_Latn",
+      "lang": "vie_Latn",
+      "family": "Austroasiatic",
+      "x": -0.0551,
+      "y": -0.008,
+      "z": 0.0052
+    },
+    {
+      "label": "tha_Thai",
+      "lang": "tha_Thai",
+      "family": "Tai-Kadai",
+      "x": -0.0158,
+      "y": -0.0181,
+      "z": 0.0035
+    },
+    {
+      "label": "ind_Latn",
+      "lang": "ind_Latn",
+      "family": "Austronesian",
+      "x": -0.0715,
+      "y": 0.0143,
+      "z": -0.0026
+    },
+    {
+      "label": "tgl_Latn",
+      "lang": "tgl_Latn",
+      "family": "Austronesian",
+      "x": -0.0361,
+      "y": 0.0015,
+      "z": 0.0232
+    },
+    {
+      "label": "swh_Latn",
+      "lang": "swh_Latn",
+      "family": "Niger-Congo",
+      "x": -0.0536,
+      "y": 0.0574,
+      "z": 0.0219
+    },
+    {
+      "label": "yor_Latn",
+      "lang": "yor_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0214,
+      "y": 0.0434,
+      "z": 0.0538
+    },
+    {
+      "label": "hau_Latn",
+      "lang": "hau_Latn",
+      "family": "Afro-Asiatic",
+      "x": -0.0217,
+      "y": 0.0615,
+      "z": 0.0513
+    },
+    {
+      "label": "fin_Latn",
+      "lang": "fin_Latn",
+      "family": "Uralic",
+      "x": -0.0655,
+      "y": -0.0264,
+      "z": -0.001
+    },
+    {
+      "label": "hun_Latn",
+      "lang": "hun_Latn",
+      "family": "Uralic",
+      "x": -0.1174,
+      "y": -0.0275,
+      "z": -0.0074
+    },
+    {
+      "label": "kat_Geor",
+      "lang": "kat_Geor",
+      "family": "Unknown",
+      "x": 0.0034,
+      "y": -0.0175,
+      "z": -0.0173
+    },
+    {
+      "label": "tam_Taml",
+      "lang": "tam_Taml",
+      "family": "Dravidian",
+      "x": -0.0519,
+      "y": 0.0404,
+      "z": -0.0371
+    },
+    {
+      "label": "tel_Telu",
+      "lang": "tel_Telu",
+      "family": "Dravidian",
+      "x": -0.0281,
+      "y": 0.0264,
+      "z": -0.0314
+    },
+    {
+      "label": "mya_Mymr",
+      "lang": "mya_Mymr",
+      "family": "Sino-Tibetan",
+      "x": -0.0252,
+      "y": 0.0591,
+      "z": -0.0175
+    },
+    {
+      "label": "khm_Khmr",
+      "lang": "khm_Khmr",
+      "family": "Austroasiatic",
+      "x": 0.0261,
+      "y": -0.0107,
+      "z": 0.0212
+    },
+    {
+      "label": "amh_Ethi",
+      "lang": "amh_Ethi",
+      "family": "Afro-Asiatic",
+      "x": -0.0508,
+      "y": 0.0257,
+      "z": 0.0177
+    },
+    {
+      "label": "eus_Latn",
+      "lang": "eus_Latn",
+      "family": "Unknown",
+      "x": -0.075,
+      "y": 0.0205,
+      "z": -0.0189
+    },
+    {
+      "label": "khk_Cyrl",
+      "lang": "khk_Cyrl",
+      "family": "Unknown",
+      "x": 0.0589,
+      "y": -0.0399,
+      "z": 0.0104
+    },
+    {
+      "label": "kaz_Cyrl",
+      "lang": "kaz_Cyrl",
+      "family": "Turkic",
+      "x": -0.0201,
+      "y": 0.0332,
+      "z": -0.0239
+    },
+    {
+      "label": "cat_Latn",
+      "lang": "cat_Latn",
+      "family": "IE: Romance",
+      "x": -0.087,
+      "y": -0.0912,
+      "z": 0.0177
+    },
+    {
+      "label": "glg_Latn",
+      "lang": "glg_Latn",
+      "family": "IE: Romance",
+      "x": -0.1287,
+      "y": -0.0419,
+      "z": 0.0134
+    },
+    {
+      "label": "ast_Latn",
+      "lang": "ast_Latn",
+      "family": "IE: Romance",
+      "x": -0.052,
+      "y": -0.1175,
+      "z": 0.0009
+    },
+    {
+      "label": "oci_Latn",
+      "lang": "oci_Latn",
+      "family": "IE: Romance",
+      "x": -0.0056,
+      "y": -0.1357,
+      "z": -0.026
+    },
+    {
+      "label": "scn_Latn",
+      "lang": "scn_Latn",
+      "family": "IE: Romance",
+      "x": 0.0251,
+      "y": -0.1049,
+      "z": -0.018
+    },
+    {
+      "label": "dan_Latn",
+      "lang": "dan_Latn",
+      "family": "IE: Germanic",
+      "x": -0.0782,
+      "y": -0.0162,
+      "z": -0.0392
+    },
+    {
+      "label": "nob_Latn",
+      "lang": "nob_Latn",
+      "family": "IE: Germanic",
+      "x": -0.087,
+      "y": -0.0305,
+      "z": -0.0279
+    },
+    {
+      "label": "isl_Latn",
+      "lang": "isl_Latn",
+      "family": "IE: Germanic",
+      "x": -0.0169,
+      "y": -0.0329,
+      "z": -0.0493
+    },
+    {
+      "label": "afr_Latn",
+      "lang": "afr_Latn",
+      "family": "IE: Germanic",
+      "x": -0.0841,
+      "y": 0.0014,
+      "z": -0.0272
+    },
+    {
+      "label": "ltz_Latn",
+      "lang": "ltz_Latn",
+      "family": "IE: Germanic",
+      "x": -0.0373,
+      "y": -0.0526,
+      "z": -0.0224
+    },
+    {
+      "label": "fao_Latn",
+      "lang": "fao_Latn",
+      "family": "IE: Germanic",
+      "x": 0.0192,
+      "y": -0.0046,
+      "z": -0.0524
+    },
+    {
+      "label": "ydd_Hebr",
+      "lang": "ydd_Hebr",
+      "family": "IE: Germanic",
+      "x": -0.0177,
+      "y": -0.0121,
+      "z": -0.0491
+    },
+    {
+      "label": "ukr_Cyrl",
+      "lang": "ukr_Cyrl",
+      "family": "IE: Slavic",
+      "x": -0.0616,
+      "y": -0.0201,
+      "z": -0.012
+    },
+    {
+      "label": "ces_Latn",
+      "lang": "ces_Latn",
+      "family": "IE: Slavic",
+      "x": -0.1308,
+      "y": -0.0767,
+      "z": 0.0155
+    },
+    {
+      "label": "bul_Cyrl",
+      "lang": "bul_Cyrl",
+      "family": "IE: Slavic",
+      "x": -0.0718,
+      "y": -0.0276,
+      "z": -0.0191
+    },
+    {
+      "label": "hrv_Latn",
+      "lang": "hrv_Latn",
+      "family": "IE: Slavic",
+      "x": -0.0848,
+      "y": -0.0504,
+      "z": -0.0071
+    },
+    {
+      "label": "bel_Cyrl",
+      "lang": "bel_Cyrl",
+      "family": "IE: Slavic",
+      "x": -0.1032,
+      "y": 0.0029,
+      "z": -0.0187
+    },
+    {
+      "label": "slk_Latn",
+      "lang": "slk_Latn",
+      "family": "IE: Slavic",
+      "x": -0.1188,
+      "y": -0.0657,
+      "z": 0.0169
+    },
+    {
+      "label": "srp_Cyrl",
+      "lang": "srp_Cyrl",
+      "family": "IE: Slavic",
+      "x": -0.0409,
+      "y": -0.0408,
+      "z": -0.0101
+    },
+    {
+      "label": "slv_Latn",
+      "lang": "slv_Latn",
+      "family": "IE: Slavic",
+      "x": -0.0761,
+      "y": -0.0472,
+      "z": -0.0032
+    },
+    {
+      "label": "mkd_Cyrl",
+      "lang": "mkd_Cyrl",
+      "family": "IE: Slavic",
+      "x": -0.051,
+      "y": -0.0314,
+      "z": -0.0071
+    },
+    {
+      "label": "urd_Arab",
+      "lang": "urd_Arab",
+      "family": "IE: Indo-Iranian",
+      "x": -0.04,
+      "y": -0.0002,
+      "z": -0.0431
+    },
+    {
+      "label": "mar_Deva",
+      "lang": "mar_Deva",
+      "family": "IE: Indo-Iranian",
+      "x": -0.0379,
+      "y": 0.0283,
+      "z": -0.0505
+    },
+    {
+      "label": "guj_Gujr",
+      "lang": "guj_Gujr",
+      "family": "IE: Indo-Iranian",
+      "x": -0.0365,
+      "y": 0.0215,
+      "z": -0.0282
+    },
+    {
+      "label": "pan_Guru",
+      "lang": "pan_Guru",
+      "family": "IE: Indo-Iranian",
+      "x": -0.0329,
+      "y": 0.0134,
+      "z": -0.0371
+    },
+    {
+      "label": "sin_Sinh",
+      "lang": "sin_Sinh",
+      "family": "IE: Indo-Iranian",
+      "x": -0.0297,
+      "y": 0.046,
+      "z": -0.0225
+    },
+    {
+      "label": "npi_Deva",
+      "lang": "npi_Deva",
+      "family": "IE: Indo-Iranian",
+      "x": -0.0296,
+      "y": 0.0229,
+      "z": -0.0329
+    },
+    {
+      "label": "asm_Beng",
+      "lang": "asm_Beng",
+      "family": "IE: Indo-Iranian",
+      "x": 0.0482,
+      "y": 0.015,
+      "z": -0.0444
+    },
+    {
+      "label": "ory_Orya",
+      "lang": "ory_Orya",
+      "family": "IE: Indo-Iranian",
+      "x": -0.0165,
+      "y": 0.0151,
+      "z": -0.0175
+    },
+    {
+      "label": "pbt_Arab",
+      "lang": "pbt_Arab",
+      "family": "IE: Indo-Iranian",
+      "x": 0.0782,
+      "y": -0.0015,
+      "z": -0.0251
+    },
+    {
+      "label": "tgk_Cyrl",
+      "lang": "tgk_Cyrl",
+      "family": "IE: Indo-Iranian",
+      "x": 0.0109,
+      "y": 0.0099,
+      "z": 0.0002
+    },
+    {
+      "label": "ckb_Arab",
+      "lang": "ckb_Arab",
+      "family": "IE: Indo-Iranian",
+      "x": 0.0177,
+      "y": -0.005,
+      "z": -0.005
+    },
+    {
+      "label": "kmr_Latn",
+      "lang": "kmr_Latn",
+      "family": "IE: Indo-Iranian",
+      "x": 0.1034,
+      "y": -0.0495,
+      "z": -0.0196
+    },
+    {
+      "label": "lit_Latn",
+      "lang": "lit_Latn",
+      "family": "IE: Baltic",
+      "x": -0.0304,
+      "y": -0.0249,
+      "z": -0.0191
+    },
+    {
+      "label": "lav_Latn",
+      "lang": "lav_Latn",
+      "family": "IE: Baltic",
+      "x": 0.3304,
+      "y": -0.0621,
+      "z": -0.3466
+    },
+    {
+      "label": "cym_Latn",
+      "lang": "cym_Latn",
+      "family": "IE: Celtic",
+      "x": 0.0014,
+      "y": -0.159,
+      "z": 0.0641
+    },
+    {
+      "label": "gle_Latn",
+      "lang": "gle_Latn",
+      "family": "IE: Celtic",
+      "x": 0.0162,
+      "y": -0.1092,
+      "z": 0.067
+    },
+    {
+      "label": "gla_Latn",
+      "lang": "gla_Latn",
+      "family": "IE: Celtic",
+      "x": 0.0289,
+      "y": -0.1033,
+      "z": 0.0672
+    },
+    {
+      "label": "als_Latn",
+      "lang": "als_Latn",
+      "family": "Unknown",
+      "x": -0.0086,
+      "y": -0.0476,
+      "z": -0.0362
+    },
+    {
+      "label": "zho_Hant",
+      "lang": "zho_Hant",
+      "family": "Sino-Tibetan",
+      "x": -0.0131,
+      "y": 0.0445,
+      "z": -0.0035
+    },
+    {
+      "label": "som_Latn",
+      "lang": "som_Latn",
+      "family": "Afro-Asiatic",
+      "x": 0.0366,
+      "y": 0.052,
+      "z": -0.0316
+    },
+    {
+      "label": "mlt_Latn",
+      "lang": "mlt_Latn",
+      "family": "Afro-Asiatic",
+      "x": 0.0113,
+      "y": -0.0426,
+      "z": -0.0336
+    },
+    {
+      "label": "kab_Latn",
+      "lang": "kab_Latn",
+      "family": "Afro-Asiatic",
+      "x": 0.208,
+      "y": -0.0581,
+      "z": -0.007
+    },
+    {
+      "label": "gaz_Latn",
+      "lang": "gaz_Latn",
+      "family": "Afro-Asiatic",
+      "x": 0.1088,
+      "y": 0.0524,
+      "z": 0.0151
+    },
+    {
+      "label": "kan_Knda",
+      "lang": "kan_Knda",
+      "family": "Dravidian",
+      "x": -0.0333,
+      "y": 0.0315,
+      "z": -0.0355
+    },
+    {
+      "label": "mal_Mlym",
+      "lang": "mal_Mlym",
+      "family": "Dravidian",
+      "x": -0.0413,
+      "y": 0.0186,
+      "z": -0.0157
+    },
+    {
+      "label": "azj_Latn",
+      "lang": "azj_Latn",
+      "family": "Turkic",
+      "x": -0.0566,
+      "y": 0.0039,
+      "z": -0.0079
+    },
+    {
+      "label": "kir_Cyrl",
+      "lang": "kir_Cyrl",
+      "family": "Turkic",
+      "x": -0.0211,
+      "y": 0.0326,
+      "z": -0.0261
+    },
+    {
+      "label": "tuk_Latn",
+      "lang": "tuk_Latn",
+      "family": "Turkic",
+      "x": 0.0023,
+      "y": 0.0094,
+      "z": 0.0099
+    },
+    {
+      "label": "tat_Cyrl",
+      "lang": "tat_Cyrl",
+      "family": "Turkic",
+      "x": -0.0151,
+      "y": 0.0394,
+      "z": -0.0241
+    },
+    {
+      "label": "crh_Latn",
+      "lang": "crh_Latn",
+      "family": "Turkic",
+      "x": 0.0018,
+      "y": 0.0075,
+      "z": -0.0188
+    },
+    {
+      "label": "lao_Laoo",
+      "lang": "lao_Laoo",
+      "family": "Tai-Kadai",
+      "x": 0.0645,
+      "y": -0.0326,
+      "z": 0.023
+    },
+    {
+      "label": "zsm_Latn",
+      "lang": "zsm_Latn",
+      "family": "Austronesian",
+      "x": -0.0658,
+      "y": 0.0213,
+      "z": -0.0114
+    },
+    {
+      "label": "jav_Latn",
+      "lang": "jav_Latn",
+      "family": "Austronesian",
+      "x": -0.0341,
+      "y": 0.0248,
+      "z": 0.0058
+    },
+    {
+      "label": "plt_Latn",
+      "lang": "plt_Latn",
+      "family": "Austronesian",
+      "x": -0.0206,
+      "y": 0.0203,
+      "z": 0.0151
+    },
+    {
+      "label": "sun_Latn",
+      "lang": "sun_Latn",
+      "family": "Austronesian",
+      "x": -0.0346,
+      "y": 0.0255,
+      "z": 0.005
+    },
+    {
+      "label": "ceb_Latn",
+      "lang": "ceb_Latn",
+      "family": "Austronesian",
+      "x": -0.0015,
+      "y": 0.0373,
+      "z": 0.0005
+    },
+    {
+      "label": "ilo_Latn",
+      "lang": "ilo_Latn",
+      "family": "Austronesian",
+      "x": -0.0214,
+      "y": -0.0002,
+      "z": 0.0631
+    },
+    {
+      "label": "war_Latn",
+      "lang": "war_Latn",
+      "family": "Austronesian",
+      "x": 0.019,
+      "y": 0.05,
+      "z": 0.0064
+    },
+    {
+      "label": "ace_Latn",
+      "lang": "ace_Latn",
+      "family": "Austronesian",
+      "x": 0.1386,
+      "y": 0.014,
+      "z": -0.0386
+    },
+    {
+      "label": "min_Latn",
+      "lang": "min_Latn",
+      "family": "Austronesian",
+      "x": 0.0757,
+      "y": -0.0103,
+      "z": -0.0286
+    },
+    {
+      "label": "bug_Latn",
+      "lang": "bug_Latn",
+      "family": "Austronesian",
+      "x": 0.142,
+      "y": -0.0024,
+      "z": 0.007
+    },
+    {
+      "label": "pag_Latn",
+      "lang": "pag_Latn",
+      "family": "Austronesian",
+      "x": 0.0085,
+      "y": 0.014,
+      "z": 0.0532
+    },
+    {
+      "label": "mri_Latn",
+      "lang": "mri_Latn",
+      "family": "Austronesian",
+      "x": 0.0728,
+      "y": -0.0608,
+      "z": 0.1038
+    },
+    {
+      "label": "smo_Latn",
+      "lang": "smo_Latn",
+      "family": "Austronesian",
+      "x": -0.0023,
+      "y": 0.0173,
+      "z": 0.0207
+    },
+    {
+      "label": "fij_Latn",
+      "lang": "fij_Latn",
+      "family": "Austronesian",
+      "x": 0.0611,
+      "y": -0.0127,
+      "z": 0.069
+    },
+    {
+      "label": "ibo_Latn",
+      "lang": "ibo_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0304,
+      "y": 0.0758,
+      "z": 0.0301
+    },
+    {
+      "label": "zul_Latn",
+      "lang": "zul_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0121,
+      "y": 0.1094,
+      "z": -0.0115
+    },
+    {
+      "label": "xho_Latn",
+      "lang": "xho_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0273,
+      "y": 0.1106,
+      "z": -0.0075
+    },
+    {
+      "label": "lin_Latn",
+      "lang": "lin_Latn",
+      "family": "Niger-Congo",
+      "x": 0.1799,
+      "y": 0.0937,
+      "z": -0.0297
+    },
+    {
+      "label": "lug_Latn",
+      "lang": "lug_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0602,
+      "y": 0.0956,
+      "z": 0.0154
+    },
+    {
+      "label": "kin_Latn",
+      "lang": "kin_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0319,
+      "y": 0.0684,
+      "z": 0.02
+    },
+    {
+      "label": "sna_Latn",
+      "lang": "sna_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0187,
+      "y": 0.0939,
+      "z": 0.0304
+    },
+    {
+      "label": "wol_Latn",
+      "lang": "wol_Latn",
+      "family": "Niger-Congo",
+      "x": 0.1205,
+      "y": -0.0513,
+      "z": 0.1052
+    },
+    {
+      "label": "tsn_Latn",
+      "lang": "tsn_Latn",
+      "family": "Niger-Congo",
+      "x": -0.0244,
+      "y": 0.1196,
+      "z": 0.0586
+    },
+    {
+      "label": "aka_Latn",
+      "lang": "aka_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0755,
+      "y": 0.0084,
+      "z": -0.0021
+    },
+    {
+      "label": "ewe_Latn",
+      "lang": "ewe_Latn",
+      "family": "Niger-Congo",
+      "x": 0.2153,
+      "y": 0.0053,
+      "z": -0.0178
+    },
+    {
+      "label": "fon_Latn",
+      "lang": "fon_Latn",
+      "family": "Niger-Congo",
+      "x": 0.2501,
+      "y": -0.1619,
+      "z": 0.095
+    },
+    {
+      "label": "bam_Latn",
+      "lang": "bam_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0746,
+      "y": -0.0485,
+      "z": 0.1876
+    },
+    {
+      "label": "mos_Latn",
+      "lang": "mos_Latn",
+      "family": "Niger-Congo",
+      "x": 0.1815,
+      "y": -0.0854,
+      "z": 0.1589
+    },
+    {
+      "label": "nso_Latn",
+      "lang": "nso_Latn",
+      "family": "Niger-Congo",
+      "x": -0.0035,
+      "y": 0.117,
+      "z": 0.0585
+    },
+    {
+      "label": "ssw_Latn",
+      "lang": "ssw_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0336,
+      "y": 0.154,
+      "z": 0.0289
+    },
+    {
+      "label": "tso_Latn",
+      "lang": "tso_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0145,
+      "y": 0.1205,
+      "z": 0.086
+    },
+    {
+      "label": "nya_Latn",
+      "lang": "nya_Latn",
+      "family": "Niger-Congo",
+      "x": -0.0172,
+      "y": 0.0675,
+      "z": 0.0406
+    },
+    {
+      "label": "run_Latn",
+      "lang": "run_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0448,
+      "y": 0.0734,
+      "z": 0.0088
+    },
+    {
+      "label": "fuv_Latn",
+      "lang": "fuv_Latn",
+      "family": "Niger-Congo",
+      "x": 0.329,
+      "y": -0.0376,
+      "z": 0.0168
+    },
+    {
+      "label": "bem_Latn",
+      "lang": "bem_Latn",
+      "family": "Niger-Congo",
+      "x": 0.1204,
+      "y": 0.0627,
+      "z": 0.0574
+    },
+    {
+      "label": "sot_Latn",
+      "lang": "sot_Latn",
+      "family": "Niger-Congo",
+      "x": -0.0267,
+      "y": 0.0614,
+      "z": 0.0737
+    },
+    {
+      "label": "est_Latn",
+      "lang": "est_Latn",
+      "family": "Uralic",
+      "x": -0.05,
+      "y": -0.0375,
+      "z": 0.0006
+    },
+    {
+      "label": "luo_Latn",
+      "lang": "luo_Latn",
+      "family": "Unknown",
+      "x": 0.1536,
+      "y": 0.1315,
+      "z": 0.0396
+    },
+    {
+      "label": "quy_Latn",
+      "lang": "quy_Latn",
+      "family": "Indigenous Americas",
+      "x": 0.2429,
+      "y": -0.0359,
+      "z": -0.0206
+    },
+    {
+      "label": "grn_Latn",
+      "lang": "grn_Latn",
+      "family": "Indigenous Americas",
+      "x": 0.2252,
+      "y": -0.0721,
+      "z": -0.0677
+    },
+    {
+      "label": "ayr_Latn",
+      "lang": "ayr_Latn",
+      "family": "Indigenous Americas",
+      "x": 0.1279,
+      "y": 0.0197,
+      "z": -0.003
+    },
+    {
+      "label": "hat_Latn",
+      "lang": "hat_Latn",
+      "family": "Creole",
+      "x": -0.0527,
+      "y": -0.0269,
+      "z": 0.0438
+    },
+    {
+      "label": "tpi_Latn",
+      "lang": "tpi_Latn",
+      "family": "Creole",
+      "x": 0.0676,
+      "y": 0.0479,
+      "z": 0.0206
+    },
+    {
+      "label": "tir_Ethi",
+      "lang": "tir_Ethi",
+      "family": "Afro-Asiatic",
+      "x": 0.0799,
+      "y": 0.0245,
+      "z": 0.0138
+    }
+  ],
+  "pca_centered": [
+    {
+      "label": "eng_Latn",
+      "lang": "eng_Latn",
+      "family": "IE: Germanic",
+      "x": 0.0556,
+      "y": -0.0652,
+      "z": 0.0226
+    },
+    {
+      "label": "spa_Latn",
+      "lang": "spa_Latn",
+      "family": "IE: Romance",
+      "x": -0.0534,
+      "y": 0.0158,
+      "z": 0.0659
+    },
+    {
+      "label": "fra_Latn",
+      "lang": "fra_Latn",
+      "family": "IE: Romance",
+      "x": -0.0364,
+      "y": 0.0079,
+      "z": 0.06
+    },
+    {
+      "label": "deu_Latn",
+      "lang": "deu_Latn",
+      "family": "IE: Germanic",
+      "x": -0.0168,
+      "y": -0.0367,
+      "z": 0.0214
+    },
+    {
+      "label": "ita_Latn",
+      "lang": "ita_Latn",
+      "family": "IE: Romance",
+      "x": -0.0632,
+      "y": 0.0191,
+      "z": 0.0809
+    },
+    {
+      "label": "por_Latn",
+      "lang": "por_Latn",
+      "family": "IE: Romance",
+      "x": -0.0294,
+      "y": 0.0116,
+      "z": 0.0375
+    },
+    {
+      "label": "rus_Cyrl",
+      "lang": "rus_Cyrl",
+      "family": "IE: Slavic",
+      "x": -0.0083,
+      "y": -0.0201,
+      "z": 0.0077
+    },
+    {
+      "label": "pol_Latn",
+      "lang": "pol_Latn",
+      "family": "IE: Slavic",
+      "x": -0.0468,
+      "y": -0.0101,
+      "z": 0.0262
+    },
+    {
+      "label": "hin_Deva",
+      "lang": "hin_Deva",
+      "family": "IE: Indo-Iranian",
+      "x": 0.0153,
+      "y": -0.0323,
+      "z": -0.0367
+    },
+    {
+      "label": "pes_Arab",
+      "lang": "pes_Arab",
+      "family": "IE: Indo-Iranian",
+      "x": 0.0084,
+      "y": -0.0267,
+      "z": -0.0123
+    },
+    {
+      "label": "ell_Grek",
+      "lang": "ell_Grek",
+      "family": "Unknown",
+      "x": -0.0077,
+      "y": -0.0157,
+      "z": -0.0018
+    },
+    {
+      "label": "ron_Latn",
+      "lang": "ron_Latn",
+      "family": "IE: Romance",
+      "x": -0.0452,
+      "y": 0.017,
+      "z": 0.0432
+    },
+    {
+      "label": "nld_Latn",
+      "lang": "nld_Latn",
+      "family": "IE: Germanic",
+      "x": -0.0085,
+      "y": -0.0455,
+      "z": 0.0162
+    },
+    {
+      "label": "swe_Latn",
+      "lang": "swe_Latn",
+      "family": "IE: Germanic",
+      "x": -0.0099,
+      "y": -0.0397,
+      "z": 0.0195
+    },
+    {
+      "label": "ben_Beng",
+      "lang": "ben_Beng",
+      "family": "IE: Indo-Iranian",
+      "x": 0.0214,
+      "y": -0.0311,
+      "z": -0.041
+    },
+    {
+      "label": "zho_Hans",
+      "lang": "zho_Hans",
+      "family": "Sino-Tibetan",
+      "x": 0.0132,
+      "y": 0.003,
+      "z": -0.0254
+    },
+    {
+      "label": "jpn_Jpan",
+      "lang": "jpn_Jpan",
+      "family": "Japonic & Koreanic",
+      "x": -0.0212,
+      "y": -0.005,
+      "z": -0.0261
+    },
+    {
+      "label": "kor_Hang",
+      "lang": "kor_Hang",
+      "family": "Japonic & Koreanic",
+      "x": 0.0103,
+      "y": -0.0372,
+      "z": -0.0488
+    },
+    {
+      "label": "arb_Arab",
+      "lang": "arb_Arab",
+      "family": "Afro-Asiatic",
+      "x": 0.0002,
+      "y": -0.0385,
+      "z": -0.0253
+    },
+    {
+      "label": "heb_Hebr",
+      "lang": "heb_Hebr",
+      "family": "Afro-Asiatic",
+      "x": -0.0129,
+      "y": -0.01,
+      "z": -0.0163
+    },
+    {
+      "label": "tur_Latn",
+      "lang": "tur_Latn",
+      "family": "Turkic",
+      "x": -0.0149,
+      "y": -0.0037,
+      "z": -0.0068
+    },
+    {
+      "label": "vie_Latn",
+      "lang": "vie_Latn",
+      "family": "Austroasiatic",
+      "x": -0.008,
+      "y": 0.0052,
+      "z": -0.0119
+    },
+    {
+      "label": "tha_Thai",
+      "lang": "tha_Thai",
+      "family": "Tai-Kadai",
+      "x": -0.0181,
+      "y": 0.0035,
+      "z": -0.0538
+    },
+    {
+      "label": "ind_Latn",
+      "lang": "ind_Latn",
+      "family": "Austronesian",
+      "x": 0.0143,
+      "y": -0.0026,
+      "z": -0.0066
+    },
+    {
+      "label": "tgl_Latn",
+      "lang": "tgl_Latn",
+      "family": "Austronesian",
+      "x": 0.0015,
+      "y": 0.0232,
+      "z": -0.0013
+    },
+    {
+      "label": "swh_Latn",
+      "lang": "swh_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0574,
+      "y": 0.0219,
+      "z": 0.0021
+    },
+    {
+      "label": "yor_Latn",
+      "lang": "yor_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0434,
+      "y": 0.0538,
+      "z": 0.0007
+    },
+    {
+      "label": "hau_Latn",
+      "lang": "hau_Latn",
+      "family": "Afro-Asiatic",
+      "x": 0.0615,
+      "y": 0.0513,
+      "z": 0.0314
+    },
+    {
+      "label": "fin_Latn",
+      "lang": "fin_Latn",
+      "family": "Uralic",
+      "x": -0.0264,
+      "y": -0.001,
+      "z": -0.0021
+    },
+    {
+      "label": "hun_Latn",
+      "lang": "hun_Latn",
+      "family": "Uralic",
+      "x": -0.0275,
+      "y": -0.0074,
+      "z": 0.0107
+    },
+    {
+      "label": "kat_Geor",
+      "lang": "kat_Geor",
+      "family": "Unknown",
+      "x": -0.0175,
+      "y": -0.0173,
+      "z": -0.052
+    },
+    {
+      "label": "tam_Taml",
+      "lang": "tam_Taml",
+      "family": "Dravidian",
+      "x": 0.0404,
+      "y": -0.0371,
+      "z": -0.0345
+    },
+    {
+      "label": "tel_Telu",
+      "lang": "tel_Telu",
+      "family": "Dravidian",
+      "x": 0.0264,
+      "y": -0.0314,
+      "z": -0.0612
+    },
+    {
+      "label": "mya_Mymr",
+      "lang": "mya_Mymr",
+      "family": "Sino-Tibetan",
+      "x": 0.0591,
+      "y": -0.0175,
+      "z": -0.0385
+    },
+    {
+      "label": "khm_Khmr",
+      "lang": "khm_Khmr",
+      "family": "Austroasiatic",
+      "x": -0.0107,
+      "y": 0.0212,
+      "z": -0.055
+    },
+    {
+      "label": "amh_Ethi",
+      "lang": "amh_Ethi",
+      "family": "Afro-Asiatic",
+      "x": 0.0257,
+      "y": 0.0177,
+      "z": -0.0298
+    },
+    {
+      "label": "eus_Latn",
+      "lang": "eus_Latn",
+      "family": "Unknown",
+      "x": 0.0205,
+      "y": -0.0189,
+      "z": 0.0026
+    },
+    {
+      "label": "khk_Cyrl",
+      "lang": "khk_Cyrl",
+      "family": "Unknown",
+      "x": -0.0399,
+      "y": 0.0104,
+      "z": -0.062
+    },
+    {
+      "label": "kaz_Cyrl",
+      "lang": "kaz_Cyrl",
+      "family": "Turkic",
+      "x": 0.0332,
+      "y": -0.0239,
+      "z": -0.0326
+    },
+    {
+      "label": "cat_Latn",
+      "lang": "cat_Latn",
+      "family": "IE: Romance",
+      "x": -0.0912,
+      "y": 0.0177,
+      "z": 0.0903
+    },
+    {
+      "label": "glg_Latn",
+      "lang": "glg_Latn",
+      "family": "IE: Romance",
+      "x": -0.0419,
+      "y": 0.0134,
+      "z": 0.0432
+    },
+    {
+      "label": "ast_Latn",
+      "lang": "ast_Latn",
+      "family": "IE: Romance",
+      "x": -0.1175,
+      "y": 0.0009,
+      "z": 0.0801
+    },
+    {
+      "label": "oci_Latn",
+      "lang": "oci_Latn",
+      "family": "IE: Romance",
+      "x": -0.1357,
+      "y": -0.026,
+      "z": 0.0864
+    },
+    {
+      "label": "scn_Latn",
+      "lang": "scn_Latn",
+      "family": "IE: Romance",
+      "x": -0.1049,
+      "y": -0.018,
+      "z": 0.0947
+    },
+    {
+      "label": "dan_Latn",
+      "lang": "dan_Latn",
+      "family": "IE: Germanic",
+      "x": -0.0162,
+      "y": -0.0392,
+      "z": 0.0194
+    },
+    {
+      "label": "nob_Latn",
+      "lang": "nob_Latn",
+      "family": "IE: Germanic",
+      "x": -0.0305,
+      "y": -0.0279,
+      "z": 0.0208
+    },
+    {
+      "label": "isl_Latn",
+      "lang": "isl_Latn",
+      "family": "IE: Germanic",
+      "x": -0.0329,
+      "y": -0.0493,
+      "z": -0.0043
+    },
+    {
+      "label": "afr_Latn",
+      "lang": "afr_Latn",
+      "family": "IE: Germanic",
+      "x": 0.0014,
+      "y": -0.0272,
+      "z": 0.003
+    },
+    {
+      "label": "ltz_Latn",
+      "lang": "ltz_Latn",
+      "family": "IE: Germanic",
+      "x": -0.0526,
+      "y": -0.0224,
+      "z": 0.0165
+    },
+    {
+      "label": "fao_Latn",
+      "lang": "fao_Latn",
+      "family": "IE: Germanic",
+      "x": -0.0046,
+      "y": -0.0524,
+      "z": 0.0001
+    },
+    {
+      "label": "ydd_Hebr",
+      "lang": "ydd_Hebr",
+      "family": "IE: Germanic",
+      "x": -0.0121,
+      "y": -0.0491,
+      "z": -0.0092
+    },
+    {
+      "label": "ukr_Cyrl",
+      "lang": "ukr_Cyrl",
+      "family": "IE: Slavic",
+      "x": -0.0201,
+      "y": -0.012,
+      "z": -0.0046
+    },
+    {
+      "label": "ces_Latn",
+      "lang": "ces_Latn",
+      "family": "IE: Slavic",
+      "x": -0.0767,
+      "y": 0.0155,
+      "z": 0.0269
+    },
+    {
+      "label": "bul_Cyrl",
+      "lang": "bul_Cyrl",
+      "family": "IE: Slavic",
+      "x": -0.0276,
+      "y": -0.0191,
+      "z": 0.0067
+    },
+    {
+      "label": "hrv_Latn",
+      "lang": "hrv_Latn",
+      "family": "IE: Slavic",
+      "x": -0.0504,
+      "y": -0.0071,
+      "z": 0.0299
+    },
+    {
+      "label": "bel_Cyrl",
+      "lang": "bel_Cyrl",
+      "family": "IE: Slavic",
+      "x": 0.0029,
+      "y": -0.0187,
+      "z": -0.02
+    },
+    {
+      "label": "slk_Latn",
+      "lang": "slk_Latn",
+      "family": "IE: Slavic",
+      "x": -0.0657,
+      "y": 0.0169,
+      "z": 0.0182
+    },
+    {
+      "label": "srp_Cyrl",
+      "lang": "srp_Cyrl",
+      "family": "IE: Slavic",
+      "x": -0.0408,
+      "y": -0.0101,
+      "z": 0.0108
+    },
+    {
+      "label": "slv_Latn",
+      "lang": "slv_Latn",
+      "family": "IE: Slavic",
+      "x": -0.0472,
+      "y": -0.0032,
+      "z": 0.0151
+    },
+    {
+      "label": "mkd_Cyrl",
+      "lang": "mkd_Cyrl",
+      "family": "IE: Slavic",
+      "x": -0.0314,
+      "y": -0.0071,
+      "z": 0.0019
+    },
+    {
+      "label": "urd_Arab",
+      "lang": "urd_Arab",
+      "family": "IE: Indo-Iranian",
+      "x": -0.0002,
+      "y": -0.0431,
+      "z": -0.0455
+    },
+    {
+      "label": "mar_Deva",
+      "lang": "mar_Deva",
+      "family": "IE: Indo-Iranian",
+      "x": 0.0283,
+      "y": -0.0505,
+      "z": -0.0244
+    },
+    {
+      "label": "guj_Gujr",
+      "lang": "guj_Gujr",
+      "family": "IE: Indo-Iranian",
+      "x": 0.0215,
+      "y": -0.0282,
+      "z": -0.0313
+    },
+    {
+      "label": "pan_Guru",
+      "lang": "pan_Guru",
+      "family": "IE: Indo-Iranian",
+      "x": 0.0134,
+      "y": -0.0371,
+      "z": -0.0489
+    },
+    {
+      "label": "sin_Sinh",
+      "lang": "sin_Sinh",
+      "family": "IE: Indo-Iranian",
+      "x": 0.046,
+      "y": -0.0225,
+      "z": -0.0237
+    },
+    {
+      "label": "npi_Deva",
+      "lang": "npi_Deva",
+      "family": "IE: Indo-Iranian",
+      "x": 0.0229,
+      "y": -0.0329,
+      "z": -0.0425
+    },
+    {
+      "label": "asm_Beng",
+      "lang": "asm_Beng",
+      "family": "IE: Indo-Iranian",
+      "x": 0.015,
+      "y": -0.0444,
+      "z": -0.0496
+    },
+    {
+      "label": "ory_Orya",
+      "lang": "ory_Orya",
+      "family": "IE: Indo-Iranian",
+      "x": 0.0151,
+      "y": -0.0175,
+      "z": -0.0334
+    },
+    {
+      "label": "pbt_Arab",
+      "lang": "pbt_Arab",
+      "family": "IE: Indo-Iranian",
+      "x": -0.0015,
+      "y": -0.0251,
+      "z": -0.0915
+    },
+    {
+      "label": "tgk_Cyrl",
+      "lang": "tgk_Cyrl",
+      "family": "IE: Indo-Iranian",
+      "x": 0.0099,
+      "y": 0.0002,
+      "z": -0.0456
+    },
+    {
+      "label": "ckb_Arab",
+      "lang": "ckb_Arab",
+      "family": "IE: Indo-Iranian",
+      "x": -0.005,
+      "y": -0.005,
+      "z": -0.0392
+    },
+    {
+      "label": "kmr_Latn",
+      "lang": "kmr_Latn",
+      "family": "IE: Indo-Iranian",
+      "x": -0.0495,
+      "y": -0.0196,
+      "z": -0.0737
+    },
+    {
+      "label": "lit_Latn",
+      "lang": "lit_Latn",
+      "family": "IE: Baltic",
+      "x": -0.0249,
+      "y": -0.0191,
+      "z": 0.0046
+    },
+    {
+      "label": "lav_Latn",
+      "lang": "lav_Latn",
+      "family": "IE: Baltic",
+      "x": -0.0621,
+      "y": -0.3466,
+      "z": 0.2327
+    },
+    {
+      "label": "cym_Latn",
+      "lang": "cym_Latn",
+      "family": "IE: Celtic",
+      "x": -0.159,
+      "y": 0.0641,
+      "z": -0.0209
+    },
+    {
+      "label": "gle_Latn",
+      "lang": "gle_Latn",
+      "family": "IE: Celtic",
+      "x": -0.1092,
+      "y": 0.067,
+      "z": -0.0623
+    },
+    {
+      "label": "gla_Latn",
+      "lang": "gla_Latn",
+      "family": "IE: Celtic",
+      "x": -0.1033,
+      "y": 0.0672,
+      "z": -0.0561
+    },
+    {
+      "label": "als_Latn",
+      "lang": "als_Latn",
+      "family": "Unknown",
+      "x": -0.0476,
+      "y": -0.0362,
+      "z": -0.0161
+    },
+    {
+      "label": "zho_Hant",
+      "lang": "zho_Hant",
+      "family": "Sino-Tibetan",
+      "x": 0.0445,
+      "y": -0.0035,
+      "z": -0.0163
+    },
+    {
+      "label": "som_Latn",
+      "lang": "som_Latn",
+      "family": "Afro-Asiatic",
+      "x": 0.052,
+      "y": -0.0316,
+      "z": -0.0269
+    },
+    {
+      "label": "mlt_Latn",
+      "lang": "mlt_Latn",
+      "family": "Afro-Asiatic",
+      "x": -0.0426,
+      "y": -0.0336,
+      "z": -0.066
+    },
+    {
+      "label": "kab_Latn",
+      "lang": "kab_Latn",
+      "family": "Afro-Asiatic",
+      "x": -0.0581,
+      "y": -0.007,
+      "z": -0.0445
+    },
+    {
+      "label": "gaz_Latn",
+      "lang": "gaz_Latn",
+      "family": "Afro-Asiatic",
+      "x": 0.0524,
+      "y": 0.0151,
+      "z": -0.02
+    },
+    {
+      "label": "kan_Knda",
+      "lang": "kan_Knda",
+      "family": "Dravidian",
+      "x": 0.0315,
+      "y": -0.0355,
+      "z": -0.0562
+    },
+    {
+      "label": "mal_Mlym",
+      "lang": "mal_Mlym",
+      "family": "Dravidian",
+      "x": 0.0186,
+      "y": -0.0157,
+      "z": -0.0247
+    },
+    {
+      "label": "azj_Latn",
+      "lang": "azj_Latn",
+      "family": "Turkic",
+      "x": 0.0039,
+      "y": -0.0079,
+      "z": -0.0385
+    },
+    {
+      "label": "kir_Cyrl",
+      "lang": "kir_Cyrl",
+      "family": "Turkic",
+      "x": 0.0326,
+      "y": -0.0261,
+      "z": -0.0463
+    },
+    {
+      "label": "tuk_Latn",
+      "lang": "tuk_Latn",
+      "family": "Turkic",
+      "x": 0.0094,
+      "y": 0.0099,
+      "z": -0.0186
+    },
+    {
+      "label": "tat_Cyrl",
+      "lang": "tat_Cyrl",
+      "family": "Turkic",
+      "x": 0.0394,
+      "y": -0.0241,
+      "z": -0.0219
+    },
+    {
+      "label": "crh_Latn",
+      "lang": "crh_Latn",
+      "family": "Turkic",
+      "x": 0.0075,
+      "y": -0.0188,
+      "z": -0.03
+    },
+    {
+      "label": "lao_Laoo",
+      "lang": "lao_Laoo",
+      "family": "Tai-Kadai",
+      "x": -0.0326,
+      "y": 0.023,
+      "z": -0.0823
+    },
+    {
+      "label": "zsm_Latn",
+      "lang": "zsm_Latn",
+      "family": "Austronesian",
+      "x": 0.0213,
+      "y": -0.0114,
+      "z": -0.0152
+    },
+    {
+      "label": "jav_Latn",
+      "lang": "jav_Latn",
+      "family": "Austronesian",
+      "x": 0.0248,
+      "y": 0.0058,
+      "z": -0.0219
+    },
+    {
+      "label": "plt_Latn",
+      "lang": "plt_Latn",
+      "family": "Austronesian",
+      "x": 0.0203,
+      "y": 0.0151,
+      "z": -0.0086
+    },
+    {
+      "label": "sun_Latn",
+      "lang": "sun_Latn",
+      "family": "Austronesian",
+      "x": 0.0255,
+      "y": 0.005,
+      "z": -0.0291
+    },
+    {
+      "label": "ceb_Latn",
+      "lang": "ceb_Latn",
+      "family": "Austronesian",
+      "x": 0.0373,
+      "y": 0.0005,
+      "z": -0.0027
+    },
+    {
+      "label": "ilo_Latn",
+      "lang": "ilo_Latn",
+      "family": "Austronesian",
+      "x": -0.0002,
+      "y": 0.0631,
+      "z": 0.0176
+    },
+    {
+      "label": "war_Latn",
+      "lang": "war_Latn",
+      "family": "Austronesian",
+      "x": 0.05,
+      "y": 0.0064,
+      "z": -0.0029
+    },
+    {
+      "label": "ace_Latn",
+      "lang": "ace_Latn",
+      "family": "Austronesian",
+      "x": 0.014,
+      "y": -0.0386,
+      "z": -0.0206
+    },
+    {
+      "label": "min_Latn",
+      "lang": "min_Latn",
+      "family": "Austronesian",
+      "x": -0.0103,
+      "y": -0.0286,
+      "z": -0.0238
+    },
+    {
+      "label": "bug_Latn",
+      "lang": "bug_Latn",
+      "family": "Austronesian",
+      "x": -0.0024,
+      "y": 0.007,
+      "z": -0.0155
+    },
+    {
+      "label": "pag_Latn",
+      "lang": "pag_Latn",
+      "family": "Austronesian",
+      "x": 0.014,
+      "y": 0.0532,
+      "z": 0.0225
+    },
+    {
+      "label": "mri_Latn",
+      "lang": "mri_Latn",
+      "family": "Austronesian",
+      "x": -0.0608,
+      "y": 0.1038,
+      "z": 0.0032
+    },
+    {
+      "label": "smo_Latn",
+      "lang": "smo_Latn",
+      "family": "Austronesian",
+      "x": 0.0173,
+      "y": 0.0207,
+      "z": -0.0047
+    },
+    {
+      "label": "fij_Latn",
+      "lang": "fij_Latn",
+      "family": "Austronesian",
+      "x": -0.0127,
+      "y": 0.069,
+      "z": 0.0075
+    },
+    {
+      "label": "ibo_Latn",
+      "lang": "ibo_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0758,
+      "y": 0.0301,
+      "z": -0.0095
+    },
+    {
+      "label": "zul_Latn",
+      "lang": "zul_Latn",
+      "family": "Niger-Congo",
+      "x": 0.1094,
+      "y": -0.0115,
+      "z": 0.0449
+    },
+    {
+      "label": "xho_Latn",
+      "lang": "xho_Latn",
+      "family": "Niger-Congo",
+      "x": 0.1106,
+      "y": -0.0075,
+      "z": 0.0427
+    },
+    {
+      "label": "lin_Latn",
+      "lang": "lin_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0937,
+      "y": -0.0297,
+      "z": 0.0631
+    },
+    {
+      "label": "lug_Latn",
+      "lang": "lug_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0956,
+      "y": 0.0154,
+      "z": 0.055
+    },
+    {
+      "label": "kin_Latn",
+      "lang": "kin_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0684,
+      "y": 0.02,
+      "z": 0.0219
+    },
+    {
+      "label": "sna_Latn",
+      "lang": "sna_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0939,
+      "y": 0.0304,
+      "z": 0.0519
+    },
+    {
+      "label": "wol_Latn",
+      "lang": "wol_Latn",
+      "family": "Niger-Congo",
+      "x": -0.0513,
+      "y": 0.1052,
+      "z": 0.0096
+    },
+    {
+      "label": "tsn_Latn",
+      "lang": "tsn_Latn",
+      "family": "Niger-Congo",
+      "x": 0.1196,
+      "y": 0.0586,
+      "z": 0.0694
+    },
+    {
+      "label": "aka_Latn",
+      "lang": "aka_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0084,
+      "y": -0.0021,
+      "z": -0.0097
+    },
+    {
+      "label": "ewe_Latn",
+      "lang": "ewe_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0053,
+      "y": -0.0178,
+      "z": 0.0081
+    },
+    {
+      "label": "fon_Latn",
+      "lang": "fon_Latn",
+      "family": "Niger-Congo",
+      "x": -0.1619,
+      "y": 0.095,
+      "z": 0.0378
+    },
+    {
+      "label": "bam_Latn",
+      "lang": "bam_Latn",
+      "family": "Niger-Congo",
+      "x": -0.0485,
+      "y": 0.1876,
+      "z": 0.0777
+    },
+    {
+      "label": "mos_Latn",
+      "lang": "mos_Latn",
+      "family": "Niger-Congo",
+      "x": -0.0854,
+      "y": 0.1589,
+      "z": 0.0566
+    },
+    {
+      "label": "nso_Latn",
+      "lang": "nso_Latn",
+      "family": "Niger-Congo",
+      "x": 0.117,
+      "y": 0.0585,
+      "z": 0.0732
+    },
+    {
+      "label": "ssw_Latn",
+      "lang": "ssw_Latn",
+      "family": "Niger-Congo",
+      "x": 0.154,
+      "y": 0.0289,
+      "z": 0.0558
+    },
+    {
+      "label": "tso_Latn",
+      "lang": "tso_Latn",
+      "family": "Niger-Congo",
+      "x": 0.1205,
+      "y": 0.086,
+      "z": 0.0866
+    },
+    {
+      "label": "nya_Latn",
+      "lang": "nya_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0675,
+      "y": 0.0406,
+      "z": 0.0392
+    },
+    {
+      "label": "run_Latn",
+      "lang": "run_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0734,
+      "y": 0.0088,
+      "z": 0.0368
+    },
+    {
+      "label": "fuv_Latn",
+      "lang": "fuv_Latn",
+      "family": "Niger-Congo",
+      "x": -0.0376,
+      "y": 0.0168,
+      "z": -0.0489
+    },
+    {
+      "label": "bem_Latn",
+      "lang": "bem_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0627,
+      "y": 0.0574,
+      "z": 0.0288
+    },
+    {
+      "label": "sot_Latn",
+      "lang": "sot_Latn",
+      "family": "Niger-Congo",
+      "x": 0.0614,
+      "y": 0.0737,
+      "z": 0.0626
+    },
+    {
+      "label": "est_Latn",
+      "lang": "est_Latn",
+      "family": "Uralic",
+      "x": -0.0375,
+      "y": 0.0006,
+      "z": 0.006
+    },
+    {
+      "label": "luo_Latn",
+      "lang": "luo_Latn",
+      "family": "Unknown",
+      "x": 0.1315,
+      "y": 0.0396,
+      "z": 0.0507
+    },
+    {
+      "label": "quy_Latn",
+      "lang": "quy_Latn",
+      "family": "Indigenous Americas",
+      "x": -0.0359,
+      "y": -0.0206,
+      "z": -0.0664
+    },
+    {
+      "label": "grn_Latn",
+      "lang": "grn_Latn",
+      "family": "Indigenous Americas",
+      "x": -0.0721,
+      "y": -0.0677,
+      "z": -0.0076
+    },
+    {
+      "label": "ayr_Latn",
+      "lang": "ayr_Latn",
+      "family": "Indigenous Americas",
+      "x": 0.0197,
+      "y": -0.003,
+      "z": -0.0357
+    },
+    {
+      "label": "hat_Latn",
+      "lang": "hat_Latn",
+      "family": "Creole",
+      "x": -0.0269,
+      "y": 0.0438,
+      "z": 0.0102
+    },
+    {
+      "label": "tpi_Latn",
+      "lang": "tpi_Latn",
+      "family": "Creole",
+      "x": 0.0479,
+      "y": 0.0206,
+      "z": 0.0035
+    },
+    {
+      "label": "tir_Ethi",
+      "lang": "tir_Ethi",
+      "family": "Afro-Asiatic",
+      "x": 0.0245,
+      "y": 0.0138,
+      "z": -0.0533
+    }
+  ]
 }

@@ -114,6 +114,11 @@ def blog_page() -> FileResponse:
     return FileResponse(static_dir / "blog.html")
 
 
+@app.get("/explore")
+def explore_page() -> FileResponse:
+    return FileResponse(static_dir / "explore.html")
+
+
 @app.get("/legacy")
 def legacy_index() -> FileResponse:
     return FileResponse(static_dir / "index.html")

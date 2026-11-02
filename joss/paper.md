@@ -49,7 +49,7 @@ Existing interpretability packages generally focus on monolingual token attribut
 2. **Interactive Visualization Layer (`docs/index.html`, `docs/blog.js`, `build_static.py`)**: Renders pre-computed JSON artifacts (`docs/data/*.json`) into interactive Plotly charts, phylogenetic dendrograms, layerwise emergence curves, and live translation-similarity explorers. Running `python3 build_static.py` packages the entire interactive suite into a standalone static site (`docs/`).
 3. **Programmatic Manuscript Synchronization (`paper/scripts/generate_stats.py`, `paper/scripts/generate_figures.py`)**: Reads the exact JSON files served to the web application to generate all 16 vector PDF figures (`paper/figures/*.pdf`) and all 321 LaTeX `\newcommand` statistical macros (`paper/output/stats.tex`).
 
-![System architecture of the `InterpretCognates` probing toolkit, interactive web companion, and deterministic LaTeX macro pipeline.\label{fig:arch}](../paper/figures/fig_system_architecture.pdf)
+![Overview of the `InterpretCognates` interactive web explorer, 135-language geometric norm suite, and layerwise conceptual emergence visualizations.\label{fig:arch}](screenshot.png)
 
 # Availability
 

@@ -1,0 +1,55 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{microtype}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.65em}
+
+\begin{document}
+
+November 2, 2026
+
+\textbf{To:} Editor-in-Chief and Action Editors, \textit{Behavior Research Methods} \\
+\textbf{Re:} Manuscript Submission --- \textit{``Universal Conceptual Structure in Neural Translation: Probing NLLB-200's Multilingual Geometry''}
+
+Dear Editors,
+
+Please consider our manuscript, ``Universal Conceptual Structure in Neural Translation: Probing NLLB-200's Multilingual Geometry,'' for publication in \textit{Behavior Research Methods}.
+
+A central question across psycholinguistics, bilingual cognition, and computational linguistics is whether multilingual systems organize lexical meaning around a language-neutral conceptual hub or partition representations primarily by surface form and language identity. At the same time, experimental psycholinguists and cognitive scientists increasingly rely on massively multilingual neural models to derive cross-linguistic semantic norms, quantify conceptual similarity, and model the bilingual mental lexicon---yet the field lacks a validated methodology and open-source interactive platform for disentangling language-identity shifts, subword tokenization confounds, and orthographic/phonological overlap from true conceptual geometry across typologically diverse languages.
+
+In this study, we introduce \textbf{InterpretCognates}---an open-source interactive research platform, cross-linguistic norming suite, and reproducible evaluation pipeline---and use it to probe the encoder geometry of Meta's 600M-parameter distilled NLLB-200 translation model across 135 typologically diverse languages (45 language families, 24 orthographic scripts) and 101 Swadesh core concepts, evaluating both contextualized carrier-frame inputs and decontextualized native bare words against targeted null and confound controls. Our work makes five primary methodological and empirical contributions to behavioral and cognitive research:
+
+\begin{enumerate}
+  \item \textbf{Additive Language-Shift and Conceptual-Manifold Geometry}: Through formal two-way variance partitioning, Participation Ratio (PR) dimensionality analysis, and All-but-the-Top (ABTT, $D = 1\dots 10$) anisotropy controls, we demonstrate that NLLB-200 separates low-dimensional per-language shifts ($\text{PR} = 13.3$, capturing $45.7\%$ of bare-word variance vs.\ $13.7\%$ in context) from an orthogonal, nearly $3\times$ higher-dimensional conceptual manifold ($\text{PR} = 38.7$). Subtracting per-language centroids increases the between-to-within-concept distance ratio (CSM) by $2.14\times$ on native bare words ($1.15 \to 2.46$, vs.\ a $0.99$ permutation null; $2.27\times$ across strictly disjoint scripts) and by $1.19\times$ in carrier frames ($2.25 \to 2.69$).
+  \item \textbf{Layerwise Emergence, Non-Linear $k$-NN Alignment, and POS-Selective Terminal Unpacking}: Tracing representations across all 12 encoder layers reveals a sigmoid phase transition (inflection at Layer 6, conceptual convergence peaking at Layer 10, where non-linear mutual $k$-NN neighborhood overlap jumps $4.35\times$ over the input layer). Crucially, we resolve why overall similarity dips at Layer 11 while mean-centered CSM peaks: from Layer 10 to Layer 11, within-concept dispersion expands by $+45.5\%$ selectively for morphosyntactically bound pronouns and verbs preparing for decoder cross-attention, whereas between-concept centroid distance expands even faster ($+47.1\%$).
+  \item \textbf{Semantic Dominance and Zipfian Mediation of Core Vocabulary}: Across the Swadesh list, semantic category explains $25.4\%$ of cross-lingual convergence variance ($F(7,93) = 4.53$, $p = 2.21 \times 10^{-4}$; partial $F = 7.74$, $p = 2.51 \times 10^{-7}$ controlling for subword fertility and word length)---over $20\times$ the variance explained by orthographic or phonological form ($R^2 \le 0.012$). Furthermore, by comparing Swadesh nouns against a non-loanword concrete noun control set, we demonstrate via ANCOVA that the convergence advantage of core vocabulary ($d = 0.54\text{--}0.69$) is mechanistically mediated by Zipfian subword tokenization compactness ($p = 7.43 \times 10^{-7}$)---a critical methodological control for psycholinguists using subword language models.
+  \item \textbf{External Validation Against Phylogenetic (ASJP) and Colexification (CLICS\textsuperscript{3}) Benchmarks}: Language-pair embedding distances significantly track ASJP phonetic distances within language subfamilies under both standard NLD ($\rho_s = 0.65$, block-permutation $p = 10^{-4}$; cross-script $\rho_s = 0.57\text{--}0.60$) and J\"ager's (2018) off-diagonal normalized LDND ($\rho_s = 0.67$; global bare-word Mantel $\rho_s = 0.24$, $p = 0.001$). Concept-pair similarities track CLICS\textsuperscript{3} cross-linguistic colexification frequency across string-distinct, within-category ($\rho_s = 0.32$), and bare-word ($d = 1.79$) controls ($d = 1.43$, $p = 1.55 \times 10^{-33}$), exhibiting a sharp step-function that separates single-family accidental homophony ($1$ family, $\mu = 0.30$ vs.\ $0.29$ baseline) from recurrent cross-family polysemy ($\ge 5$ families, $\mu = 0.44$).
+  \item \textbf{Psycholinguistic Parallels (Berlin \& Kay Color Hierarchy, Two-Level Cortical Tuning, and Kroll \& Stewart's RHM)}: The primary principal axis of basic color terms recovers the Berlin and Kay evolutionary hierarchy ($\rho_s = 0.91\text{--}0.93$, $p \le 2.18 \times 10^{-4}$) independently of word length. Moreover, the model's decomposition into a shared conceptual centroid, a global language vector, and a structured interaction residual provides an explicit computational testbed for bilingual fMRI findings of two-level cortical language tuning (Deniz et al., 2025) and Kroll \& Stewart's (1994) Revised Hierarchical Model across training-resource tiers ($p \le 3.63 \times 10^{-9}$).
+\end{enumerate}
+
+To maximize utility for the \textit{Behavior Research Methods} community, we release \textbf{InterpretCognates} (\url{https://github.com/kylemath/InterpretCognates}), including a synchronized interactive web application (\url{https://kylemath.github.io/InterpretCognates/}) that allows researchers to inspect, filter, and download 135-language geometric norms across every study, alongside a deterministic verification pipeline that compiles all 321 reported statistics directly into LaTeX macros (\texttt{output/stats.tex}) with zero hardcoded numbers. In accordance with Springer Nature transparency guidelines, we disclose in our Reproducibility Statement that AI-assisted software engineering tools were used under direct human specification to build the interactive web platform and automate the programmatic macro pipeline, with all experimental designs, analyses, and scientific claims deterministically validated by the author.
+
+This manuscript is original, is not under consideration elsewhere, and has been posted as a preprint on arXiv (\texttt{arXiv:2603.02258}). Suggested Action Editors / Reviewers with relevant expertise include:
+\begin{itemize}
+  \item \textbf{Prof.\ Benjamin K.\ Bergen} or \textbf{Dr.\ Tyler A.\ Chang} (UC San Diego --- multilingual language model geometry \& cognitive psycholinguistics)
+  \item \textbf{Prof.\ Johann-Mattis List} (University of Passau / MPI-EVA --- quantitative lexical typology \& CLICS\textsuperscript{3} colexification norms)
+  \item \textbf{Prof.\ Judith F.\ Kroll} (UC Irvine --- bilingual mental lexicon \& Revised Hierarchical Model)
+  \item \textbf{Prof.\ Gerhard J\"ager} (University of T\"ubingen --- computational phylogenetics \& ASJP distance metrics)
+  \item \textbf{Prof.\ Ivan Vuli\'c} (University of Cambridge --- cross-lingual lexical semantics \& concrete noun alignment)
+  \item \textbf{Prof.\ Fatma Deniz} (TU Berlin / UC Berkeley) or \textbf{Prof.\ Evelina Fedorenko} (MIT --- bilingual cortical representations \& language network neurobiology)
+\end{itemize}
+
+Thank you for your time and consideration.
+
+Sincerely,
+
+\textbf{Kyle Mathewson} \\
+Professor, Department of Psychology \\
+Neuroscience and Mental Health Institute \\
+University of Alberta \\
+\texttt{kyle.mathewson@ualberta.ca}
+
+\end{document}

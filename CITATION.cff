@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use InterpretCognates or its 135-language geometric norms in your research, please cite the following work."
+title: "InterpretCognates: Interactive Probing and Cross-Linguistic Geometric Norms for Multilingual Neural Translation"
+version: 2.0.0
+date-released: 2026-11-02
+url: "https://kylemath.github.io/InterpretCognates/"
+repository-code: "https://github.com/kylemath/InterpretCognates"
+license: MIT
+authors:
+  - family-names: "Mathewson"
+    given-names: "Kyle E."
+    email: "kyle.mathewson@ualberta.ca"
+    affiliation: "Department of Psychology, Neuroscience and Mental Health Institute, University of Alberta"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "Mathewson"
+      given-names: "Kyle E."
+      affiliation: "Department of Psychology, Neuroscience and Mental Health Institute, University of Alberta"
+  title: "Universal Conceptual Structure in Neural Translation: Probing NLLB-200's Multilingual Geometry"
+  year: 2026
+  journal: "arXiv preprint arXiv:2603.02258 (Submitted to Behavior Research Methods, BR-Org-26-1447)"
+  url: "https://arxiv.org/abs/2603.02258"

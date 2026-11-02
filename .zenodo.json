@@ -1,0 +1,42 @@
+{
+  "title": "InterpretCognates: Interactive Probing and Cross-Linguistic Geometric Norms for Multilingual Neural Translation (NLLB-200)",
+  "description": "Open-source interactive web platform, 135-language embedding norm suite, and deterministic statistical verification pipeline for probing universal conceptual structure, phylogenetic signal (ASJP), cross-linguistic colexification (CLICS^3), and bilingual lexical geometry in Meta's NLLB-200 neural translation model.",
+  "upload_type": "software",
+  "license": "MIT",
+  "creators": [
+    {
+      "name": "Mathewson, Kyle E.",
+      "affiliation": "Department of Psychology and Neuroscience and Mental Health Institute, University of Alberta",
+      "orcid": "0000-0003-4856-3980"
+    }
+  ],
+  "keywords": [
+    "multilingual representation geometry",
+    "neural machine translation",
+    "NLLB-200",
+    "psycholinguistics",
+    "lexical typology",
+    "Swadesh list",
+    "colexification",
+    "CLICS3",
+    "ASJP",
+    "bilingual mental lexicon"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "arXiv:2603.02258",
+      "relation": "isSupplementTo",
+      "scheme": "arxiv"
+    },
+    {
+      "identifier": "https://github.com/kylemath/InterpretCognates",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://kylemath.github.io/InterpretCognates/",
+      "relation": "isIdenticalTo",
+      "scheme": "url"
+    }
+  ]
+}

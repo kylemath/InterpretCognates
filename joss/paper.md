@@ -53,7 +53,7 @@ Existing interpretability packages generally focus on monolingual token attribut
 
 # Availability
 
-`InterpretCognates` is released under the MIT License at <https://github.com/kylemath/InterpretCognates>, with the live interactive companion hosted at <https://kylemath.github.io/InterpretCognates/> and the companion empirical manuscript available at `arXiv:2603.02258` [@mathewson2026universal].
+`InterpretCognates` is released under the MIT License at <https://github.com/kylemath/InterpretCognates> and archived on Zenodo at [`10.5281/zenodo.23898624`](https://doi.org/10.5281/zenodo.23898624), with the live interactive companion hosted at <https://kylemath.github.io/InterpretCognates/> and the companion empirical manuscript available at `arXiv:2603.02258` [@mathewson2026universal].
 
 # Acknowledgements
 

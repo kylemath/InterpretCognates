@@ -1,6 +1,7 @@
 # InterpretCognates
 
 [![arXiv](https://img.shields.io/badge/arXiv-2603.02258v2-b31b1b.svg)](https://arxiv.org/abs/2603.02258)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23898624.svg)](https://doi.org/10.5281/zenodo.23898624)
 [![Interactive Companion](https://img.shields.io/badge/Interactive_Companion-GitHub_Pages-2ea44f.svg)](https://kylemath.github.io/InterpretCognates/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Release](https://img.shields.io/badge/Release-v2.0.0-purple.svg)](https://github.com/kylemath/InterpretCognates/releases/tag/v2.0.0)
@@ -9,6 +10,7 @@
 
 - **Live Interactive Companion:** [https://kylemath.github.io/InterpretCognates/](https://kylemath.github.io/InterpretCognates/) (22 synchronized 2D/3D Plotly charts, phylogenetic trees, colexification graphs, and layerwise emergence explorers).
 - **Preprint (arXiv v2):** [Universal Conceptual Structure in Neural Translation: Probing NLLB-200's Multilingual Geometry](https://arxiv.org/abs/2603.02258) ([`paper/main.pdf`](paper/main.pdf); see [`paper/REPRODUCING.md`](paper/REPRODUCING.md) to build from source).
+- **Permanent Archive (Zenodo DOI):** [10.5281/zenodo.23898624](https://doi.org/10.5281/zenodo.23898624)
 - **Journal Submission:** Submitted to *Behavior Research Methods* (Manuscript ID: `BR-Org-26-1447`).
 - **Companion Software Paper (*JOSS*):** [`joss/paper.md`](joss/paper.md).
 - **[Screenshot](screenshot.png)** — App overview.

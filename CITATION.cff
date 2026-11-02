@@ -2,6 +2,7 @@ cff-version: 1.2.0
 message: "If you use InterpretCognates or its 135-language geometric norms in your research, please cite the following work."
 title: "InterpretCognates: Interactive Probing and Cross-Linguistic Geometric Norms for Multilingual Neural Translation"
 version: 2.0.0
+doi: 10.5281/zenodo.23898624
 date-released: 2026-11-02
 url: "https://kylemath.github.io/InterpretCognates/"
 repository-code: "https://github.com/kylemath/InterpretCognates"

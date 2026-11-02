@@ -40,7 +40,15 @@ if [ -f "build/main.bbl" ]; then
 fi
 
 TAR_NAME="interpretcognates_arxiv.tar.gz"
-tar -czf "$TAR_NAME" -C "$ARXIV_DIR" .
+python3 -c '
+import tarfile, os
+with tarfile.open("'"$TAR_NAME"'", "w:gz", format=tarfile.USTAR_FORMAT) as tf:
+    for root, _, files in os.walk("'"$ARXIV_DIR"'"):
+        for f in sorted(files):
+            full = os.path.join(root, f)
+            rel = os.path.relpath(full, "'"$ARXIV_DIR"'")
+            tf.add(full, arcname=rel)
+'
 
 echo ""
 echo "=== SUCCESS: $TAR_NAME created ==="

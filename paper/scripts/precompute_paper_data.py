@@ -302,6 +302,10 @@ def _compute_decontextualized_baseline(swadesh: Corpus, swadesh_convergence: dic
     raw_vecs = mdl.embed_text_batch(texts, langs)
     corr_vecs = _abtt_correct_matrix(raw_vecs, k=REFERENCE_ABTT_K)
 
+    dectx_raw_embeddings: Dict[str, Dict[str, np.ndarray]] = {}
+    for (c, l), v in zip(keys, raw_vecs):
+        dectx_raw_embeddings.setdefault(c, {})[l] = v
+
     dectx_embeddings: Dict[str, Dict[str, np.ndarray]] = {}
     for (c, l), v in zip(keys, corr_vecs):
         dectx_embeddings.setdefault(c, {})[l] = v
@@ -328,6 +332,8 @@ def _compute_decontextualized_baseline(swadesh: Corpus, swadesh_convergence: dic
             }
         )
 
+    bare_csm = bm.conceptual_store_metric(dectx_raw_embeddings, languages)
+
     return {
         "method": "decontextualized_baseline",
         "description": "Convergence scores recomputed with target words embedded in isolation (no carrier sentence).",
@@ -345,7 +351,45 @@ def _compute_decontextualized_baseline(swadesh: Corpus, swadesh_convergence: dic
             "paired_t_stat": float(t_stat),
             "paired_t_p": float(t_p),
         },
+        "bare_word_csm": bare_csm,
         "per_concept": per_concept,
+        "_dectx_raw_embeddings": dectx_raw_embeddings,
+        "_dectx_corr_embeddings": dectx_embeddings,
+    }
+
+
+SWADESH_CONCRETE_NOUNS = {
+    "woman", "man", "person", "fish", "bird", "dog", "louse",
+    "tree", "seed", "leaf", "root", "bark", "skin", "flesh",
+    "blood", "bone", "grease", "egg", "horn", "tail", "feather",
+    "hair", "head", "ear", "eye", "nose", "mouth", "tooth",
+    "tongue", "claw", "foot", "knee", "hand", "belly", "neck",
+    "breast", "heart", "liver", "sun", "moon", "star", "water",
+    "rain", "stone", "sand", "earth", "cloud", "smoke", "fire",
+    "ash", "path", "mountain",
+}
+
+
+def _compute_orthographic_similarity(corpus: Corpus, languages: List[str], concept_subset=None) -> Dict[str, float]:
+    latin_langs = [l for l in languages if l.endswith("_Latn")]
+    concept_scores = []
+    for concept, trans in corpus.concepts.items():
+        if concept_subset is not None and concept not in concept_subset:
+            continue
+        forms = [trans[l].lower().strip() for l in latin_langs if l in trans and trans[l]]
+        if len(forms) < 4:
+            continue
+        sims = []
+        for i in range(len(forms)):
+            for j in range(i + 1, len(forms)):
+                sims.append(1.0 - bm._normalized_edit_distance(forms[i], forms[j]))
+        if sims:
+            concept_scores.append(float(np.mean(sims)))
+    return {
+        "mean": float(np.mean(concept_scores)) if concept_scores else 0.0,
+        "std": float(np.std(concept_scores)) if concept_scores else 0.0,
+        "n_concepts": len(concept_scores),
+        "n_latin_languages": len(latin_langs),
     }
 
 
@@ -353,7 +397,7 @@ def _compute_swadesh_vs_non_swadesh(swadesh: Corpus, non_swadesh: Corpus) -> dic
     # Use intersection of language sets for a fair comparison.
     languages = sorted(set(swadesh.languages) & set(non_swadesh.languages))
 
-    def embed_for_langs(corpus: Corpus) -> Dict[str, Dict[str, np.ndarray]]:
+    def embed_for_langs(corpus: Corpus):
         texts, langs, keys = [], [], []
         for concept, translations in corpus.concepts.items():
             for lang in languages:
@@ -366,14 +410,39 @@ def _compute_swadesh_vs_non_swadesh(swadesh: Corpus, non_swadesh: Corpus) -> dic
         out: Dict[str, Dict[str, np.ndarray]] = {}
         for (c, l), v in zip(keys, vecs):
             out.setdefault(c, {})[l] = v
-        return out
+        return out, keys, vecs
 
-    sw_emb = embed_for_langs(swadesh)
-    nsw_emb = embed_for_langs(non_swadesh)
+    sw_emb, sw_keys, sw_vecs = embed_for_langs(swadesh)
+    nsw_emb, nsw_keys, nsw_vecs = embed_for_langs(non_swadesh)
 
     sw_rank = bm.swadesh_convergence_ranking(sw_emb, languages)
     nsw_rank = bm.swadesh_convergence_ranking(nsw_emb, languages)
     comp = bm.swadesh_vs_non_swadesh_comparison(sw_emb, nsw_emb, languages)
+
+    # Joint ABTT-corrected (k=3) comparison across combined vocabulary on the same 39 languages
+    combined_vecs = sw_vecs + nsw_vecs
+    corr_combined = _abtt_correct_matrix(combined_vecs, k=REFERENCE_ABTT_K)
+    sw_corr_vecs = corr_combined[: len(sw_vecs)]
+    nsw_corr_vecs = corr_combined[len(sw_vecs) :]
+
+    sw_emb_corr: Dict[str, Dict[str, np.ndarray]] = {}
+    for (c, l), v in zip(sw_keys, sw_corr_vecs):
+        sw_emb_corr.setdefault(c, {})[l] = v
+    nsw_emb_corr: Dict[str, Dict[str, np.ndarray]] = {}
+    for (c, l), v in zip(nsw_keys, nsw_corr_vecs):
+        nsw_emb_corr.setdefault(c, {})[l] = v
+
+    comp_corr = bm.swadesh_vs_non_swadesh_comparison(sw_emb_corr, nsw_emb_corr, languages)
+
+    # POS-matched comparison: Swadesh Concrete Nouns (n=52) vs Non-Swadesh Concrete Nouns
+    sw_nouns_raw = {c: v for c, v in sw_emb.items() if c in SWADESH_CONCRETE_NOUNS}
+    sw_nouns_corr = {c: v for c, v in sw_emb_corr.items() if c in SWADESH_CONCRETE_NOUNS}
+    comp_nouns_raw = bm.swadesh_vs_non_swadesh_comparison(sw_nouns_raw, nsw_emb, languages)
+    comp_nouns_corr = bm.swadesh_vs_non_swadesh_comparison(sw_nouns_corr, nsw_emb_corr, languages)
+
+    ortho_sw_all = _compute_orthographic_similarity(swadesh, languages)
+    ortho_sw_nouns = _compute_orthographic_similarity(swadesh, languages, SWADESH_CONCRETE_NOUNS)
+    ortho_nsw = _compute_orthographic_similarity(non_swadesh, languages)
 
     return {
         "swadesh": {
@@ -398,16 +467,55 @@ def _compute_swadesh_vs_non_swadesh(swadesh: Corpus, non_swadesh: Corpus) -> dic
             "swadesh_sims": [float(x) for x in comp["swadesh_sims"]],
             "non_swadesh_sims": [float(x) for x in comp["non_swadesh_sims"]],
         },
+        "comparison_corrected": {
+            "swadesh_mean": float(comp_corr["swadesh_mean"]),
+            "swadesh_std": float(comp_corr["swadesh_std"]),
+            "non_swadesh_mean": float(comp_corr["non_swadesh_mean"]),
+            "non_swadesh_std": float(comp_corr["non_swadesh_std"]),
+            "U_statistic": float(comp_corr["U_statistic"]),
+            "p_value": float(comp_corr["p_value"]),
+            "swadesh_sims": [float(x) for x in comp_corr["swadesh_sims"]],
+            "non_swadesh_sims": [float(x) for x in comp_corr["non_swadesh_sims"]],
+        },
+        "pos_matched_nouns": {
+            "swadesh_count": len(sw_nouns_raw),
+            "non_swadesh_count": len(nsw_emb),
+            "raw": {
+                "swadesh_mean": float(comp_nouns_raw["swadesh_mean"]),
+                "swadesh_std": float(comp_nouns_raw["swadesh_std"]),
+                "non_swadesh_mean": float(comp_nouns_raw["non_swadesh_mean"]),
+                "non_swadesh_std": float(comp_nouns_raw["non_swadesh_std"]),
+                "U_statistic": float(comp_nouns_raw["U_statistic"]),
+                "p_value": float(comp_nouns_raw["p_value"]),
+                "swadesh_sims": [float(x) for x in comp_nouns_raw["swadesh_sims"]],
+                "non_swadesh_sims": [float(x) for x in comp_nouns_raw["non_swadesh_sims"]],
+            },
+            "corrected": {
+                "swadesh_mean": float(comp_nouns_corr["swadesh_mean"]),
+                "swadesh_std": float(comp_nouns_corr["swadesh_std"]),
+                "non_swadesh_mean": float(comp_nouns_corr["non_swadesh_mean"]),
+                "non_swadesh_std": float(comp_nouns_corr["non_swadesh_std"]),
+                "U_statistic": float(comp_nouns_corr["U_statistic"]),
+                "p_value": float(comp_nouns_corr["p_value"]),
+                "swadesh_sims": [float(x) for x in comp_nouns_corr["swadesh_sims"]],
+                "non_swadesh_sims": [float(x) for x in comp_nouns_corr["non_swadesh_sims"]],
+            },
+        },
+        "orthographic_similarity": {
+            "swadesh_all": ortho_sw_all,
+            "swadesh_concrete_nouns": ortho_sw_nouns,
+            "non_swadesh": ortho_nsw,
+        },
     }
 
 
 def _cosine_mean_upper(vectors: np.ndarray) -> float:
-    """Mean cosine similarity over i<j for rows of vectors (float32)."""
+    """Mean cosine similarity over i<j for rows of vectors."""
     if vectors.shape[0] < 2:
         return float("nan")
-    v = vectors.astype(np.float32, copy=False)
+    v = vectors.astype(np.float64, copy=False)
     v = v / np.clip(np.linalg.norm(v, axis=1, keepdims=True), 1e-8, None)
-    sim = v @ v.T
+    sim = np.clip(v @ v.T, -1.0, 1.0)
     n = sim.shape[0]
     iu = np.triu_indices(n, k=1)
     return float(sim[iu].mean())
@@ -426,9 +534,9 @@ def _conceptual_store_ratio(concept_lang_vecs: np.ndarray, present: np.ndarray) 
         idx = np.where(present[ci])[0]
         if idx.size < 2:
             continue
-        vecs = concept_lang_vecs[ci, idx, :].astype(np.float32, copy=False)
+        vecs = concept_lang_vecs[ci, idx, :].astype(np.float64, copy=False)
         vecs = vecs / np.clip(np.linalg.norm(vecs, axis=1, keepdims=True), 1e-8, None)
-        sim = vecs @ vecs.T
+        sim = np.clip(vecs @ vecs.T, -1.0, 1.0)
         n = sim.shape[0]
         iu = np.triu_indices(n, k=1)
         # within distance = 1 - similarity
@@ -439,9 +547,9 @@ def _conceptual_store_ratio(concept_lang_vecs: np.ndarray, present: np.ndarray) 
         return 0.0
 
     mean_within = float(np.mean(within_vals))
-    cent = np.array(centroids, dtype=np.float32)
+    cent = np.array(centroids, dtype=np.float64)
     cent = cent / np.clip(np.linalg.norm(cent, axis=1, keepdims=True), 1e-8, None)
-    sim_cent = cent @ cent.T
+    sim_cent = np.clip(cent @ cent.T, -1.0, 1.0)
     m = sim_cent.shape[0]
     iu = np.triu_indices(m, k=1)
     mean_between = float((1.0 - sim_cent[iu]).mean())
@@ -477,26 +585,32 @@ def _compute_layerwise_metrics(swadesh: Corpus, languages_subset: List[str]) -> 
     n_layers = len(layer_vecs)
     dim = int(layer_vecs[0].shape[0])
 
-    # Store embeddings in float16 for memory; keep a presence mask.
-    E = np.zeros((n_layers, n_concepts, n_langs, dim), dtype=np.float16)
+    # Store embeddings in float32; keep a presence mask.
+    E = np.zeros((n_layers, n_concepts, n_langs, dim), dtype=np.float32)
     present = np.zeros((n_concepts, n_langs), dtype=bool)
 
     print(f"  Layerwise: {n_layers} layers × {n_concepts} concepts × {n_langs} langs (dim={dim})")
 
+    batch_words: List[str] = []
+    batch_langs: List[str] = []
+    batch_coords: List[Tuple[int, int]] = []
     for ci, concept in enumerate(concepts):
         trans = swadesh.concepts[concept]
         for li, lang in enumerate(langs):
             w = trans.get(lang)
             if not w:
                 continue
-            vecs = mdl.embed_word_in_context_all_layers(w, lang)
-            if len(vecs) != n_layers:
-                # Model can return fewer layers in edge cases; skip this pair.
-                print(f"  [layerwise] Skipping {lang}/{concept}: got {len(vecs)} layers, expected {n_layers}")
-                continue
-            present[ci, li] = True
-            for lidx in range(n_layers):
-                E[lidx, ci, li, :] = vecs[lidx].astype(np.float16, copy=False)
+            batch_words.append(w)
+            batch_langs.append(lang)
+            batch_coords.append((ci, li))
+
+    all_layer_vecs = mdl.embed_words_in_context_all_layers_batch(batch_words, batch_langs)
+    for (ci, li), vecs in zip(batch_coords, all_layer_vecs):
+        if len(vecs) != n_layers:
+            continue
+        present[ci, li] = True
+        for lidx in range(n_layers):
+            E[lidx, ci, li, :] = vecs[lidx].astype(np.float32, copy=False)
 
     # Per-layer per-concept convergence
     concept_traj: Dict[str, Dict[int, float]] = {c: {} for c in concepts}
@@ -554,9 +668,11 @@ def _compute_layerwise_metrics(swadesh: Corpus, languages_subset: List[str]) -> 
             "bottom_5_concepts": bottom5,
         })
 
-    # Simple “emergence” heuristics: max first difference.
+    # Simple “emergence” heuristics: max first difference and peak convergence layer.
     diffs = np.diff(np.array(conv_means)) if len(conv_means) >= 2 else np.array([0.0])
     emergence = int(np.argmax(diffs) + 1) if diffs.size else 0
+    peak_layer = int(np.argmax(conv_means)) if conv_means else 0
+    peak_conv = float(conv_means[peak_layer]) if conv_means else 0.0
     diffs_csm = np.diff(np.array(csm_cens)) if len(csm_cens) >= 2 else np.array([0.0])
     phase = int(np.argmax(diffs_csm) + 1) if diffs_csm.size else 0
 
@@ -567,6 +683,8 @@ def _compute_layerwise_metrics(swadesh: Corpus, languages_subset: List[str]) -> 
         "layers": layers_out,
         "summary": {
             "convergence_emergence_layer": emergence,
+            "peak_convergence_layer": peak_layer,
+            "peak_convergence_mean": round(peak_conv, 4),
             "csm_phase_transition_layer": phase,
             "final_layer_convergence": round(float(conv_means[-1]) if conv_means else 0.0, 4),
             "final_layer_csm_centered": round(float(csm_cens[-1]) if csm_cens else 0.0, 4),
@@ -612,9 +730,9 @@ def main() -> None:
 
     print("Computing decontextualized baseline …")
     dectx = _compute_decontextualized_baseline(swadesh, sw_conv)
-    _write_json(DOCS_DATA_DIR / "decontextualized_convergence.json", dectx)
+    _write_json(DOCS_DATA_DIR / "decontextualized_convergence.json", _strip_private_fields(dectx))
 
-    print("Computing layerwise metrics (real hidden states; 40-language subset) …")
+    print("Computing layerwise metrics (real hidden states; 39-language subset) …")
     layerwise = _compute_layerwise_metrics(swadesh, non_swadesh_controlled.languages)
     _write_json(DOCS_DATA_DIR / "layerwise_metrics.json", layerwise)
 
@@ -628,10 +746,12 @@ def main() -> None:
 
     print("Computing phylogenetic analysis …")
     emb_dist = bm.compute_swadesh_embedding_distances(sw_emb_ctx, langs)
+    emb_dist_bare = bm.compute_swadesh_embedding_distances(dectx["_dectx_raw_embeddings"], langs)
     mds = bm.mds_projection(emb_dist, langs)
     dendro = bm.hierarchical_clustering_data(emb_dist, langs)
     asjp_dist, asjp_langs = bm.compute_asjp_distance_matrix(langs)
     mantel = None
+    mantel_bare = None
     if len(asjp_langs) >= 4:
         lang_idx = {l: i for i, l in enumerate(langs)}
         asjp_indices = [lang_idx[l] for l in asjp_langs]
@@ -641,6 +761,12 @@ def main() -> None:
         mantel["languages"] = asjp_langs
         mantel["asjp_distance_matrix"] = asjp_dist.tolist()
         mantel["embedding_distance_subset"] = emb_subset.tolist()
+
+        emb_subset_bare = emb_dist_bare[np.ix_(asjp_indices, asjp_indices)]
+        mantel_bare = bm.mantel_test(emb_subset_bare, asjp_dist, permutations=999)
+        mantel_bare["num_languages"] = len(asjp_langs)
+        mantel_bare["languages"] = asjp_langs
+        mantel_bare["embedding_distance_subset"] = emb_subset_bare.tolist()
     concept_maps = bm.family_concept_maps(sw_emb_ctx, langs)
 
     # 3D PCA of language centroids for interactive blog toggle
@@ -675,6 +801,7 @@ def main() -> None:
         "mds": mds,
         "dendrogram": dendro,
         "mantel_test": mantel,
+        "mantel_test_bare_word": mantel_bare,
         "concept_maps": concept_maps,
         "pca_raw": pca_raw,
         "pca_centered": pca_centered,
@@ -684,10 +811,13 @@ def main() -> None:
     _write_json(DOCS_DATA_DIR / "colexification.json", bm.colexification_test(sw_emb_ctx, langs))
 
     print("Computing conceptual store metric …")
-    _write_json(DOCS_DATA_DIR / "conceptual_store.json", bm.conceptual_store_metric(sw_emb_ctx, langs))
+    csm_ctx = bm.conceptual_store_metric(sw_emb_ctx, langs)
+    csm_ctx["bare_word"] = dectx["bare_word_csm"]
+    _write_json(DOCS_DATA_DIR / "conceptual_store.json", csm_ctx)
 
     print("Computing offset invariance …")
     pairs = bm.semantic_offset_invariance(sw_emb_ctx, langs, bm.DEFAULT_OFFSET_PAIRS)
+    bare_pairs = bm.semantic_offset_invariance(dectx["_dectx_raw_embeddings"], langs, bm.DEFAULT_OFFSET_PAIRS)
 
     # Build the joint_vector_plot exactly from the computed embeddings (no synthesis).
     semantic_set = {
@@ -701,7 +831,7 @@ def main() -> None:
         if (p["concept_a"], p["concept_b"]) in semantic_set
         or (p["concept_b"], p["concept_a"]) in semantic_set
     ]
-    top_k = sorted(semantic_pairs, key=lambda p: p["centroid_offset_norm"], reverse=True)[:5]
+    top_k = sorted(semantic_pairs, key=lambda p: p["centroid_offset_norm"], reverse=True)[:15]
 
     unique_concepts = list(dict.fromkeys(
         c for p in top_k for c in (p["concept_a"], p["concept_b"])
@@ -785,6 +915,7 @@ def main() -> None:
         "num_pairs": len(pairs),
         "num_languages": len(langs),
         "pairs": pairs,
+        "bare_word_pairs": bare_pairs,
         "joint_vector_plot": joint_plot,
         "vector_plot": vector_plot,
     })
@@ -803,16 +934,20 @@ def main() -> None:
                 all_langs.append(lang_code)
                 all_keys.append((color_name, lang_code))
     vecs = mdl.embed_words_in_context_batch(all_texts, all_langs)
+    vecs_bare = mdl.embed_text_batch(all_texts, all_langs)
 
     # Fit PCA on overall color centroids; project both centroids and per-language points.
     color_vectors: Dict[str, List[np.ndarray]] = {}
-    for (color_name, _lang_code), v in zip(all_keys, vecs):
+    color_vectors_bare: Dict[str, List[np.ndarray]] = {}
+    for (color_name, _lang_code), v, vb in zip(all_keys, vecs, vecs_bare):
         color_vectors.setdefault(color_name, []).append(v)
+        color_vectors_bare.setdefault(color_name, []).append(vb)
 
-    centroid_labels, centroid_vecs = [], []
+    centroid_labels, centroid_vecs, centroid_vecs_bare = [], [], []
     for color_name, vlist in color_vectors.items():
         centroid_labels.append(color_name)
         centroid_vecs.append(np.mean(np.array(vlist), axis=0))
+        centroid_vecs_bare.append(np.mean(np.array(color_vectors_bare[color_name]), axis=0))
 
     overall_array = np.array(centroid_vecs, dtype=np.float64)
     n_comp = min(3, overall_array.shape[0], overall_array.shape[1])
@@ -825,6 +960,17 @@ def main() -> None:
          "x": float(centroids_proj[i, 0]),
          "y": float(centroids_proj[i, 1]),
          "z": float(centroids_proj[i, 2]) if n_comp >= 3 else 0.0}
+        for i in range(len(centroid_labels))
+    ]
+
+    overall_bare = np.array(centroid_vecs_bare, dtype=np.float64)
+    pca_bare = PCA(n_components=n_comp)
+    proj_bare = pca_bare.fit_transform(overall_bare)
+    bare_centroids = [
+        {"label": centroid_labels[i],
+         "x": float(proj_bare[i, 0]),
+         "y": float(proj_bare[i, 1]),
+         "z": float(proj_bare[i, 2]) if n_comp >= 3 else 0.0}
         for i in range(len(centroid_labels))
     ]
 
@@ -844,8 +990,10 @@ def main() -> None:
         "num_colors": len(colors),
         "num_languages": len(color_langs),
         "centroids": centroids,
+        "bare_word_centroids": bare_centroids,
         "per_language": per_language,
         "explained_variance": [float(v) for v in pca.explained_variance_ratio_],
+        "bare_word_explained_variance": [float(v) for v in pca_bare.explained_variance_ratio_],
     })
 
     print("Computing sample concept ('water') …")

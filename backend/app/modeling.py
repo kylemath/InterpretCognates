@@ -12,7 +12,11 @@ MODEL_NAME = os.getenv("NLLB_MODEL", "facebook/nllb-200-distilled-600M")
 
 _MODEL = None
 _TOKENIZER = None
-_DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+_DEVICE = torch.device(
+    "cuda"
+    if torch.cuda.is_available()
+    else ("mps" if getattr(torch.backends, "mps", None) and torch.backends.mps.is_available() else "cpu")
+)
 _LOCK = threading.Lock()
 
 
@@ -231,39 +235,105 @@ def embed_word_in_context_all_layers(
     return pooled_per_layer
 
 
+def embed_words_in_context_all_layers_batch(
+    words: list[str],
+    langs: list[str],
+    context_template: str = DEFAULT_CONTEXT_TEMPLATE,
+    *,
+    include_embedding_layer: bool = False,
+    batch_size: int = 64,
+) -> list[list[np.ndarray]]:
+    """Batch version of embed_word_in_context_all_layers grouped by language."""
+    from collections import defaultdict
+
+    model, tokenizer = _ensure_model_loaded()
+    results: list[tuple[int, list[np.ndarray]]] = []
+    by_lang: dict[str, list[tuple[int, str]]] = defaultdict(list)
+    for idx, (word, lang) in enumerate(zip(words, langs)):
+        by_lang[lang].append((idx, word))
+
+    for lang in sorted(by_lang.keys()):
+        items = by_lang[lang]
+        tokenizer.src_lang = lang
+        for start in range(0, len(items), batch_size):
+            chunk = items[start : start + batch_size]
+            sentences = [context_template.format(word=w) for _, w in chunk]
+            encoded = tokenizer(sentences, return_tensors="pt", padding=True).to(_DEVICE)
+            with torch.no_grad():
+                out = model.model.encoder(
+                    input_ids=encoded["input_ids"],
+                    attention_mask=encoded["attention_mask"],
+                    output_hidden_states=True,
+                    return_dict=True,
+                )
+            hidden_states = list(out.hidden_states or [])
+            if not include_embedding_layer:
+                hidden_states = hidden_states[1:]
+
+            for row_i, (orig_idx, word) in enumerate(chunk):
+                row_ids = encoded["input_ids"][row_i : row_i + 1]
+                word_indices = _find_word_token_indices(row_ids, tokenizer, word)
+                per_layer: list[np.ndarray] = []
+                for h in hidden_states:
+                    if word_indices is not None and len(word_indices) > 0:
+                        vec = h[row_i, word_indices, :].mean(dim=0)
+                    else:
+                        vec = _pool_hidden(
+                            h[row_i : row_i + 1],
+                            encoded["attention_mask"][row_i : row_i + 1],
+                        ).squeeze(0)
+                    per_layer.append(vec.detach().cpu().numpy())
+                results.append((orig_idx, per_layer))
+
+    results.sort(key=lambda x: x[0])
+    return [layers for _, layers in results]
+
+
 def embed_words_in_context_batch(
     words: list[str],
     langs: list[str],
     context_template: str = DEFAULT_CONTEXT_TEMPLATE,
+    batch_size: int = 64,
 ) -> list[np.ndarray]:
     """Batch version of embed_word_in_context.
 
-    Each word is placed into *context_template*, the full sentence is
-    encoded, and only the target word's subword token hidden states
-    are mean-pooled to produce the embedding.
+    Each word is placed into the fixed carrier frame *context_template*
+    with `tokenizer.src_lang = lang`, the full sentence is encoded, and
+    only the target word's subword token hidden states are mean-pooled
+    to produce the embedding (falling back to full-sequence pooling if
+    subword indices cannot be isolated).
     """
+    from collections import defaultdict
+
     model, tokenizer = _ensure_model_loaded()
     results: list[tuple[int, np.ndarray]] = []
-    indexed = list(enumerate(zip(words, langs)))
-    indexed.sort(key=lambda x: x[1][1])
+    by_lang: dict[str, list[tuple[int, str]]] = defaultdict(list)
+    for idx, (word, lang) in enumerate(zip(words, langs)):
+        by_lang[lang].append((idx, word))
 
-    for idx, (word, lang) in indexed:
+    for lang in sorted(by_lang.keys()):
+        items = by_lang[lang]
         tokenizer.src_lang = lang
-        sentence = context_template.format(word=word)
-        encoded = tokenizer(sentence, return_tensors="pt").to(_DEVICE)
+        for start in range(0, len(items), batch_size):
+            chunk = items[start : start + batch_size]
+            sentences = [context_template.format(word=w) for _, w in chunk]
+            encoded = tokenizer(sentences, return_tensors="pt", padding=True).to(_DEVICE)
 
-        with torch.no_grad():
-            out = model.model.encoder(**encoded, return_dict=True)
+            with torch.no_grad():
+                out = model.model.encoder(**encoded, return_dict=True)
 
-        hidden = out.last_hidden_state
-        word_indices = _find_word_token_indices(encoded["input_ids"], tokenizer, word)
-
-        if word_indices is not None and len(word_indices) > 0:
-            vec = hidden[0, word_indices, :].mean(dim=0)
-        else:
-            vec = _pool_hidden(hidden, encoded["attention_mask"]).squeeze(0)
-
-        results.append((idx, vec.detach().cpu().numpy()))
+            hidden = out.last_hidden_state
+            for row_i, (orig_idx, word) in enumerate(chunk):
+                row_ids = encoded["input_ids"][row_i : row_i + 1]
+                word_indices = _find_word_token_indices(row_ids, tokenizer, word)
+                if word_indices is not None and len(word_indices) > 0:
+                    vec = hidden[row_i, word_indices, :].mean(dim=0)
+                else:
+                    vec = _pool_hidden(
+                        hidden[row_i : row_i + 1],
+                        encoded["attention_mask"][row_i : row_i + 1],
+                    ).squeeze(0)
+                results.append((orig_idx, vec.detach().cpu().numpy()))
 
     results.sort(key=lambda x: x[0])
     return [vec for _, vec in results]
@@ -375,13 +445,13 @@ def cross_attention_map(
 
 
 def abtt_correct(vectors: list[np.ndarray], k: int = 3) -> list[np.ndarray]:
-    array = np.array(vectors)
+    array = np.array(vectors, dtype=np.float64)
     array = array - array.mean(axis=0)
-    pca = PCA(n_components=k)
+    pca = PCA(n_components=k, svd_solver="full")
     pca.fit(array)
     for component in pca.components_:
         array = array - (array @ component[:, None]) * component[None, :]
-    return [array[i] for i in range(len(vectors))]
+    return [array[i].astype(np.float32) for i in range(len(vectors))]
 
 
 def sentence_similarity_matrix_corrected(vectors: list[np.ndarray], k: int = 3) -> list[list[float]]:
@@ -463,19 +533,27 @@ def embed_text_all_layers(text: str, lang: str) -> list[np.ndarray]:
     ]
 
 
-def embed_text_batch(texts: list[str], langs: list[str]) -> list[np.ndarray]:
+def embed_text_batch(texts: list[str], langs: list[str], batch_size: int = 64) -> list[np.ndarray]:
+    from collections import defaultdict
+
     model, tokenizer = _ensure_model_loaded()
     results: list[tuple[int, np.ndarray]] = []
-    indexed = list(enumerate(zip(texts, langs)))
-    indexed.sort(key=lambda x: x[1][1])
+    by_lang: dict[str, list[tuple[int, str]]] = defaultdict(list)
+    for idx, (text, lang) in enumerate(zip(texts, langs)):
+        by_lang[lang].append((idx, text))
 
-    for idx, (text, lang) in indexed:
+    for lang in sorted(by_lang.keys()):
+        items = by_lang[lang]
         tokenizer.src_lang = lang
-        encoded = tokenizer(text, return_tensors="pt", padding=True, truncation=True).to(_DEVICE)
-        with torch.no_grad():
-            out = model.model.encoder(**encoded, return_dict=True)
-        vec = _pool_hidden(out.last_hidden_state, encoded["attention_mask"]).squeeze(0).cpu().numpy()
-        results.append((idx, vec))
+        for start in range(0, len(items), batch_size):
+            chunk = items[start : start + batch_size]
+            batch_texts = [t for _, t in chunk]
+            encoded = tokenizer(batch_texts, return_tensors="pt", padding=True, truncation=True).to(_DEVICE)
+            with torch.no_grad():
+                out = model.model.encoder(**encoded, return_dict=True)
+            pooled = _pool_hidden(out.last_hidden_state, encoded["attention_mask"]).detach().cpu().numpy()
+            for row_i, (orig_idx, _) in enumerate(chunk):
+                results.append((orig_idx, pooled[row_i]))
 
     results.sort(key=lambda x: x[0])
     return [vec for _, vec in results]

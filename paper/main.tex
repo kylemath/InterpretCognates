@@ -12,13 +12,12 @@
 \input{sections/06-conclusion}
 
 \section*{Acknowledgments}
-The author thanks Claire Scavuzzo and Alona Fyshe for helpful discussions, and the anonymous reviewers for their constructive feedback.
+The author thanks Claire Scavuzzo and Alona Fyshe for helpful discussions.
 
-\section*{Data and Code Availability}
-All code, pre-computed embeddings, and analysis scripts are available at \url{https://github.com/kylemath/InterpretCognates}.
-The repository includes a fully reproducible pipeline from raw embeddings to statistical tests and figures.
-The NLLB-200 model is publicly available through the Hugging Face Transformers library.
-External datasets used in this work---the Swadesh list, ASJP phonetic distances, and CLICS3 colexification database---are publicly available from their respective sources as cited in the text.
+\section*{Data, Code, Interactive Companion, and Programmatic Reproducibility}
+To ensure deterministic auditability and eliminate manual transcription errors across all six studies, the complete empirical workflow of \textsc{InterpretCognates} is implemented as an automated, end-to-end pipeline available at \url{https://github.com/kylemath/InterpretCognates}, paired with a synchronized interactive 3D browser companion at \url{https://kylemath.github.io/InterpretCognates/} that follows the exact section and figure progression of this manuscript.
+All embeddings are extracted deterministically from the publicly available \texttt{facebook/\allowbreak nllb-200-\allowbreak distilled-600M} checkpoint via Hugging Face \texttt{transformers}, cross-referenced against public typological databases (Swadesh core vocabulary, ASJP v20, and CLICS\textsuperscript{3}), and evaluated through version-controlled Python scripts that automatically generate all 16 publication figures and export all 321 statistical values reported in the text and tables directly as \LaTeX{} macros (\texttt{output/stats.tex}) with zero hardcoded numbers.
+In accordance with publisher guidelines on transparent research workflows, the author discloses that AI-assisted coding and editorial tools were utilized under direct human specification to engineer the interactive visualization platform, automate the \LaTeX{} statistical macro verification pipeline, and implement the non-parametric permutation and cross-script control suites; all experimental designs, mathematical formulations, statistical verifications, and scientific interpretations are the sole responsibility of the author.
 
 \bibliographystyle{plainnat}
 \bibliography{references}

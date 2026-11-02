@@ -13,14 +13,43 @@
 \newcommand{\MantelP}{0.020}
 \newcommand{\MantelPermutations}{999}
 \newcommand{\MantelNumLangs}{88}
+\newcommand{\MantelWithinSubfamilyRho}{0.65}
+\newcommand{\MantelWithinSubfamilyP}{2.40 \times 10^{-40}}
+\newcommand{\MantelWithinSubfamilyPairs}{321}
+\newcommand{\MantelCrossBranchIERho}{0.10}
+\newcommand{\MantelCrossBranchIEPairs}{374}
+\newcommand{\MantelBetweenFamilyRho}{0.04}
+\newcommand{\MantelBetweenFamilyPairs}{3133}
+\newcommand{\MantelTotalPairs}{3828}
+\newcommand{\MantelBetweenFamilyPct}{81.8}
+\newcommand{\MantelWithinSubfamilyBlockP}{1.00 \times 10^{-4}}
+\newcommand{\MantelBareWithinSubfamilyRho}{0.57}
+\newcommand{\MantelBareWithinSubfamilyBlockP}{2.00 \times 10^{-4}}
+\newcommand{\MantelCrossScriptSubfamilyPairs}{53}
+\newcommand{\MantelCrossScriptSubfamilyRho}{0.57}
+\newcommand{\MantelCrossScriptSubfamilyP}{6.95 \times 10^{-6}}
+\newcommand{\MantelBareCrossScriptSubfamilyRho}{0.60}
+\newcommand{\MantelBareCrossScriptSubfamilyP}{2.41 \times 10^{-6}}
+\newcommand{\MantelWithinSubfamilyPartialRho}{0.67}
+\newcommand{\MantelLDNDSubfamilyRho}{0.67}
+\newcommand{\MantelLDNDRho}{0.15}
+\newcommand{\RHMHighResCount}{40}
+\newcommand{\RHMLowResCount}{95}
+\newcommand{\RHMHighResDist}{0.24}
+\newcommand{\RHMLowResDist}{0.30}
+\newcommand{\RHMResourceU}{690}
+\newcommand{\RHMResourceP}{2.80 \times 10^{-9}}
+\newcommand{\MantelBareRho}{0.24}
+\newcommand{\MantelBareP}{0.001}
 \newcommand{\PhyloNumLanguages}{135}
 \newcommand{\SwadeshCompMean}{0.80}
 \newcommand{\NonSwadeshCompMean}{0.89}
 \newcommand{\SwadeshCompU}{1505}
 \newcommand{\SwadeshCompP}{1.000}
-\newcommand{\SwadeshCompCohenD}{-1.01}
+\newcommand{\SwadeshCompCohenD}{-0.94}
 \newcommand{\SwadeshCompNumSwadesh}{101}
 \newcommand{\SwadeshCompNumNonSwadesh}{60}
+\newcommand{\OrthoSimLoanword}{0.26}
 \newcommand{\ControlledSwadeshCompMean}{0.80}
 \newcommand{\ControlledNonSwadeshCompMean}{0.78}
 \newcommand{\ControlledSwadeshCompU}{3420}
@@ -28,32 +57,207 @@
 \newcommand{\ControlledSwadeshCompCohenD}{0.23}
 \newcommand{\ControlledSwadeshCompNumSwadesh}{101}
 \newcommand{\ControlledSwadeshCompNumNonSwadesh}{60}
-\newcommand{\ColexSpearmanRho}{0.17}
-\newcommand{\ColexSpearmanP}{2.15e-10}
-\newcommand{\ColexNumPairs}{1431}
-\newcommand{\ColexU}{42656}
-\newcommand{\ColexP}{1.33e-11}
-\newcommand{\ColexColMean}{0.36}
+\newcommand{\PosNounSwadeshCount}{52}
+\newcommand{\PosNounSwadeshMean}{0.83}
+\newcommand{\PosNounNonSwadeshMean}{0.78}
+\newcommand{\PosNounCompU}{2016}
+\newcommand{\PosNounCompP}{0.004}
+\newcommand{\PosNounCompCohenD}{0.45}
+\newcommand{\PosNounCorrSwadeshMean}{0.75}
+\newcommand{\PosNounCorrNonSwadeshMean}{0.65}
+\newcommand{\PosNounCorrCompU}{2099}
+\newcommand{\PosNounCorrCompP}{8.40 \times 10^{-4}}
+\newcommand{\PosNounCorrCompCohenD}{0.54}
+\newcommand{\OrthoSimSwadesh}{0.13}
+\newcommand{\OrthoSimSwadeshNouns}{0.12}
+\newcommand{\OrthoSimControlled}{0.13}
+\newcommand{\StrictNounCount}{52}
+\newcommand{\StrictNounRawNonSwadeshMean}{0.76}
+\newcommand{\StrictNounRawU}{1846}
+\newcommand{\StrictNounRawP}{7.16 \times 10^{-4}}
+\newcommand{\StrictNounRawCohenD}{0.59}
+\newcommand{\StrictNounCorrNonSwadeshMean}{0.63}
+\newcommand{\StrictNounCorrU}{1933}
+\newcommand{\StrictNounCorrP}{8.03 \times 10^{-5}}
+\newcommand{\StrictNounCorrCohenD}{0.69}
+\newcommand{\SwadeshNounMeanFert}{1.73}
+\newcommand{\NonSwadeshNounMeanFert}{2.21}
+\newcommand{\SwadeshNounMeanLen}{4.19}
+\newcommand{\NonSwadeshNounMeanLen}{4.85}
+\newcommand{\NounLenDiffP}{9.02 \times 10^{-9}}
+\newcommand{\NounFertAncovaT}{-5.26}
+\newcommand{\NounFertAncovaP}{7.43 \times 10^{-7}}
+\newcommand{\NounSwadeshAncovaP}{0.510}
+\newcommand{\ColexSpearmanRho}{0.13}
+\newcommand{\ColexSpearmanP}{8.85 \times 10^{-21}}
+\newcommand{\ColexNumPairs}{5050}
+\newcommand{\ColexU}{492477}
+\newcommand{\ColexP}{1.55 \times 10^{-33}}
+\newcommand{\ColexColMean}{0.37}
 \newcommand{\ColexNonColMean}{0.29}
-\newcommand{\ColexCohenD}{0.96}
-\newcommand{\ColexColCount}{65}
-\newcommand{\ColexNonColCount}{878}
+\newcommand{\ColexCohenD}{1.43}
+\newcommand{\ColexColCount}{201}
+\newcommand{\ColexNonColCount}{3258}
+\newcommand{\ColexAnyCount}{1591}
+\newcommand{\ColexStringDistinctColMean}{0.37}
+\newcommand{\ColexStringDistinctNonColMean}{0.29}
+\newcommand{\ColexStringDistinctU}{492111}
+\newcommand{\ColexStringDistinctP}{2.14 \times 10^{-33}}
+\newcommand{\ColexStringDistinctCohenD}{1.41}
+\newcommand{\ColexStringDistinctRho}{0.13}
+\newcommand{\ColexStringDistinctRhoP}{1.19 \times 10^{-20}}
+\newcommand{\ColexWithinCatPairs}{783}
+\newcommand{\ColexWithinCatColMean}{0.42}
+\newcommand{\ColexWithinCatNonColMean}{0.33}
+\newcommand{\ColexWithinCatU}{27839}
+\newcommand{\ColexWithinCatP}{4.51 \times 10^{-18}}
+\newcommand{\ColexWithinCatCohenD}{1.26}
+\newcommand{\ColexWithinCatRho}{0.32}
+\newcommand{\ColexWithinCatRhoP}{2.73 \times 10^{-20}}
+\newcommand{\ColexSamePOSPairs}{1765}
+\newcommand{\ColexSamePOSColMean}{0.39}
+\newcommand{\ColexSamePOSNonColMean}{0.31}
+\newcommand{\ColexSamePOSU}{101245}
+\newcommand{\ColexSamePOSP}{2.10 \times 10^{-22}}
+\newcommand{\ColexSamePOSCohenD}{1.20}
+\newcommand{\ColexSamePOSRho}{0.20}
+\newcommand{\ColexSamePOSRhoP}{1.45 \times 10^{-17}}
+\newcommand{\ColexBareStringDistinctU}{528369}
+\newcommand{\ColexBareStringDistinctP}{9.98 \times 10^{-49}}
+\newcommand{\ColexBareStringDistinctCohenD}{1.79}
+\newcommand{\ColexBareStringDistinctRho}{0.22}
+\newcommand{\ColexBareStringDistinctRhoP}{6.95 \times 10^{-55}}
+\newcommand{\ColexCentroidCohenD}{1.80}
+\newcommand{\ColexCentroidRho}{0.20}
+\newcommand{\ColexCentroidRhoP}{5.91 \times 10^{-47}}
+\newcommand{\ColexBareCentroidCohenD}{1.71}
+\newcommand{\ColexBareCentroidRho}{0.21}
+\newcommand{\ColexBareCentroidRhoP}{2.68 \times 10^{-53}}
+\newcommand{\ColexWithinCatColexCount}{399}
+\newcommand{\ColexCrossCatColexCount}{1{,}393}
+\newcommand{\ColexCognateExclU}{491{,}254}
+\newcommand{\ColexCognateExclP}{3.55 \times 10^{-33}}
+\newcommand{\ColexCognateExclCohenD}{1.40}
+\newcommand{\ColexOneFamCount}{1{,}241}
+\newcommand{\ColexOneFamMean}{0.30}
+\newcommand{\ColexFiveFamCount}{63}
+\newcommand{\ColexFiveFamMean}{0.44}
+\newcommand{\ColexTenFamCount}{31}
+\newcommand{\ColexTenFamMean}{0.48}
 \newcommand{\ConceptualStoreRaw}{2.25}
 \newcommand{\ConceptualStoreCentered}{2.69}
 \newcommand{\ConceptualStoreImprovement}{1.19}
+\newcommand{\ConceptualStoreBareRaw}{1.15}
+\newcommand{\ConceptualStoreBareCentered}{2.46}
+\newcommand{\ConceptualStoreBareImprovement}{2.14}
+\newcommand{\CSMSSConceptCtx}{64.4}
+\newcommand{\CSMSSLangCtx}{3.8}
+\newcommand{\CSMSSResidCtx}{31.8}
+\newcommand{\CSMSSConceptBare}{44.7}
+\newcommand{\CSMSSLangBare}{25.7}
+\newcommand{\CSMSSResidBare}{29.6}
+\newcommand{\CSMPermNull}{1.01}
+\newcommand{\CSMBareGlobalCentered}{1.76}
+\newcommand{\CSMCrossScriptCtxRaw}{2.47}
+\newcommand{\CSMCrossScriptCtxCentered}{2.94}
+\newcommand{\CSMCrossScriptCtxImprovement}{1.19}
+\newcommand{\CSMCrossScriptBareRaw}{1.15}
+\newcommand{\CSMCrossScriptBareCentered}{2.60}
+\newcommand{\CSMCrossScriptBareImprovement}{2.27}
+\newcommand{\PRLangBare}{13.3}
+\newcommand{\PRLangCtx}{18.8}
+\newcommand{\PRConcept}{38.7}
+\newcommand{\PRLangBareTopTenPct}{66.6}
+\newcommand{\PRConceptTopTenPct}{40.1}
 \newcommand{\OffsetNumPairs}{22}
 \newcommand{\OffsetMeanConsistency}{0.84}
 \newcommand{\OffsetMaxConsistency}{0.94}
 \newcommand{\OffsetMinConsistency}{0.70}
 \newcommand{\OffsetBestPair}{fire--water}
+\newcommand{\OffsetNormCorrR}{0.84}
+\newcommand{\OffsetNormCorrP}{1.03 \times 10^{-6}}
+\newcommand{\OffsetSemanticCount}{15}
+\newcommand{\OffsetControlCount}{7}
+\newcommand{\OffsetSemanticMean}{0.82}
+\newcommand{\OffsetControlMean}{0.86}
+\newcommand{\OffsetBestSemanticPair}{fire--water}
+\newcommand{\OffsetBestSemanticVal}{0.94}
+\newcommand{\OffsetResidSemanticMean}{0.012}
+\newcommand{\OffsetResidControlMean}{-0.025}
+\newcommand{\OffsetResidU}{90}
+\newcommand{\OffsetResidP}{0.003}
+\newcommand{\OffsetResidCohenD}{1.06}
+\newcommand{\OffsetBestResidPair}{man--woman}
+\newcommand{\OffsetCouplingSemanticMean}{0.17}
+\newcommand{\OffsetCouplingControlMean}{-0.00}
+\newcommand{\OffsetCouplingU}{105}
+\newcommand{\OffsetCouplingP}{5.86 \times 10^{-6}}
+\newcommand{\OffsetLOOU}{89}
+\newcommand{\OffsetLOOP}{0.004}
+\newcommand{\OffsetConcaveU}{83}
+\newcommand{\OffsetConcaveP}{0.016}
+\newcommand{\OffsetBareConcaveU}{96}
+\newcommand{\OffsetBareConcaveP}{6.00 \times 10^{-4}}
+\newcommand{\OffsetBareCouplingSemMean}{0.23}
+\newcommand{\OffsetBareCouplingCtrlMean}{-0.01}
+\newcommand{\OffsetBareCouplingU}{105}
+\newcommand{\OffsetBareCouplingP}{5.86 \times 10^{-6}}
+\newcommand{\OffsetMatchedCount}{15}
+\newcommand{\OffsetMatchedSemMean}{0.82}
+\newcommand{\OffsetMatchedCtrlMean}{0.78}
+\newcommand{\OffsetMatchedRawU}{154}
+\newcommand{\OffsetMatchedRawP}{0.045}
+\newcommand{\OffsetMatchedResidU}{211}
+\newcommand{\OffsetMatchedResidP}{3.55 \times 10^{-5}}
+\newcommand{\OffsetMatchedCouplingU}{225}
+\newcommand{\OffsetMatchedCouplingP}{1.70 \times 10^{-6}}
+\newcommand{\OffsetMatchedSemNormMean}{10.18}
+\newcommand{\OffsetMatchedCtrlNormMean}{10.74}
+\newcommand{\OffsetMatchedNormP}{0.30}
+\newcommand{\RHMHighResOffset}{0.89}
+\newcommand{\RHMLowResOffset}{0.80}
+\newcommand{\RHMOffsetU}{3{,}101}
+\newcommand{\RHMOffsetP}{3.63 \times 10^{-9}}
 \newcommand{\ColorNumColors}{11}
-\newcommand{\ColorNumLanguages}{136}
+\newcommand{\ColorNumLanguages}{135}
+\newcommand{\ColorPConeVar}{22.8}
+\newcommand{\ColorPCtwoVar}{16.3}
+\newcommand{\ColorPCthreeVar}{13.5}
+\newcommand{\ColorPConeTwoVar}{39.1}
+\newcommand{\ColorTotalVar}{52.6}
+\newcommand{\ColorBKRho}{0.93}
+\newcommand{\ColorBKP}{8.48 \times 10^{-5}}
+\newcommand{\ColorBKR}{0.89}
+\newcommand{\ColorBKRp}{2.83 \times 10^{-4}}
+\newcommand{\ColorBKRhoAll}{0.86}
+\newcommand{\ColorBKPAll}{6.08 \times 10^{-4}}
+\newcommand{\ColorBKRSeven}{0.82}
+\newcommand{\ColorBKRSevenP}{0.002}
+\newcommand{\ColorBarePConeVar}{23.8}
+\newcommand{\ColorBareBKRho}{0.91}
+\newcommand{\ColorBareBKP}{2.18 \times 10^{-4}}
+\newcommand{\ColorBareBKR}{0.88}
+\newcommand{\ColorBareBKRp}{4.18 \times 10^{-4}}
+\newcommand{\ColorPartialLengthR}{0.70}
+\newcommand{\ColorPartialLengthP}{0.017}
+\newcommand{\ColorBarePartialLengthR}{0.63}
+\newcommand{\ColorBarePartialLengthP}{0.038}
+\newcommand{\ColorLayerZeroRho}{0.81}
+\newcommand{\ColorLayerZeroP}{0.0046}
+\newcommand{\ColorLayerSevenRho}{0.96}
+\newcommand{\ColorLayerSevenP}{7.69 \times 10^{-6}}
+\newcommand{\RHMHighResColorDist}{1.42}
+\newcommand{\RHMLowResColorDist}{2.05}
+\newcommand{\RHMColorP}{1.65 \times 10^{-8}}
 \newcommand{\IsotropySpearmanRho}{0.990}
-\newcommand{\IsotropySpearmanP}{4.93e-87}
+\newcommand{\IsotropySpearmanP}{4.93 \times 10^{-87}}
 \newcommand{\DecompRsqOrtho}{0.012}
-\newcommand{\DecompSlopeOrtho}{0.511}
-\newcommand{\DecompRsqPhon}{0.004}
-\newcommand{\DecompSlopePhon}{0.277}
+\newcommand{\DecompSlopeOrtho}{1.308}
+\newcommand{\DecompPOrtho}{0.272}
+\newcommand{\DecompRsqPhon}{0.000}
+\newcommand{\DecompSlopePhon}{0.098}
+\newcommand{\DecompPPhon}{0.929}
+\newcommand{\DecompNumLatinLangs}{92}
 \newcommand{\CatBodyMean}{0.55}
 \newcommand{\CatBodyStd}{0.17}
 \newcommand{\CatNatureMean}{0.72}
@@ -70,19 +274,51 @@
 \newcommand{\CatPronounsStd}{0.08}
 \newcommand{\CatOtherMean}{0.54}
 \newcommand{\CatOtherStd}{0.20}
-\newcommand{\CarrierBaselineRho}{0.867}
-\newcommand{\CarrierBaselineP}{1.12e-31}
-\newcommand{\CarrierBaselineMeanDiff}{0.128}
-\newcommand{\CarrierBaselineTstat}{15.69}
-\newcommand{\CarrierBaselineTp}{9.99e-29}
+\newcommand{\CatAnovaF}{4.53}
+\newcommand{\CatAnovaP}{2.21 \times 10^{-4}}
+\newcommand{\CatAnovaEtaSq}{0.254}
+\newcommand{\CatAnovaEtaPct}{25.4}
+\newcommand{\CatKWH}{28.00}
+\newcommand{\CatKWP}{2.20 \times 10^{-4}}
+\newcommand{\CatBareAnovaF}{3.00}
+\newcommand{\CatBareAnovaP}{0.007}
+\newcommand{\CatBareAnovaEtaPct}{18.4}
+\newcommand{\CatPartialFertF}{7.74}
+\newcommand{\CatPartialFertP}{2.51 \times 10^{-7}}
+\newcommand{\DecompRsqFert}{0.037}
+\newcommand{\DecompPFert}{0.055}
+\newcommand{\DecompRsqLen}{0.000}
+\newcommand{\DecompPLen}{0.837}
+\newcommand{\CarrierCtxMean}{0.58}
+\newcommand{\CarrierDectxMean}{0.45}
+\newcommand{\CarrierBaselineRho}{0.866}
+\newcommand{\CarrierBaselineP}{1.48 \times 10^{-31}}
+\newcommand{\CarrierBaselineMeanDiff}{0.129}
+\newcommand{\CarrierBaselineTstat}{15.74}
+\newcommand{\CarrierBaselineTp}{7.97 \times 10^{-29}}
 \newcommand{\LayerwiseNumLayers}{12}
 \newcommand{\LayerwiseNumLangs}{39}
 \newcommand{\LayerwiseEmergenceLayer}{1}
+\newcommand{\LayerwisePeakLayer}{10}
+\newcommand{\LayerwisePeakConv}{0.86}
 \newcommand{\LayerwisePhaseTrans}{6}
 \newcommand{\LayerwiseFinalCSM}{4.01}
 \newcommand{\LayerwiseFinalConv}{0.80}
 \newcommand{\LayerwiseInputConv}{0.35}
+\newcommand{\LayerTenCenteredCSM}{3.89}
+\newcommand{\LayerSixRawBetween}{0.466}
+\newcommand{\LayerTenRawBetween}{0.462}
+\newcommand{\LayerElevenRawBetween}{0.680}
+\newcommand{\LayerBetweenGainPct}{47.1}
+\newcommand{\LayerWithinContractPct}{43.3}
+\newcommand{\LayerWithinExpandPct}{45.5}
+\newcommand{\LayerPronounDip}{-0.15}
+\newcommand{\LayerActionDip}{-0.09}
 \newcommand{\IsotropyKThreeOptimal}{No}
 \newcommand{\IsotropyMinRho}{0.98}
 \newcommand{\IsotropyMaxRho}{1.00}
-\newcommand{\IsotropyKRange}{0.98--1.00}
+\newcommand{\IsotropyKRange}{0.98\text{--}1.00}
+\newcommand{\IsotropyKZeroMean}{0.72}
+\newcommand{\IsotropyKOneMean}{0.59}
+\newcommand{\IsotropyKThreeMean}{0.58}
+\newcommand{\IsotropyKTenMean}{0.56}

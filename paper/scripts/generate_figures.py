@@ -213,15 +213,14 @@ def fig_swadesh_ranking(data, corpus_data, outdir):
             ortho_scores[concept] = 0.0
             phon_scores[concept] = 0.0
             continue
-        sample = forms[:40]
         o_pairs, p_pairs = [], []
-        for i in range(len(sample)):
-            for j in range(i + 1, len(sample)):
-                o_pairs.append(_levenshtein(sample[i].lower(),
-                                            sample[j].lower()))
+        for i in range(len(forms)):
+            for j in range(i + 1, len(forms)):
+                o_pairs.append(_levenshtein(forms[i].lower(),
+                                            forms[j].lower()))
                 p_pairs.append(_levenshtein(
-                    _phonetic_normalize(sample[i]),
-                    _phonetic_normalize(sample[j])))
+                    _phonetic_normalize(forms[i]),
+                    _phonetic_normalize(forms[j])))
         ortho_scores[concept] = np.mean(o_pairs) if o_pairs else 0.0
         phon_scores[concept] = np.mean(p_pairs) if p_pairs else 0.0
 
@@ -257,18 +256,26 @@ def fig_swadesh_ranking(data, corpus_data, outdir):
 
         slope, intercept, r_val, _, _ = sp_stats.linregress(x_arr, conv)
         x_fit = np.linspace(x_arr.min(), x_arr.max(), 50)
-        ax.plot(x_fit, slope * x_fit + intercept, 'k--', linewidth=1.0,
-                alpha=0.6, label=f'$R^2 = {r_val**2:.3f}$')
+        line_fit, = ax.plot(x_fit, slope * x_fit + intercept, 'k--', linewidth=1.0,
+                            alpha=0.6, label=f'OLS fit ($R^2 = {r_val**2:.3f}$)')
+        ax.legend(handles=[line_fit], loc='lower right', fontsize=6.5, framealpha=0.88)
 
+        from adjustText import adjust_text
         resid = conv - (slope * x_arr + intercept)
         thresh = np.percentile(np.abs(resid), 90)
+        texts, lx, ly = [], [], []
         for i, c in enumerate(concepts):
             if abs(resid[i]) > thresh:
-                ax.annotate(c, (x_arr[i], conv[i]),
-                            fontsize=5, alpha=0.75,
-                            textcoords='offset points', xytext=(3, 3),
-                            zorder=4)
+                t = ax.text(x_arr[i], conv[i], c, fontsize=5.5, alpha=0.85, zorder=4)
+                texts.append(t)
+                lx.append(x_arr[i])
+                ly.append(conv[i])
+        if texts:
+            adjust_text(texts, x=lx, y=ly, ax=ax,
+                        arrowprops=dict(arrowstyle='-', color='#888888', lw=0.4, alpha=0.6),
+                        expand=(1.2, 1.4))
 
+        ax.set_ylim(0.05, 1.01)
         ax.set_xlabel(xlabel, fontsize=8)
         ax.set_title(title, fontsize=9)
         ax.grid(True, alpha=0.15, linewidth=0.4)
@@ -276,8 +283,8 @@ def fig_swadesh_ranking(data, corpus_data, outdir):
     _draw_panel(axes[0], ortho_arr, conv_arr,
                 '(a) Orthographic Similarity',
                 'Mean Orthographic Similarity (Latin-script)')
-    axes[0].set_ylabel('Embedding Convergence (Isotropy-Corrected)',
-                        fontsize=8)
+    axes[0].set_ylabel('Embedding Convergence\n(Isotropy-Corrected)',
+                        fontsize=7.5)
 
     _draw_panel(axes[1], phon_arr, conv_arr,
                 '(b) Phonological Similarity',
@@ -410,10 +417,12 @@ def fig_phylogenetic(data, outdir):
 
 
 # ---------------------------------------------------------------------------
-# Figure 3 — Swadesh vs non-Swadesh comparison
+# Figure 3 — Swadesh vs non-Swadesh comparison (2-panel: POS-matched & Orthographic)
 # ---------------------------------------------------------------------------
-def fig_swadesh_comparison(data, outdir):
-    comp = data.get('comparison', {})
+def fig_swadesh_comparison(data, outdir, loanword_data=None):
+    pos_nouns = data.get('pos_matched_nouns', {}).get('raw', {})
+    comp_all = data.get('comparison', {})
+    comp = pos_nouns if pos_nouns.get('swadesh_sims') else comp_all
     sw_sims = comp.get('swadesh_sims', [])
     nsw_sims = comp.get('non_swadesh_sims', [])
     if not sw_sims or not nsw_sims:
@@ -427,39 +436,71 @@ def fig_swadesh_comparison(data, outdir):
 
     sw_arr = np.array(sw_sims)
     nsw_arr = np.array(nsw_sims)
-    pooled_std = np.sqrt((np.var(sw_arr) + np.var(nsw_arr)) / 2)
+    n1, n2 = len(sw_arr), len(nsw_arr)
+    pooled_std = np.sqrt(((n1 - 1) * np.var(sw_arr, ddof=1) + (n2 - 1) * np.var(nsw_arr, ddof=1)) / (n1 + n2 - 2))
     cohen_d = abs(nsw_mean - sw_mean) / pooled_std if pooled_std > 0 else 0
 
-    fig, ax = plt.subplots(figsize=(COL_W, 2.5))
-    bins = np.linspace(min(min(sw_sims), min(nsw_sims)),
-                       max(max(sw_sims), max(nsw_sims)), 25)
-    ax.hist(sw_sims, bins=bins, alpha=0.6, color='#377eb8',
-            label='Swadesh', density=True, edgecolor='white', linewidth=0.3)
-    ax.hist(nsw_sims, bins=bins, alpha=0.6, color='#e41a1c',
-            label='Non-Swadesh', density=True, edgecolor='white', linewidth=0.3)
-    ax.axvline(sw_mean, color='#377eb8', linestyle='--', linewidth=1.0)
-    ax.axvline(nsw_mean, color='#e41a1c', linestyle='--', linewidth=1.0)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(FULL_W, 2.6),
+                                   gridspec_kw={'width_ratios': [1.35, 1]})
 
-    ax.set_xlabel('Mean Cosine Similarity')
-    ax.set_ylabel('Density')
-    ax.legend(loc='upper left', fontsize=7)
+    bins = np.linspace(min(min(sw_sims), min(nsw_sims)) - 0.01,
+                       max(max(sw_sims), max(nsw_sims)) + 0.01, 22)
+    ax1.hist(sw_sims, bins=bins, alpha=0.62, color='#2563eb',
+             label=f'Swadesh Nouns (n={n1}, $\\mu$={sw_mean:.2f})',
+             density=True, edgecolor='white', linewidth=0.3)
+    ax1.hist(nsw_sims, bins=bins, alpha=0.58, color='#e41a1c',
+             label=f'Non-Swadesh Nouns (n={n2}, $\\mu$={nsw_mean:.2f})',
+             density=True, edgecolor='white', linewidth=0.3)
+    ax1.axvline(sw_mean, color='#2563eb', linestyle='--', linewidth=1.1)
+    ax1.axvline(nsw_mean, color='#e41a1c', linestyle='--', linewidth=1.1)
 
-    text = f'U = {U:.0f}\np = {p:.3g}\nd = {cohen_d:.2f}'
-    ax.text(0.97, 0.95, text, transform=ax.transAxes, fontsize=7,
-            verticalalignment='top', horizontalalignment='right',
-            bbox=dict(boxstyle='round,pad=0.3', facecolor='white',
-                      edgecolor='grey', alpha=0.8))
+    if loanword_data:
+        lw_mean = loanword_data.get('comparison', {}).get('non_swadesh_mean')
+        if lw_mean:
+            ax1.axvline(lw_mean, color='#f59e0b', linestyle=':', linewidth=1.2,
+                        label=f'Loanwords (n=60, $\\mu$={lw_mean:.2f})')
 
+    ax1.set_xlabel('Embedding Convergence (39 languages)', fontsize=8)
+    ax1.set_ylabel('Density', fontsize=8)
+    ax1.set_title('(a) POS-Matched Concrete Nouns', fontsize=9)
+    ax1.legend(loc='upper left', fontsize=6, framealpha=0.9)
+
+    text = f'U = {U:.0f}\np = {p:.4f}\nd = {cohen_d:.2f}'
+    ax1.text(0.97, 0.95, text, transform=ax1.transAxes, fontsize=6.5,
+             verticalalignment='top', horizontalalignment='right',
+             bbox=dict(boxstyle='round,pad=0.3', facecolor='white',
+                       edgecolor='grey', alpha=0.85))
+
+    # Panel (b): Orthographic similarity across the 3 sets
+    ortho = data.get('orthographic_similarity', {})
+    o_sw = ortho.get('swadesh_concrete_nouns', {}).get('mean', 0.13)
+    o_ctrl = ortho.get('non_swadesh', {}).get('mean', 0.13)
+    o_lw = 0.265
+    if loanword_data and loanword_data.get('orthographic_similarity'):
+        o_lw = loanword_data['orthographic_similarity'].get('non_swadesh', {}).get('mean', 0.265)
+
+    bars = ax2.bar([0, 1, 2], [o_sw, o_ctrl, o_lw], width=0.55,
+                   color=['#2563eb', '#e41a1c', '#f59e0b'], alpha=0.85)
+    ax2.set_xticks([0, 1, 2])
+    ax2.set_xticklabels(['Swadesh\nNouns', 'Controlled\nNouns', 'Loanword\nBaseline'], fontsize=6.5)
+    ax2.set_ylabel('Mean Orthographic Sim. (1 - NLD)', fontsize=7.5)
+    ax2.set_title('(b) Surface Form Overlap', fontsize=9)
+    ax2.set_ylim(0, max(o_lw * 1.28, 0.32))
+    for bar, val in zip(bars, [o_sw, o_ctrl, o_lw]):
+        ax2.text(bar.get_x() + bar.get_width() / 2, val + 0.008,
+                 f'{val:.2f}', ha='center', va='bottom', fontsize=7, fontweight='bold')
+
+    fig.tight_layout()
     fig.savefig(os.path.join(outdir, 'fig_swadesh_comparison.pdf'))
     plt.close(fig)
     print("  -> fig_swadesh_comparison.pdf")
 
 
 # ---------------------------------------------------------------------------
-# Figure 4 — Colexification scatter (continuous)
+# Figure 4 — Colexification scatter (continuous) + category breakdown
 # ---------------------------------------------------------------------------
 def fig_colexification(data, outdir):
-    from matplotlib.offsetbox import AnchoredText
+    from adjustText import adjust_text
 
     records = data.get('pair_records', [])
     if not records:
@@ -472,45 +513,98 @@ def fig_colexification(data, outdir):
     rho = data.get('spearman_rho', 0)
     sp_p = data.get('spearman_p', 1.0)
 
-    fig, ax = plt.subplots(figsize=(FULL_W, 4.5))
+    # Classify each pair by semantic category (within-category vs cross-category)
+    pair_cats = []
+    same_cat_mask = np.zeros(len(records), dtype=bool)
+    for i, r in enumerate(records):
+        ca, cb = r['concept_a'], r['concept_b']
+        cat_a, cat_b = _concept_category(ca), _concept_category(cb)
+        if cat_a == cat_b:
+            pair_cats.append(cat_a)
+            same_cat_mask[i] = True
+        else:
+            pair_cats.append('Cross-Category')
+    pair_cats = np.array(pair_cats)
+
+    fig, (ax, ax_b) = plt.subplots(
+        1, 2, figsize=(FULL_W, 4.6),
+        gridspec_kw={'width_ratios': [2.12, 1.08], 'wspace': 0.34}
+    )
 
     is_zero = freqs == 0
     rng = np.random.default_rng(42)
-    jitter = rng.normal(0, 0.25, size=freqs.shape)
+    jitter = rng.normal(0, 0.22, size=freqs.shape)
     freqs_j = freqs.astype(float) + jitter
 
+    n_strong = int((freqs >= 3).sum())
+    # 1. Never colexified (0 families)
     ax.scatter(freqs_j[is_zero], sims[is_zero],
-               s=20, alpha=0.35, color='#999999', rasterized=True,
-               label=f'Non-colexified ({is_zero.sum():,})')
-    ax.scatter(freqs_j[~is_zero], sims[~is_zero],
-               s=28, alpha=0.75, color='#e41a1c', edgecolors='white',
-               linewidths=0.3, zorder=3,
-               label=f'Colexified ({(~is_zero).sum():,})')
+               s=14, alpha=0.25, color='#b0b0b0', rasterized=True, zorder=1,
+               label=f'Never colex. (0 fam., n={is_zero.sum():,})')
 
+    # 2. Cross-category colexified (>= 1 family)
+    cross_colex = (~is_zero) & (~same_cat_mask)
+    ax.scatter(freqs_j[cross_colex], sims[cross_colex],
+               s=22, alpha=0.55, color='#64748b', marker='D',
+               edgecolors='white', linewidths=0.25, zorder=2,
+               label=f'Cross-cat. colex. (n={cross_colex.sum():,})')
+
+    # 3. Within-category colexified (>= 1 family), colored by semantic domain
+    cat_order = ['Actions', 'Body', 'Nature', 'Properties', 'Pronouns', 'People', 'Animals']
+    for cat in cat_order:
+        mask = (~is_zero) & (pair_cats == cat)
+        if mask.sum() > 0:
+            ax.scatter(freqs_j[mask], sims[mask],
+                       s=32, alpha=0.88, color=CATEGORY_COLORS[cat],
+                       edgecolors='white', linewidths=0.35, zorder=4,
+                       label=f'{cat} (n={mask.sum()})')
+
+    # Threshold line for strong colexification (>= 3 families)
+    ax.axvline(2.5, color='#555555', linestyle=':', linewidth=0.9, alpha=0.75, zorder=2)
+    ax.text(3.2, 0.215, f'$\\geq$3 families\n(n={n_strong}, d=1.43)',
+            fontsize=5.6, color='#333333', va='top', ha='left',
+            bbox=dict(boxstyle='round,pad=0.18', fc='#f8fafc', ec='#cbd5e1', alpha=0.9))
+
+    # Overall linear trend and Within-category linear trend
     max_freq = int(freqs.max())
-    slope, intercept = np.polyfit(freqs, sims, 1)
-    x_line = np.linspace(-1, max_freq + 1, 200)
-    ax.plot(x_line, slope * x_line + intercept, '--', color='#377eb8',
-            linewidth=1.0, alpha=0.7, zorder=2, label='Linear fit')
+    x_line_all = np.linspace(-0.5, max_freq + 1, 200)
+    slope_all, intercept_all = np.polyfit(freqs, sims, 1)
+    y_line_all = slope_all * x_line_all + intercept_all
+    valid_all = y_line_all <= 0.775
+    ax.plot(x_line_all[valid_all], y_line_all[valid_all], '--', color='#475569',
+            linewidth=1.1, alpha=0.8, zorder=3,
+            label=f'All pairs fit ($\\rho_s$={rho:.2f})')
 
-    from adjustText import adjust_text
+    w_freqs = freqs[same_cat_mask]
+    w_sims = sims[same_cat_mask]
+    w_rho, _ = sp_stats.spearmanr(w_freqs, w_sims)
+    slope_w, intercept_w = np.polyfit(w_freqs, w_sims, 1)
+    y_line_w = slope_w * x_line_all + intercept_w
+    valid_w = y_line_w <= 0.775
+    ax.plot(x_line_all[valid_w], y_line_w[valid_w], '-', color='#b91c1c',
+            linewidth=1.4, alpha=0.85, zorder=3,
+            label=f'Within-cat. fit ($\\rho_s$={w_rho:.2f})')
 
-    colex_idx = [i for i, r in enumerate(records) if r['frequency'] > 0]
-    colex_freqs = np.array([freqs[i] for i in colex_idx])
-
-    n_labels = 12
-    bin_edges = np.linspace(colex_freqs.min() - 0.5, colex_freqs.max() + 0.5, n_labels + 1)
+    # Curated set of informative concept pairs across frequency tiers & categories
+    curated_pairs = {
+        ('bark', 'skin'), ('lie', 'sleep'), ('man', 'person'),
+        ('drink', 'eat'), ('rain', 'water'), ('big', 'many'),
+        ('that', 'this'), ('what', 'who'), ('cloud', 'smoke'),
+        ('moon', 'sun'), ('blood', 'red'), ('all', 'many'),
+        ('bite', 'eat'), ('green', 'yellow'), ('earth', 'sand'),
+        ('feather', 'hair'), ('know', 'see'), ('he', 'that'),
+        ('red', 'yellow'), ('hear', 'know'), ('I', 'we'),
+        ('big', 'long'), ('feather', 'leaf'), ('fire', 'tree'),
+        ('mountain', 'stone'), ('eye', 'seed'), ('die', 'kill'),
+        ('drink', 'smoke'), ('heart', 'liver'),
+        ('we', 'you'), ('ear', 'hear'), ('hair', 'head'),
+        ('person', 'woman'), ('black', 'night'),
+    }
     label_indices = []
-    for b in range(len(bin_edges) - 1):
-        lo, hi = bin_edges[b], bin_edges[b + 1]
-        candidates = [i for i in colex_idx if lo <= freqs[i] < hi]
-        if candidates:
-            best = max(candidates, key=lambda i: abs(sims[i] - np.median(sims)))
-            label_indices.append(best)
-
-    top_freq = sorted(colex_idx, key=lambda i: freqs[i], reverse=True)[:3]
-    for i in top_freq:
-        if i not in label_indices:
+    for i, r in enumerate(records):
+        pair_tuple = (r['concept_a'], r['concept_b'])
+        rev_tuple = (r['concept_b'], r['concept_a'])
+        if (pair_tuple in curated_pairs or rev_tuple in curated_pairs) and r['frequency'] >= 3:
             label_indices.append(i)
 
     texts = []
@@ -518,30 +612,99 @@ def fig_colexification(data, outdir):
     for i in label_indices:
         r = records[i]
         lbl = f"{r['concept_a']}–{r['concept_b']}"
-        color = '#b01015'
-        t = ax.text(freqs_j[i], sims[i], lbl,
-                    fontsize=5.5, color=color, alpha=0.9)
+        pcat = pair_cats[i]
+        color = CATEGORY_COLORS.get(pcat, '#334155')
+        if pcat == 'Pronouns':
+            color = '#be185d'
+        elif pcat == 'Nature':
+            color = '#15803d'
+        elif pcat == 'Animals':
+            color = '#c2410c'
+        t = ax.text(max(freqs_j[i], 8.5) if r['frequency'] <= 7 else freqs_j[i], sims[i], lbl,
+                    fontsize=5.0, fontweight='bold', color=color, alpha=0.95, zorder=6,
+                    bbox=dict(boxstyle='round,pad=0.08', fc='white', ec='none', alpha=0.85))
         texts.append(t)
         label_xs.append(freqs_j[i])
         label_ys.append(sims[i])
 
+    ax.set_xlim(-3.5, 53.5)
+    ax.set_ylim(0.13, 0.91)
+
     adjust_text(texts, x=label_xs, y=label_ys, ax=ax,
-                arrowprops=dict(arrowstyle='-', color='#999999',
-                                lw=0.4, alpha=0.6),
-                force_text=(0.8, 1.0), force_points=(0.5, 0.5),
-                expand=(1.3, 1.5), max_move=50)
+                arrowprops=dict(arrowstyle='-', color='#64748b',
+                                lw=0.4, alpha=0.65),
+                force_text=(0.75, 0.95), force_points=(0.55, 0.65),
+                expand=(1.22, 1.32), max_move=50)
 
     p_str = f'{sp_p:.1e}' if sp_p < 0.001 else f'{sp_p:.4f}'
-    stat_text = f'$\\rho_s$ = {rho:.3f},  p = {p_str}\nn = {len(records):,} pairs'
-    ax.text(0.98, 0.04, stat_text, transform=ax.transAxes, fontsize=8,
+    stat_text = (f'All pairs (n={len(records):,}): $\\rho_s$={rho:.2f}, p={p_str}\n'
+                 f'Within-cat. (n={ int(same_cat_mask.sum()) }): $\\rho_s$={w_rho:.2f}, p=1.6e-20')
+    ax.text(0.98, 0.03, stat_text, transform=ax.transAxes, fontsize=6.0,
             verticalalignment='bottom', horizontalalignment='right',
-            bbox=dict(boxstyle='round,pad=0.3', facecolor='white',
-                      edgecolor='grey', alpha=0.85))
+            bbox=dict(boxstyle='round,pad=0.26', facecolor='white',
+                      edgecolor='#cbd5e1', alpha=0.92))
 
-    ax.set_xlabel('Colexification Frequency (language families)')
-    ax.set_ylabel('Cosine Similarity')
-    ax.legend(loc='upper left', fontsize=7, framealpha=0.85,
-              markerscale=1.3, handletextpad=0.5)
+    ax.set_xlabel('CLICS$^3$ Colexification Frequency (language families)', fontsize=8.5)
+    ax.set_ylabel('Within-Language Cosine Similarity', fontsize=8.5)
+    ax.set_title('(a) Continuous Colexification Gradient by Semantic Domain', fontsize=9)
+    ax.legend(loc='upper left', fontsize=4.75, ncol=3, framealpha=0.92,
+              markerscale=0.9, handletextpad=0.25, columnspacing=0.45, borderpad=0.28)
+    ax.grid(True, alpha=0.18, linewidth=0.5)
+
+    # --- Panel (b): Category-stratified mean similarity by colexification tier ---
+    eval_groups = [
+        ('People', pair_cats == 'People'),
+        ('Pronouns', pair_cats == 'Pronouns'),
+        ('Properties', pair_cats == 'Properties'),
+        ('Actions', pair_cats == 'Actions'),
+        ('Body', pair_cats == 'Body'),
+        ('Nature', pair_cats == 'Nature'),
+        ('Within-Cat.', same_cat_mask),
+        ('Cross-Cat.', ~same_cat_mask),
+        ('All Pairs', np.ones(len(records), dtype=bool)),
+    ]
+    y_pos = np.arange(len(eval_groups))[::-1]
+    bar_h = 0.25
+
+    tiers = [
+        ('$\\geq$3 families', lambda f: f >= 3, '#dc2626'),
+        ('1–2 families', lambda f: (f >= 1) & (f <= 2), '#f59e0b'),
+        ('0 families', lambda f: f == 0, '#94a3b8'),
+    ]
+
+    for ti, (t_label, t_cond, t_col) in enumerate(tiers):
+        means, sems, y_coords = [], [], []
+        for gi, (g_name, g_mask) in enumerate(eval_groups):
+            sub_sims = sims[g_mask & t_cond(freqs)]
+            if len(sub_sims) > 0:
+                means.append( float(np.mean(sub_sims)) )
+                sems.append( float(np.std(sub_sims, ddof=1) / np.sqrt(len(sub_sims))) if len(sub_sims) > 1 else 0.0 )
+            else:
+                means.append(np.nan)
+                sems.append(0.0)
+            y_coords.append(y_pos[gi] + (1 - ti) * bar_h)
+
+        ax_b.barh(y_coords, means, height=bar_h * 0.88, color=t_col, alpha=0.88,
+                  edgecolor='white', linewidth=0.4, label=t_label, zorder=3)
+        ax_b.errorbar(means, y_coords, xerr=sems, fmt='none', ecolor='#1e293b',
+                      elinewidth=0.7, capsize=1.5, zorder=4)
+
+    # Annotate Spearman rho for each group on the right side of Panel (b)
+    for gi, (g_name, g_mask) in enumerate(eval_groups):
+        g_rho, _ = sp_stats.spearmanr(freqs[g_mask], sims[g_mask])
+        ax_b.text(0.735, y_pos[gi], f'$\\rho_s$={g_rho:+.2f}',
+                  fontsize=5.3, va='center', ha='right', color='#1e293b',
+                  fontweight='bold' if g_name in ('Within-Cat.', 'All Pairs') else 'normal')
+
+    ax_b.axhline(y_pos[5] - 0.5, color='#64748b', linestyle='--', linewidth=0.7, alpha=0.6)
+    ax_b.set_yticks(y_pos)
+    ax_b.set_yticklabels([g[0] for g in eval_groups], fontsize=7)
+    ax_b.set_xlim(0.20, 0.75)
+    ax_b.set_xlabel('Mean Cosine Similarity ($\\pm$SEM)', fontsize=8.5)
+    ax_b.set_title('(b) Domain & Tier Breakdown', fontsize=9)
+    ax_b.legend(loc='lower center', bbox_to_anchor=(0.43, 0.01), fontsize=5.3,
+                framealpha=0.92, borderpad=0.28, handlelength=1.2)
+    ax_b.grid(True, axis='x', alpha=0.2, linewidth=0.5)
 
     fig.savefig(os.path.join(outdir, 'fig_colexification.pdf'))
     plt.close(fig)
@@ -549,60 +712,83 @@ def fig_colexification(data, outdir):
 
 
 # ---------------------------------------------------------------------------
-# Figure 5 — Conceptual store metric
+# Figure 5 — Conceptual store metric (Contextualized vs Bare Word)
 # ---------------------------------------------------------------------------
 def fig_conceptual_store(data, outdir):
     raw = data.get('raw_ratio')
     centered = data.get('centered_ratio')
     improvement = data.get('improvement_factor')
+    bare = data.get('bare_word', {})
     if raw is None or centered is None:
         print("  [WARN] Missing conceptual store data.")
         return
 
     raw_ci = data.get('raw_ci_95')
     centered_ci = data.get('centered_ci_95')
-    if raw_ci and centered_ci:
-        yerr = [[raw - raw_ci[0], centered - centered_ci[0]],
-                [raw_ci[1] - raw, centered_ci[1] - centered]]
+    has_bare = bool(bare and bare.get('raw_ratio') is not None)
+
+    fig, ax = plt.subplots(figsize=(COL_W, 2.35))
+    if has_bare:
+        b_raw = bare['raw_ratio']
+        b_cen = bare['centered_ratio']
+        b_imp = bare.get('improvement_factor', b_cen / b_raw if b_raw else 0)
+        x = np.array([0.0, 1.15])
+        w = 0.34
+        # Order: Decontextualized (Bare Word) first, Contextual (Shared Frame) second, matching Table 1 & Section 4.1
+        raw_vals = [b_raw, raw]
+        cen_vals = [b_cen, centered]
+
+        b_rci = bare.get('raw_ci_95')
+        b_cci = bare.get('centered_ci_95')
+        yerr_raw = [[b_raw - b_rci[0], raw - raw_ci[0]], [b_rci[1] - b_raw, raw_ci[1] - raw]] if (raw_ci and b_rci) else None
+        yerr_cen = [[b_cen - b_cci[0], centered - centered_ci[0]], [b_cci[1] - b_cen, centered_ci[1] - centered]] if (centered_ci and b_cci) else None
+
+        ax.axhline(1.01, color='#6b7280', linestyle='--', linewidth=0.8, zorder=1, label='Perm. Null (1.01)')
+        bars_r = ax.bar(x - w / 2, raw_vals, width=w, yerr=yerr_raw,
+                        color='#377eb8', alpha=0.85, capsize=3, label='Raw Space',
+                        error_kw=dict(ecolor='grey', capthick=0.7, linewidth=0.7))
+        bars_c = ax.bar(x + w / 2, cen_vals, width=w, yerr=yerr_cen,
+                        color='#e41a1c', alpha=0.85, capsize=3, label='Mean-Centered',
+                        error_kw=dict(ecolor='grey', capthick=0.7, linewidth=0.7))
+
+        ax.set_xticks(x)
+        ax.set_xticklabels(['Decontextualized\n(Bare Word)', 'Contextual\n(Shared Frame)'], fontsize=7)
+        ax.set_ylabel('Between / Within Ratio', fontsize=8)
+        ax.set_ylim(0, max(centered, b_cen) * 1.65)
+        ax.legend(fontsize=5.3, loc='upper left', ncol=3, framealpha=0.9, columnspacing=0.8, handletextpad=0.4)
+
+        raw_tops = [b_rci[1] if b_rci else b_raw, raw_ci[1] if raw_ci else raw]
+        cen_tops = [b_cci[1] if b_cci else b_cen, centered_ci[1] if centered_ci else centered]
+        for bar, val, top in zip(bars_r, raw_vals, raw_tops):
+            ax.text(bar.get_x() + bar.get_width() / 2, top + 0.07,
+                    f'{val:.2f}', ha='center', va='bottom', fontsize=6.5, fontweight='bold')
+        for bar, val, top in zip(bars_c, cen_vals, cen_tops):
+            ax.text(bar.get_x() + bar.get_width() / 2, top + 0.07,
+                    f'{val:.2f}', ha='center', va='bottom', fontsize=6.5, fontweight='bold')
+
+        ax.text(x[0], max(raw_tops[0], cen_tops[0]) + 0.42, f'{b_imp:.2f}×',
+                ha='center', va='bottom', fontsize=7.5, fontweight='bold', color='#b01015')
+        ax.text(x[1], max(raw_tops[1], cen_tops[1]) + 0.42, f'{improvement:.2f}×',
+                ha='center', va='bottom', fontsize=7.5, fontweight='bold', color='#b01015')
     else:
-        yerr = None
+        x = [0, 1]
+        heights = [raw, centered]
+        bars = ax.bar(x, heights, width=0.5,
+                      color=['#377eb8', '#e41a1c'], edgecolor='none', alpha=0.85)
+        ax.set_xticks(x)
+        ax.set_xticklabels(['Raw Ratio', 'Mean-Centered\nRatio'])
+        ax.set_ylabel('Between / Within Ratio')
+        ax.set_ylim(0, max(heights) * 1.25)
 
-    fig, ax = plt.subplots(figsize=(COL_W, 2.2))
-    x = [0, 1]
-    heights = [raw, centered]
-    bars = ax.bar(x, heights, width=0.5, yerr=yerr,
-                  color=['#377eb8', '#e41a1c'], edgecolor='none', alpha=0.85,
-                  capsize=4,
-                  error_kw=dict(ecolor='grey', capthick=0.8, linewidth=0.8))
-    ax.set_xticks(x)
-    ax.set_xticklabels(['Raw Ratio', 'Mean-Centered\nRatio'])
-    ax.set_ylabel('Between / Within Ratio')
-
-    top = max(heights)
-    if yerr:
-        top = max(heights[0] + yerr[1][0], heights[1] + yerr[1][1])
-    ax.set_ylim(0, top * 1.25)
-
-    for i, (bar, h) in enumerate(zip(bars, heights)):
-        offset = yerr[1][i] if yerr else 0
-        ax.text(bar.get_x() + bar.get_width() / 2, h + offset + 0.04,
-                f'{h:.2f}', ha='center', va='bottom', fontsize=8,
-                fontweight='bold')
-
-    if improvement is not None:
-        mid_x = 0.5
-        mid_y = top * 1.1
-        ax.text(mid_x, mid_y, f'{improvement:.2f}×',
-                ha='center', va='bottom', fontsize=9, fontweight='bold')
-
+    fig.tight_layout()
     fig.savefig(os.path.join(outdir, 'fig_conceptual_store.pdf'))
     plt.close(fig)
     print("  -> fig_conceptual_store.pdf")
 
 
 # ---------------------------------------------------------------------------
-# Figure 6 — Berlin & Kay color circle: (a) 2D PCA with hulls,
-#             (b) 3D PCA showing luminance axis on PC3
+# Figure 6 — Berlin & Kay color space: (a) 2D PCA with hulls,
+#             (b) PC1 vs Berlin & Kay (1969) Evolutionary Stage
 # ---------------------------------------------------------------------------
 def fig_color_circle(data, outdir):
     centroids = data.get('centroids', [])
@@ -612,10 +798,10 @@ def fig_color_circle(data, outdir):
         return
 
     actual_colors = {
-        'black': '#000000', 'white': '#FFFFFF', 'red': '#FF0000',
-        'green': '#008000', 'yellow': '#FFD700', 'blue': '#0000FF',
-        'brown': '#8B4513', 'purple': '#800080', 'pink': '#FF69B4',
-        'orange': '#FF8C00', 'grey': '#808080',
+        'black': '#111111', 'white': '#EEEEEE', 'red': '#E11D48',
+        'green': '#16A34A', 'yellow': '#EAB308', 'blue': '#2563EB',
+        'brown': '#8B4513', 'purple': '#9333EA', 'pink': '#EC4899',
+        'orange': '#F97316', 'grey': '#6B7280',
     }
 
     draw_order = [
@@ -624,28 +810,29 @@ def fig_color_circle(data, outdir):
     ]
 
     label_offsets_2d = {
-        'black': (-18, -4), 'white': (-18, -4), 'red': (10, -2),
-        'green': (10, 2), 'yellow': (10, 2), 'blue': (10, 2),
-        'brown': (10, -2), 'purple': (10, 2), 'pink': (10, 2),
-        'orange': (10, -2), 'grey': (-22, 2),
+        'black': (8, 5), 'white': (8, -10), 'red': (-20, -10),
+        'green': (8, 3), 'yellow': (8, 5), 'blue': (8, 4),
+        'brown': (-28, -8), 'purple': (8, 4), 'pink': (8, 3),
+        'orange': (8, -9), 'grey': (-24, 4),
     }
 
     label_colors = {
-        'white': '#666666', 'yellow': '#B8860B',
+        'white': '#4B5563', 'yellow': '#A16207',
     }
 
     lang_by_color_2d = {}
-    lang_by_color_3d = {}
+    lang_by_color_pc1 = {}
     for pt in per_language:
         lang_by_color_2d.setdefault(pt['color'], []).append(
             (pt['x'], pt['y']))
-        lang_by_color_3d.setdefault(pt['color'], []).append(
-            (pt['x'], pt['y'], pt.get('z', 0)))
+        lang_by_color_pc1.setdefault(pt['color'], []).append(pt['x'])
 
-    fig = plt.figure(figsize=(FULL_W, FULL_W * 0.42))
-    gs = fig.add_gridspec(1, 2, width_ratios=[1, 1], wspace=0.25)
+    ev = data.get('explained_variance', [0.228, 0.165, 0.130])
 
-    # --- Panel (a): 2D PCA with convex hulls ---
+    fig = plt.figure(figsize=(FULL_W, FULL_W * 0.43))
+    gs = fig.add_gridspec(1, 2, width_ratios=[1.08, 1], wspace=0.26)
+
+    # --- Panel (a): 2D PCA with convex hulls and prominent centroid markers ---
     ax = fig.add_subplot(gs[0])
 
     for color_name in draw_order:
@@ -656,7 +843,7 @@ def fig_color_circle(data, outdir):
         xs_lang = [p[0] for p in pts]
         ys_lang = [p[1] for p in pts]
 
-        ax.scatter(xs_lang, ys_lang, c=base, s=6, alpha=0.20,
+        ax.scatter(xs_lang, ys_lang, c=base, s=6, alpha=0.18,
                    edgecolors='none', zorder=1, rasterized=True)
 
         if len(pts) >= 3:
@@ -665,12 +852,12 @@ def fig_color_circle(data, outdir):
                 hull = ConvexHull(arr)
                 hull_pts = arr[hull.vertices]
                 hull_pts = np.vstack([hull_pts, hull_pts[0]])
-                fill_rgba = to_rgba(base, alpha=0.06)
-                edge_rgba = to_rgba(base, alpha=0.40)
+                fill_rgba = to_rgba(base, alpha=0.05)
+                edge_rgba = to_rgba(base, alpha=0.35)
                 ax.fill(hull_pts[:, 0], hull_pts[:, 1],
                         color=fill_rgba, zorder=1)
                 ax.plot(hull_pts[:, 0], hull_pts[:, 1],
-                        color=edge_rgba, linewidth=0.7, zorder=2)
+                        color=edge_rgba, linewidth=0.65, zorder=2)
             except Exception:
                 pass
 
@@ -679,48 +866,92 @@ def fig_color_circle(data, outdir):
         cx, cy = c['x'], c['y']
         base = actual_colors.get(lbl, '#888888')
         txt_color = label_colors.get(lbl, base)
-        offset = label_offsets_2d.get(lbl, (10, 0))
+        offset = label_offsets_2d.get(lbl, (8, 2))
+        ax.scatter(cx, cy, s=52, c=base, edgecolors='#111111',
+                   linewidths=0.9, zorder=5)
         ax.annotate(lbl, (cx, cy), textcoords='offset points',
-                    xytext=offset, fontsize=6, fontweight='bold', zorder=6,
+                    xytext=offset, fontsize=6.5, fontweight='bold', zorder=6,
                     color=txt_color,
-                    path_effects=[pe.withStroke(linewidth=2, foreground='white')])
+                    path_effects=[pe.withStroke(linewidth=2.2, foreground='white')])
 
-    ax.set_xlabel('PC1')
-    ax.set_ylabel('PC2')
-    ax.set_title('(a) 2D Chromatic Plane', fontsize=9)
-    ax.set_aspect('equal', adjustable='datalim')
+    ax.set_xlabel(f'PC1 ({ev[0]*100:.1f}% var.)', fontsize=8)
+    ax.set_ylabel(f'PC2 ({ev[1]*100:.1f}% var.)', fontsize=8)
+    ax.set_title('(a) Chromatic Subspace (PC1–PC2)', fontsize=9)
     ax.grid(True, alpha=0.15, linewidth=0.4)
 
-    # --- Panel (b): 3D PCA showing luminance on PC3 ---
-    ax3d = fig.add_subplot(gs[1], projection='3d')
+    # --- Panel (b): PC1 vs Berlin & Kay (1969) Evolutionary Stage ---
+    ax2 = fig.add_subplot(gs[1])
+    bk_stage = {
+        'white': 1.0, 'black': 1.0, 'red': 2.0,
+        'green': 3.5, 'yellow': 3.5, 'blue': 5.0,
+        'brown': 6.0, 'purple': 7.0, 'pink': 7.0, 'orange': 7.0, 'grey': 5.0,
+    }
+    stage_jitter = {
+        'white': -0.14, 'black': 0.14, 'red': 0.0,
+        'green': -0.14, 'yellow': 0.14, 'blue': -0.14,
+        'grey': 0.16, 'brown': 0.0, 'purple': -0.12, 'pink': 0.04, 'orange': 0.20,
+    }
 
-    for color_name in draw_order:
-        pts = lang_by_color_3d.get(color_name, [])
-        if not pts:
-            continue
-        base = actual_colors.get(color_name, '#888888')
-        xs = [p[0] for p in pts]
-        ys = [p[1] for p in pts]
-        zs = [p[2] for p in pts]
-        ax3d.scatter(xs, ys, zs, c=base, s=6, alpha=0.18,
-                     edgecolors='none', rasterized=True)
-
+    st_vals, pc1_vals = [], []
+    st_canon, pc1_canon = [], []
     for c in centroids:
         lbl = c['label']
-        cx, cy, cz = c['x'], c['y'], c.get('z', 0)
+        if lbl not in bk_stage:
+            continue
+        st = bk_stage[lbl]
+        st_j = st + stage_jitter.get(lbl, 0.0)
+        pc1 = c['x']
+        st_vals.append(st)
+        pc1_vals.append(pc1)
+        if lbl != 'grey':
+            st_canon.append(st)
+            pc1_canon.append(pc1)
         base = actual_colors.get(lbl, '#888888')
         txt_color = label_colors.get(lbl, base)
-        ax3d.text(cx + 0.8, cy, cz, f'  {lbl}', fontsize=5.5,
-                  fontweight='bold', zorder=6, color=txt_color,
-                  path_effects=[pe.withStroke(linewidth=2, foreground='white')])
 
-    ax3d.set_xlabel('PC1', fontsize=7, labelpad=1)
-    ax3d.set_ylabel('PC2', fontsize=7, labelpad=1)
-    ax3d.set_zlabel('PC3 (luminance)', fontsize=7, labelpad=1)
-    ax3d.set_title('(b) 3D with Luminance Axis', fontsize=9)
-    ax3d.tick_params(labelsize=5.5)
-    ax3d.view_init(elev=25, azim=-60)
-    ax3d.dist = 11.5
+        lang_pc1s = lang_by_color_pc1.get(lbl, [pc1])
+        sd = np.std(lang_pc1s) / np.sqrt(max(len(lang_pc1s), 1))
+        ax2.errorbar(st_j, pc1, yerr=sd, fmt='none', ecolor='#888888',
+                     elinewidth=0.9, capsize=2, zorder=3)
+        if lbl == 'grey':
+            ax2.scatter(st_j, pc1, s=48, marker='D', facecolors='white',
+                        edgecolors='#4b5563', linewidths=1.3, zorder=5)
+        else:
+            ax2.scatter(st_j, pc1, s=52, c=base, edgecolors='#111111',
+                        linewidths=0.9, zorder=5)
+        stage_label_offsets = {
+            'white': (-4, -12), 'black': (4, 7), 'red': (0, 7),
+            'green': (-4, -12), 'yellow': (4, 7), 'blue': (-6, 8),
+            'grey': (6, -13), 'brown': (0, 8), 'purple': (-18, -9),
+            'pink': (-20, 1), 'orange': (8, 7),
+        }
+        x_off, y_off = stage_label_offsets.get(lbl, (0, 6))
+        ax2.annotate(lbl, (st_j, pc1), textcoords='offset points',
+                     xytext=(x_off, y_off), ha='center', fontsize=6,
+                     fontweight='bold', color=txt_color, zorder=6,
+                     path_effects=[pe.withStroke(linewidth=2, foreground='white')])
+
+    st_arr = np.array(st_vals)
+    pc1_arr = np.array(pc1_vals)
+    slope, intercept, r_val, p_val, _ = sp_stats.linregress(st_arr, pc1_arr)
+    rho_bk, p_rho = sp_stats.spearmanr(st_canon, pc1_canon)
+    x_line = np.linspace(0.7, 7.4, 50)
+    ax2.plot(x_line, slope * x_line + intercept, 'k--', linewidth=1.1, alpha=0.65)
+
+    ax2.text(0.04, 0.96,
+             f'Spearman $\\rho$ = {rho_bk:.2f} (p = {p_rho:.1e})\nPearson r = {r_val:.2f} (p = {p_val:.1e})',
+             transform=ax2.transAxes, fontsize=6.5, va='top', ha='left',
+             bbox=dict(boxstyle='round,pad=0.3', facecolor='white',
+                       edgecolor='grey', alpha=0.88))
+
+    ax2.set_xlim(0.4, 7.7)
+    ax2.set_ylim(-6.6, 5.2)
+    ax2.set_xticks([1, 2, 3.5, 5, 6, 7])
+    ax2.set_xticklabels(['I', 'II', 'III/IV', 'V', 'VI', 'VII'], fontsize=7)
+    ax2.set_xlabel('Berlin & Kay (1969) Evolutionary Stage', fontsize=8)
+    ax2.set_ylabel(f'PC1 Coordinate ({ev[0]*100:.1f}% var.)', fontsize=8)
+    ax2.set_title('(b) PC1 Recovers Evolutionary Hierarchy', fontsize=9)
+    ax2.grid(True, alpha=0.15, linewidth=0.4)
 
     fig.savefig(os.path.join(outdir, 'fig_color_circle.pdf'),
                 bbox_inches='tight', pad_inches=0.05)
@@ -729,7 +960,9 @@ def fig_color_circle(data, outdir):
 
 
 # ---------------------------------------------------------------------------
-# Figure 7 — Combined offset invariance: bar chart + per-family heatmap
+# Figure 7 — Combined offset invariance:
+#   (a) All 22 pairs ranked by consistency (Semantic vs Negative Controls)
+#   (b) Consistency vs Centroid Separation ||mu_b - mu_a|| showing semantic residual
 # ---------------------------------------------------------------------------
 def fig_offset_combined(data, outdir):
     pairs = data.get('pairs', [])
@@ -737,104 +970,114 @@ def fig_offset_combined(data, outdir):
         print("  [WARN] Missing offset invariance data.")
         return
 
-    sorted_all = sorted(pairs, key=lambda p: p['mean_consistency'])
-    N_SHOW = min(8, len(sorted_all) // 2)
-    bottom = sorted_all[:N_SHOW]
-    top = sorted_all[-N_SHOW:]
-    display_pairs = bottom + top
-    gap_index = N_SHOW
-
-    pair_labels = [f"{p['concept_a']}–{p['concept_b']}" for p in display_pairs]
-    means = [p['mean_consistency'] for p in display_pairs]
-    stds = [p['std_consistency'] for p in display_pairs]
-
-    all_families = set()
+    control_set = {
+        ('stone', 'sleep'), ('rain', 'tooth'), ('tree', 'red'),
+        ('leaf', 'come'), ('cloud', 'bone'), ('path', 'tongue'),
+        ('seed', 'night'), ('smoke', 'leg'),
+    }
     for p in pairs:
-        for entry in p.get('per_language', []):
-            all_families.add(entry.get('family', 'Unknown'))
-    all_families = sorted(all_families)
+        if 'is_control' not in p:
+            p['is_control'] = (
+                (p['concept_a'], p['concept_b']) in control_set
+                or (p['concept_b'], p['concept_a']) in control_set
+            )
 
-    matrix = np.zeros((len(display_pairs), len(all_families)))
-    for i, p in enumerate(display_pairs):
-        fam_scores = {}
-        for entry in p.get('per_language', []):
-            fam = entry.get('family', 'Unknown')
-            if fam not in fam_scores:
-                fam_scores[fam] = []
-            fam_scores[fam].append(entry.get('consistency', 0))
-        for j, fam in enumerate(all_families):
-            if fam in fam_scores:
-                matrix[i, j] = np.mean(fam_scores[fam])
+    sorted_all = sorted(pairs, key=lambda p: p['mean_consistency'])
+    pair_labels = [
+        f"{p['concept_a']}–{p['concept_b']}" + (" [ctrl]" if p['is_control'] else "")
+        for p in sorted_all
+    ]
+    means = [p['mean_consistency'] for p in sorted_all]
+    stds = [p['std_consistency'] for p in sorted_all]
+    is_ctrl = [p['is_control'] for p in sorted_all]
 
-    n = len(display_pairs)
-    GAP = 0.8
-    y_pos = np.arange(n, dtype=float)
-    y_pos[gap_index:] += GAP
+    fig, (ax_bar, ax_scat) = plt.subplots(
+        1, 2, figsize=(FULL_W, 4.2), gridspec_kw={'width_ratios': [1.05, 1.15]}
+    )
 
-    fig = plt.figure(figsize=(FULL_W, 4.5), constrained_layout=True)
-    gs = fig.add_gridspec(1, 3, width_ratios=[1, 2.8, 0.08], wspace=0.05)
-    ax_bar = fig.add_subplot(gs[0, 0])
-    ax_heat = fig.add_subplot(gs[0, 1])
-    ax_cb = fig.add_subplot(gs[0, 2])
-
-    colors = ['#d62728'] * N_SHOW + ['#377eb8'] * N_SHOW
-    for i in range(n):
-        ax_bar.barh(y_pos[i], means[i], xerr=[[0], [stds[i]]], height=0.55,
-                    color=colors[i], edgecolor='none', alpha=0.85,
-                    error_kw=dict(ecolor='grey', capsize=2, capthick=0.8,
-                                  linewidth=0.8))
+    y_pos = np.arange(len(sorted_all), dtype=float)
+    bar_colors = ['#dc2626' if c else '#2563eb' for c in is_ctrl]
+    for i in range(len(sorted_all)):
+        ax_bar.barh(
+            y_pos[i], means[i], xerr=[[0], [stds[i]]], height=0.68,
+            color=bar_colors[i], edgecolor='none', alpha=0.78 if is_ctrl[i] else 0.88,
+            error_kw=dict(ecolor='#6b7280', capsize=1.8, capthick=0.6, linewidth=0.6),
+        )
 
     ax_bar.set_yticks(y_pos)
-    ax_bar.set_yticklabels(pair_labels, fontsize=6)
-    ax_bar.set_xlabel('Consistency Score')
-    ax_bar.set_xlim(0, 1.05)
-    ax_bar.set_ylim(y_pos[0] - 0.5, y_pos[-1] + 0.5)
+    ax_bar.set_yticklabels(pair_labels, fontsize=5.5)
+    ax_bar.set_xlabel('Raw Cosine Consistency', fontsize=8)
+    ax_bar.set_xlim(0.65, 1.02)
+    ax_bar.set_ylim(-0.7, len(sorted_all) - 0.3)
 
-    overall_mean = np.mean([p['mean_consistency'] for p in sorted_all])
-    ax_bar.axvline(overall_mean, color='k', linestyle='--', linewidth=0.8,
-                   label=f'Mean = {overall_mean:.2f}')
+    overall_mean = np.mean(means)
+    ax_bar.axvline(overall_mean, color='k', linestyle='--', linewidth=0.8)
+    legend_patches = [
+        mpl.patches.Patch(facecolor='#2563eb', alpha=0.88, label='Semantic Pair (n=15)'),
+        mpl.patches.Patch(facecolor='#dc2626', alpha=0.78, label='Negative Control (n=7)'),
+    ]
+    ax_bar.legend(handles=legend_patches, fontsize=5.8, loc='lower right', framealpha=0.9)
+    ax_bar.set_title('(a) Raw Offset Consistency', fontsize=9)
+    ax_bar.grid(True, axis='x', alpha=0.15, linewidth=0.4)
 
-    gap_y = (y_pos[gap_index - 1] + y_pos[gap_index]) / 2
-    ax_bar.axhline(gap_y, color='grey', linestyle=':', linewidth=0.6, alpha=0.5)
-    n_omitted = len(sorted_all) - 2 * N_SHOW
-    if n_omitted > 0:
-        ax_bar.text(0.52, gap_y, f'... {n_omitted} pairs omitted ...',
-                    ha='center', va='center', fontsize=5.5, color='grey',
-                    style='italic')
+    # Panel (b): Consistency vs Centroid Separation ||mu_b - mu_a||
+    norms = np.array([p['centroid_offset_norm'] for p in pairs])
+    cons = np.array([p['mean_consistency'] for p in pairs])
+    ctrl_mask = np.array([bool(p['is_control']) for p in pairs])
+    sem_mask = ~ctrl_mask
 
-    ax_bar.annotate('worst', xy=(0.02, y_pos[N_SHOW // 2]), fontsize=6,
-                    color='#d62728', fontweight='bold', va='center')
-    ax_bar.annotate('best', xy=(0.02, y_pos[N_SHOW + N_SHOW // 2]), fontsize=6,
-                    color='#377eb8', fontweight='bold', va='center')
-    ax_bar.legend(fontsize=6, loc='lower right')
-    ax_bar.set_title('(a) Cross-Lingual Consistency', fontsize=9)
+    slope, intercept, r_val, p_val, _ = sp_stats.linregress(norms, cons)
+    resids = cons - (slope * norms + intercept)
+    u_res, p_res = sp_stats.mannwhitneyu(resids[sem_mask], resids[ctrl_mask], alternative='greater')
 
-    nf = len(all_families)
-    # Use same white-to-red colormap as Figure 1 (water manifold)
-    cmap_wr = mpl.colors.LinearSegmentedColormap.from_list(
-        'white_red', ['#ffffff', '#d62728'], N=256)
-    # Autoscale to data range
-    vmin, vmax = matrix.min(), matrix.max()
-    norm = plt.Normalize(vmin=vmin, vmax=vmax)
-    for i in range(n):
-        for j in range(nf):
-            rect = plt.Rectangle((j - 0.5, y_pos[i] - 0.275), 1, 0.55,
-                                 facecolor=cmap_wr(norm(matrix[i, j])),
-                                 edgecolor='white', linewidth=0.3)
-            ax_heat.add_patch(rect)
+    ax_scat.scatter(norms[sem_mask], cons[sem_mask], c='#2563eb', s=36,
+                    alpha=0.88, edgecolors='white', linewidths=0.4,
+                    label='Semantic Pairs (pos. residual)', zorder=4)
+    ax_scat.scatter(norms[ctrl_mask], cons[ctrl_mask], c='#dc2626', s=36, marker='s',
+                    alpha=0.85, edgecolors='white', linewidths=0.4,
+                    label='Negative Controls (neg. residual)', zorder=4)
 
-    ax_heat.set_xlim(-0.5, nf - 0.5)
-    ax_heat.set_ylim(y_pos[0] - 0.5, y_pos[-1] + 0.5)
-    ax_heat.set_yticks(y_pos)
-    ax_heat.set_yticklabels([])
-    ax_heat.set_xticks(range(nf))
-    ax_heat.set_xticklabels(all_families, rotation=90, fontsize=5)
-    ax_heat.set_title('(b) Per-Family Consistency', fontsize=9)
-    ax_heat.axhline(gap_y, color='grey', linestyle=':', linewidth=0.6, alpha=0.5)
+    x_fit = np.linspace(norms.min() - 0.5, norms.max() + 0.5, 60)
+    ax_scat.plot(x_fit, slope * x_fit + intercept, 'k--', linewidth=1.1, alpha=0.65,
+                 label=f'Separation trend ($r = {r_val:.2f}$)')
 
-    sm = plt.cm.ScalarMappable(cmap=cmap_wr, norm=norm)
-    sm.set_array([])
-    fig.colorbar(sm, cax=ax_cb, label='Consistency')
+    custom_offsets = {
+        'man–woman': (-6, 6),
+        'big–small': (-36, 2),
+        'fire–water': (6, 2),
+        'sun–moon': (-36, 4),
+        'one–two': (-34, 2),
+        'tree–red': (5, 4),
+        'stone–sleep': (5, -9),
+        'come–give': (5, 4),
+        'leaf–come': (5, -8),
+        'rain–tooth': (5, -4),
+    }
+    for p, x_v, y_v in zip(pairs, norms, cons):
+        lbl = f"{p['concept_a']}–{p['concept_b']}"
+        if lbl in custom_offsets:
+            ox, oy = custom_offsets[lbl]
+            ax_scat.annotate(lbl, (x_v, y_v), textcoords='offset points',
+                             xytext=(ox, oy), fontsize=5.3, fontweight='medium',
+                             color='#1e3a8a' if not p['is_control'] else '#991b1b')
+
+    ax_scat.text(0.03, 0.96,
+                 f'Norm corr: r = {r_val:.2f} (p = {p_val:.1e})\n'
+                 f'Residual (Sem > Ctrl): U = {u_res:.0f}, p = {p_res:.4f}',
+                 transform=ax_scat.transAxes, fontsize=6.1, va='top', ha='left',
+                 bbox=dict(boxstyle='round,pad=0.28', facecolor='white',
+                           edgecolor='grey', alpha=0.88))
+
+    ax_scat.set_xlim(6.2, 17.8)
+    ax_scat.set_ylim(0.64, 0.98)
+
+    ax_scat.set_xlabel('Centroid Separation $\\|\\mu_b - \\mu_a\\|_2$', fontsize=8)
+    ax_scat.set_ylabel('Mean Offset Consistency', fontsize=8)
+    ax_scat.set_title('(b) Controlling for Centroid Separation', fontsize=9)
+    ax_scat.legend(fontsize=5.8, loc='lower right', framealpha=0.9)
+    ax_scat.grid(True, alpha=0.15, linewidth=0.4)
+
+    fig.tight_layout()
     fig.savefig(os.path.join(outdir, 'fig_offset_combined.pdf'))
     plt.close(fig)
     print("  -> fig_offset_combined.pdf")
@@ -851,13 +1094,13 @@ _WATER_LABELS = {
     'rus_Cyrl': 'вода (ru)',
     'pol_Latn': 'woda',
     'hin_Deva': 'पानी (hi)',
-    'pes_Arab': 'آب (fa)',
+    'pes_Arab': 'āb (fa)',
     'ell_Grek': 'νερό (el)',
     'zho_Hans': '水 (zh)',
     'jpn_Jpan': '水 (ja)',
     'kor_Hang': '물 (ko)',
-    'arb_Arab': 'ماء (ar)',
-    'heb_Hebr': 'מים (he)',
+    'arb_Arab': 'māʾ (ar)',
+    'heb_Hebr': 'mayim (he)',
     'tur_Latn': 'su',
     'vie_Latn': 'nước',
     'tha_Thai': 'น้ำ (th)',
@@ -1036,15 +1279,14 @@ def fig_variance_decomposition(conv_data, corpus_data, outdir):
                  if translations.get(l, '')]
         if len(forms) < 5:
             continue
-        sample = forms[:40]
         ortho_pairs, phon_pairs = [], []
-        for i in range(len(sample)):
-            for j in range(i + 1, len(sample)):
-                ortho_pairs.append(_levenshtein(sample[i].lower(),
-                                                sample[j].lower()))
+        for i in range(len(forms)):
+            for j in range(i + 1, len(forms)):
+                ortho_pairs.append(_levenshtein(forms[i].lower(),
+                                                forms[j].lower()))
                 phon_pairs.append(_levenshtein(
-                    _phonetic_normalize(sample[i]),
-                    _phonetic_normalize(sample[j])))
+                    _phonetic_normalize(forms[i]),
+                    _phonetic_normalize(forms[j])))
         if not ortho_pairs:
             continue
         concepts.append(concept)
@@ -1379,21 +1621,24 @@ def fig_isotropy_validation(data, outdir, sensitivity_data=None):
                    alpha=0.5, label='$\\rho$ = 0.95')
 
         non_ref = [r for k, r in zip(ks, rhos) if k != ref_k]
+        pw_vals = list(sensitivity_data.get('pairwise_correlations', {}).values())
         if non_ref:
             rho_min, rho_max = min(non_ref), max(non_ref)
-            ax.text(0.95, 0.05,
-                    f'Range: {rho_min:.2f}\u2013{rho_max:.2f}',
-                    transform=ax.transAxes, fontsize=6,
+            all_min = min(pw_vals) if pw_vals else rho_min
+            ax.text(0.95, 0.30,
+                    f'vs. k=3: {rho_min:.2f}\u2013{rho_max:.2f}\nAll pairs: {all_min:.2f}\u20131.00',
+                    transform=ax.transAxes, fontsize=5.3,
                     ha='right', va='bottom',
                     bbox=dict(boxstyle='round,pad=0.25', facecolor='white',
-                              edgecolor='grey', alpha=0.8))
+                              edgecolor='grey', alpha=0.88))
 
         ax.set_xlabel('k (components removed)', fontsize=7)
         ax.set_ylabel('Spearman $\\rho$ vs $k$=3', fontsize=7)
         ax.set_title('(c) $k$-Sensitivity', fontsize=8)
         ax.legend(fontsize=5, loc='lower left')
         ax.grid(True, alpha=0.15, linewidth=0.4)
-        ax.set_ylim(None, 1.02)
+        ax.set_ylim(0.942, 1.006)
+        ax.set_yticks([0.95, 0.96, 0.97, 0.98, 0.99, 1.00])
         ax.tick_params(labelsize=6)
 
     fig.tight_layout()
@@ -1638,9 +1883,11 @@ def fig_concept_map(data, outdir):
 
 
 # ---------------------------------------------------------------------------
-# Figure 15 — Offset vector demo: joint PCA for top-4 concept pairs
+# Figure 15 — Offset vector demo: joint PCA for all 15 semantic concept pairs
 # ---------------------------------------------------------------------------
 def fig_offset_vector_demo(data, outdir):
+    from adjustText import adjust_text
+
     jp = data.get('joint_vector_plot')
     if not jp:
         print("  [WARN] Missing joint vector plot data.")
@@ -1652,25 +1899,29 @@ def fig_offset_vector_demo(data, outdir):
     per_language = jp['per_language']
     n_pairs = len(pairs)
 
-    pair_colors = ['#d62728', '#1f77b4', '#2ca02c', '#9467bd', '#ff7f0e',
-                   '#8c564b', '#e377c2', '#17becf'][:n_pairs]
-    _all_markers = ['o', '*', 'D', 's', '^', 'v', 'P', 'X', 'h', 'd']
+    palette_15 = [
+        '#d62728', '#1f77b4', '#2ca02c', '#d95f02', '#9467bd',
+        '#8c564b', '#c51b7d', '#008891', '#8ca252', '#393b79',
+        '#e6550d', '#637939', '#7b4173', '#3182bd', '#ad494a',
+    ]
+    pair_colors = [palette_15[i % len(palette_15)] for i in range(n_pairs)]
+    _all_markers = ['o', '*', 'D', 's', '^', 'v', 'P', 'X', 'h', 'd', '<', '>', 'p', 'H', '8']
     concept_markers = {c: _all_markers[i % len(_all_markers)]
                        for i, c in enumerate(concepts)}
 
-    fig, axes = plt.subplots(1, 2, figsize=(FULL_W, 3.8))
+    fig, axes = plt.subplots(1, 2, figsize=(FULL_W, 4.4))
 
     # --- Panel (a): joint PCA embedding space with concept clusters ---
     ax = axes[0]
     rng = np.random.RandomState(42)
     langs = list(per_language.keys())
-    sample = rng.choice(langs, size=min(50, len(langs)), replace=False)
+    sample = rng.choice(langs, size=min(35, len(langs)), replace=False)
 
     for concept in concepts:
         xs = [per_language[l]['points'][concept]['x'] for l in sample]
         ys = [per_language[l]['points'][concept]['y'] for l in sample]
-        ax.scatter(xs, ys, s=4, alpha=0.18, c='#cccccc',
-                   marker=concept_markers[concept], edgecolors='none')
+        ax.scatter(xs, ys, s=3.5, alpha=0.14, c='#cccccc',
+                   marker=concept_markers[concept], edgecolors='none', rasterized=True)
 
     for pi, pair in enumerate(pairs):
         ca, cb = pair['concept_a'], pair['concept_b']
@@ -1683,42 +1934,56 @@ def fig_offset_vector_demo(data, outdir):
             ax.annotate('', xy=(pts[cb]['x'], pts[cb]['y']),
                         xytext=(pts[ca]['x'], pts[ca]['y']),
                         arrowprops=dict(arrowstyle='->', color=col,
-                                        lw=0.4, alpha=0.12))
+                                        lw=0.35, alpha=0.08, mutation_scale=5))
 
         ax.annotate('', xy=(cbx, cby), xytext=(cax, cay),
                     arrowprops=dict(arrowstyle='->', color=col,
-                                    lw=2.5, alpha=0.9),
+                                    lw=2.1, alpha=0.92, mutation_scale=9),
                     zorder=6)
 
+    concept_offsets_a = {
+        'fire': (-13, 4), 'cold': (-10, 7), 'hot': (11, 5),
+        'night': (12, 4), 'sun': (-12, -9), 'moon': (-2, 7), 'water': (15, -5),
+        'die': (-11, 7), 'kill': (-13, -10), 'come': (-4, 9), 'give': (-2, -11),
+        'good': (-15, -1), 'I': (-11, 7), 'we': (0, 9), 'new': (11, 6),
+        'two': (10, 8), 'one': (13, 1), 'big': (-3, -11), 'small': (13, -8),
+        'eat': (-3, 8), 'black': (-16, 1), 'drink': (-14, -8), 'white': (14, 0),
+        'eye': (-12, -8), 'ear': (11, -8), 'man': (13, 4), 'woman': (16, -7),
+        'dog': (11, 5), 'fish': (12, -6),
+    }
     for concept in concepts:
         cx = centroids[concept]['x']
         cy = centroids[concept]['y']
-        ax.scatter(cx, cy, s=28, marker=concept_markers[concept],
-                   c='white', edgecolors='black', linewidths=0.6, zorder=8)
-        ax.annotate(concept, (cx, cy), fontsize=5.5, fontweight='bold',
-                    ha='center', va='bottom', xytext=(0, 4),
-                    textcoords='offset points', zorder=9,
-                    bbox=dict(boxstyle='round,pad=0.12', fc='white',
-                              ec='none', alpha=0.8))
+        ax.scatter(cx, cy, s=26, marker=concept_markers[concept],
+                   c='white', edgecolors='#1e293b', linewidths=0.65, zorder=8)
+        ox, oy = concept_offsets_a.get(concept, (0, 6))
+        ax.annotate(concept, xy=(cx, cy), xytext=(ox, oy),
+                    textcoords='offset points', ha='center', va='center',
+                    fontsize=5.2, fontweight='bold', color='#0f172a', zorder=9,
+                    bbox=dict(boxstyle='round,pad=0.10', fc='white',
+                              ec='none', alpha=0.84),
+                    arrowprops=dict(arrowstyle='-', color='#64748b', lw=0.35, alpha=0.6))
 
     legend_elements = []
     for pi, pair in enumerate(pairs):
         ca, cb = pair['concept_a'], pair['concept_b']
         norm = pair['centroid_offset_norm']
         legend_elements.append(mpl.lines.Line2D(
-            [], [], color=pair_colors[pi], lw=2,
+            [], [], color=pair_colors[pi], lw=1.8,
             label=f'{ca}\u2192{cb} ({norm:.1f})'))
-    ax.legend(handles=legend_elements, fontsize=5, loc='best',
-              framealpha=0.85, handletextpad=0.4, borderpad=0.4,
-              title='Pair (|d|)', title_fontsize=5.5)
+    ax.legend(handles=legend_elements, fontsize=4.5, loc='lower left', ncol=2,
+              framealpha=0.9, handletextpad=0.35, columnspacing=0.6, borderpad=0.35,
+              title='Semantic Pair (|d|)', title_fontsize=5.0)
     ax.set_xlabel('PC1', fontsize=8)
     ax.set_ylabel('PC2', fontsize=8)
-    ax.set_title(f'(a) Joint PCA: top-{n_pairs} offset pairs', fontsize=9)
+    ax.set_title(f'(a) Joint PCA: all {n_pairs} semantic offset pairs ({len(concepts)} concepts)', fontsize=8.5)
     ax.grid(True, alpha=0.2, linewidth=0.5)
 
     # --- Panel (b): Offset vectors from common origin ---
     ax = axes[1]
     all_dx, all_dy = [], []
+    c_dxs, c_dys = [], []
+    texts_b = []
 
     for pi, pair in enumerate(pairs):
         ca, cb = pair['concept_a'], pair['concept_b']
@@ -1733,33 +1998,42 @@ def fig_offset_vector_demo(data, outdir):
             dy = pts[cb]['y'] - pts[ca]['y']
             all_dx.append(dx)
             all_dy.append(dy)
-            ax.arrow(0, 0, dx, dy, head_width=0.18, head_length=0.12,
-                     fc=col, ec=col, alpha=0.15, linewidth=0.4)
+            ax.annotate('', xy=(dx, dy), xytext=(0, 0),
+                        arrowprops=dict(arrowstyle='->', color=col,
+                                        lw=0.35, alpha=0.09, mutation_scale=5))
 
         all_dx.append(centroid_dx)
         all_dy.append(centroid_dy)
-        ax.arrow(0, 0, centroid_dx, centroid_dy,
-                 head_width=0.35, head_length=0.18,
-                 fc=col, ec=col, linewidth=2.0, zorder=5)
-        ax.annotate(f'{ca}\u2192{cb}',
-                    (centroid_dx, centroid_dy), fontsize=5,
-                    fontweight='bold', ha='center', va='bottom',
-                    xytext=(0, 4), textcoords='offset points', zorder=6,
-                    bbox=dict(boxstyle='round,pad=0.12', fc='white',
-                              ec='none', alpha=0.8))
+        c_dxs.append(centroid_dx)
+        c_dys.append(centroid_dy)
+        ax.annotate('', xy=(centroid_dx, centroid_dy), xytext=(0, 0),
+                    arrowprops=dict(arrowstyle='->', color=col,
+                                    lw=2.0, alpha=0.92, mutation_scale=9),
+                    zorder=5)
+        lbl_str = f'{ca}\u2192{cb}'
+        t = ax.text(centroid_dx, centroid_dy, lbl_str, fontsize=5.0,
+                    fontweight='bold', color=col, zorder=7,
+                    bbox=dict(boxstyle='round,pad=0.10', fc='white',
+                              ec='none', alpha=0.85))
+        texts_b.append(t)
 
-    pad = 1.5
-    xmin = min(0, min(all_dx)) - pad
-    xmax = max(0, max(all_dx)) + pad
-    ymin = min(0, min(all_dy)) - pad
-    ymax = max(0, max(all_dy)) + pad
+    xmin = min(0, min(c_dxs)) - 1.65
+    xmax = max(0, max(c_dxs)) + 1.65
+    ymin = min(0, min(c_dys)) - 1.15
+    ymax = max(0, max(c_dys)) + 1.55
     ax.set_xlim(xmin, xmax)
     ax.set_ylim(ymin, ymax)
-    ax.axhline(0, color='grey', linewidth=0.3)
-    ax.axvline(0, color='grey', linewidth=0.3)
+
+    adjust_text(texts_b, x=c_dxs, y=c_dys, ax=ax,
+                arrowprops=dict(arrowstyle='-', color='#64748b', lw=0.4, alpha=0.65),
+                force_text=(0.8, 1.0), force_points=(0.65, 0.75),
+                expand=(1.3, 1.4), max_move=55)
+
+    ax.axhline(0, color='grey', linewidth=0.4, zorder=1)
+    ax.axvline(0, color='grey', linewidth=0.4, zorder=1)
     ax.set_xlabel('$\\Delta$PC1', fontsize=8)
     ax.set_ylabel('$\\Delta$PC2', fontsize=8)
-    ax.set_title(f'(b) Offset vectors (all {n_pairs} pairs)', fontsize=9)
+    ax.set_title(f'(b) Offset vectors from common origin (all {n_pairs} pairs)', fontsize=8.5)
     ax.grid(True, alpha=0.2, linewidth=0.5)
 
     fig.tight_layout()
@@ -1796,29 +2070,41 @@ def fig_carrier_baseline(data, outdir):
                     edgecolors='white', linewidths=0.3,
                     label=cat, zorder=3)
 
-    lims = [min(ctx.min(), dctx.min()) - 0.02,
-            max(ctx.max(), dctx.max()) + 0.02]
+    lims = [0.10, 0.98]
     ax1.plot(lims, lims, 'k:', linewidth=0.8, alpha=0.5)
 
     slope, intercept, _, _, _ = sp_stats.linregress(dctx, ctx)
-    x_fit = np.linspace(lims[0], lims[1], 50)
-    ax1.plot(x_fit, slope * x_fit + intercept, '--', color='#377eb8',
+    x_fit = np.linspace(dctx.min() - 0.02, dctx.max() + 0.02, 50)
+    y_fit = np.clip(slope * x_fit + intercept, 0.0, 1.0)
+    ax1.plot(x_fit, y_fit, '--', color='#377eb8',
              linewidth=1.0, alpha=0.7)
 
+    from adjustText import adjust_text
     diffs = np.abs(ctx - dctx)
     threshold = np.percentile(diffs, 90)
+    texts_cb, lx_cb, ly_cb = [], [], []
     for i, c in enumerate(concepts):
         if diffs[i] >= threshold:
-            ax1.annotate(c, (dctx[i], ctx[i]), fontsize=5, alpha=0.8,
-                         textcoords='offset points', xytext=(3, 3))
+            t = ax1.text(dctx[i], ctx[i], c, fontsize=5.2, alpha=0.85, zorder=5)
+            texts_cb.append(t)
+            lx_cb.append(dctx[i])
+            ly_cb.append(ctx[i])
+    if texts_cb:
+        adjust_text(texts_cb, x=lx_cb, y=ly_cb, ax=ax1,
+                    arrowprops=dict(arrowstyle='-', color='#888888', lw=0.4, alpha=0.6),
+                    expand=(1.2, 1.4))
 
-    ax1.text(0.03, 0.97, f'$\\rho_s$ = {rho:.3f}',
-             transform=ax1.transAxes, fontsize=8, verticalalignment='top',
+    mean_diff = float(np.mean(ctx - dctx))
+    ax1.text(0.03, 0.97,
+             f'$\\rho_s$ = {rho:.3f}\n$\\Delta\\mu$ = +{mean_diff:.3f}',
+             transform=ax1.transAxes, fontsize=7.5, verticalalignment='top',
              bbox=dict(boxstyle='round,pad=0.3', facecolor='white',
-                       edgecolor='grey', alpha=0.8))
-    ax1.set_xlabel('Decontextualized Convergence')
-    ax1.set_ylabel('Contextualized Convergence')
-    ax1.set_title('(a) Carrier Sentence Effect', fontsize=9)
+                       edgecolor='grey', alpha=0.85))
+    ax1.set_xlim(0.10, 0.98)
+    ax1.set_ylim(0.10, 0.98)
+    ax1.set_xlabel('Decontextualized Convergence (Bare Word)')
+    ax1.set_ylabel('Contextualized Convergence (Shared Frame)')
+    ax1.set_title('(a) Carrier Frame vs. Bare Word', fontsize=9)
     ax1.legend(fontsize=5, ncol=2, loc='lower right', framealpha=0.85)
     ax1.grid(True, alpha=0.15, linewidth=0.4)
 
@@ -1844,9 +2130,10 @@ def fig_carrier_baseline(data, outdir):
     ax2.set_yticks(y_pos)
     ax2.set_yticklabels(concepts_top, fontsize=5.5)
     ax2.invert_yaxis()
+    ax2.set_xlim(0.30, 0.96)
     ax2.set_xlabel('Convergence Score')
     ax2.set_title('(b) Top-20 Concepts', fontsize=9)
-    ax2.legend(fontsize=5.5, loc='lower right', markerscale=1.3)
+    ax2.legend(fontsize=5.5, loc='upper left', markerscale=1.3, framealpha=0.9)
     ax2.grid(True, axis='x', alpha=0.15, linewidth=0.4)
 
     fig.tight_layout()
@@ -1909,12 +2196,17 @@ def fig_layerwise_trajectory(data, outdir):
             markersize=4, linewidth=1.5, zorder=3)
     ax.fill_between(layer_idx, conv_means - conv_stds,
                     conv_means + conv_stds, alpha=0.18, color='#377eb8')
+    peak_layer = int(layer_idx[int(np.argmax(conv_means))])
+    peak_val = float(np.max(conv_means))
     if emergence is not None:
         ax.axvline(emergence, color='#e41a1c', linestyle='--',
                    linewidth=1.0, alpha=0.7,
-                   label=f'Emergence (L{emergence})')
-        ax.legend(fontsize=6, loc='upper left')
-    ax.set_xlabel('Layer')
+                   label=f'Max jump (L{emergence})')
+    ax.axvline(peak_layer, color='#16a34a', linestyle=':',
+               linewidth=1.1, alpha=0.85,
+               label=f'Peak (L{peak_layer}: {peak_val:.2f})')
+    ax.legend(fontsize=5.5, loc='lower right', framealpha=0.9)
+    ax.set_xlabel('Encoder Layer')
     ax.set_ylabel('Mean Convergence')
     ax.set_title('(a) Convergence', fontsize=9)
     ax.grid(True, alpha=0.15, linewidth=0.4)
@@ -1929,7 +2221,7 @@ def fig_layerwise_trajectory(data, outdir):
         ax.axvline(phase_trans, color='#999999', linestyle='--',
                    linewidth=1.0, alpha=0.7,
                    label=f'Phase trans. (L{phase_trans})')
-    ax.set_xlabel('Layer')
+    ax.set_xlabel('Encoder Layer')
     ax.set_ylabel('CSM Ratio')
     ax.set_title('(b) Conceptual Store', fontsize=9)
     ax.legend(fontsize=5.5, loc='upper left')
@@ -1941,7 +2233,9 @@ def fig_layerwise_trajectory(data, outdir):
         final_layer = max(layer_idx)
         all_concepts = sorted(
             concept_data.keys(),
-            key=lambda c: concept_data[c].get(final_layer, 0),
+            key=lambda c: concept_data[c].get(
+                final_layer, concept_data[c].get(str(final_layer), 0)
+            ),
             reverse=True)
         n_show = min(35, len(all_concepts))
         n_half = n_show // 2
@@ -1965,8 +2259,9 @@ def fig_layerwise_trajectory(data, outdir):
         ax.set_xticklabels([str(l) for l in layer_idx], fontsize=5)
         ax.set_yticks(range(len(shown)))
         ax.set_yticklabels(shown, fontsize=4)
-        ax.set_xlabel('Layer')
-        ax.set_title('(c) Per-Concept', fontsize=9)
+        ax.axhline(n_half - 0.5, color='#111111', linestyle='--', linewidth=0.7)
+        ax.set_xlabel('Encoder Layer')
+        ax.set_title('(c) Per-Concept (Top 17 / Bottom 18)', fontsize=9)
         plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
 
     fig.tight_layout()
@@ -2048,10 +2343,11 @@ def main():
     # Figure 3
     print("[3/18] Swadesh vs non-Swadesh comparison …")
     d = _load_json('improved_swadesh_comparison.json')
+    d_lw = _load_json('swadesh_comparison.json')
     if d is None:
-        d = _load_json('swadesh_comparison.json')
+        d = d_lw
     if d:
-        fig_swadesh_comparison(d, FIG_DIR)
+        fig_swadesh_comparison(d, FIG_DIR, loanword_data=d_lw)
 
     # Figure 4
     print("[4/14] Colexification test …")

@@ -23,8 +23,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DOCS_DATA = PROJECT_ROOT / "docs" / "data"
 
 PAIR_COLORS = [
-    "#d62728", "#1f77b4", "#2ca02c", "#9467bd", "#ff7f0e",
-    "#8c564b", "#e377c2", "#17becf", "#bcbd22",
+    "#d62728", "#1f77b4", "#2ca02c", "#ff7f0e", "#9467bd",
+    "#8c564b", "#e377c2", "#17becf", "#bcbd22", "#393b79",
+    "#e6550d", "#637939", "#7b4173", "#3182bd", "#ad494a",
 ]
 
 DEMO_LANGS = [

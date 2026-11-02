@@ -1,4 +1,4 @@
-\begin{thebibliography}{28}
+\begin{thebibliography}{32}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -73,6 +73,15 @@ Ton Dijkstra and Walter J.~B. van Heuven.
   175--197, 2002.
 \newblock \doi{10.1017/S1366728902003012}.
 
+\bibitem[Ethayarajh(2019)]{ethayarajh2019}
+Kawin Ethayarajh.
+\newblock How contextual are contextualized word representations? {C}omparing
+  the geometry of {BERT}, {ELMo}, and {GPT-2} embeddings.
+\newblock In \emph{Proceedings of the 2019 Conference on Empirical Methods in
+  Natural Language Processing (EMNLP-IJCNLP)}, pages 55--65. Association for
+  Computational Linguistics, 2019.
+\newblock \doi{10.18653/v1/D19-1006}.
+
 \bibitem[Foroutan et~al.(2022)Foroutan, Banaei, Aberer, and
   Bosselut]{foroutan2022}
 Negar Foroutan, Mohammadreza Banaei, Karl Aberer, and Antoine Bosselut.
@@ -82,6 +91,17 @@ Negar Foroutan, Mohammadreza Banaei, Karl Aberer, and Antoine Bosselut.
   Natural Language Processing (EMNLP)}, pages 7560--7575. Association for
   Computational Linguistics, 2022.
 \newblock \doi{10.18653/v1/2022.emnlp-main.493}.
+
+\bibitem[Goyal et~al.(2022)Goyal, Gao, Chaudhary, Chen, Wenzek, Ju, Krishnan,
+  Ranzato, Guzm{\'a}n, and Fan]{goyal2022}
+Naman Goyal, Cynthia Gao, Vishrav Chaudhary, Peng-Jen Chen, Guillaume Wenzek,
+  Da~Ju, Sanjana Krishnan, Marc'Aurelio Ranzato, Francisco Guzm{\'a}n, and
+  Angela Fan.
+\newblock The {F}lores-101 evaluation benchmark for low-resource and
+  multilingual machine translation.
+\newblock \emph{Transactions of the Association for Computational Linguistics},
+  10:\penalty0 522--538, 2022.
+\newblock \doi{10.1162/tacl_a_00474}.
 
 \bibitem[Hewitt and Manning(2019)]{hewitt2019}
 John Hewitt and Christopher~D. Manning.
@@ -233,6 +253,16 @@ Elena Voita, David Talbot, Fedor Moiseev, Rico Sennrich, and Ivan Titov.
   Computational Linguistics, 2019.
 \newblock \doi{10.18653/v1/P19-1580}.
 
+\bibitem[Voita et~al.(2021)Voita, Sennrich, and Titov]{voita2021}
+Elena Voita, Rico Sennrich, and Ivan Titov.
+\newblock Analyzing the source and target contributions to predictions in
+  neural machine translation.
+\newblock In \emph{Proceedings of the 59th Annual Meeting of the Association
+  for Computational Linguistics and the 11th International Joint Conference on
+  Natural Language Processing (ACL-IJCNLP)}, volume~1, pages 3284--3295.
+  Association for Computational Linguistics, 2021.
+\newblock \doi{10.18653/v1/2021.acl-long.255}.
+
 \bibitem[Vuli{\'c} et~al.(2020)Vuli{\'c}, Baker, Ponti, Peti-Stanti{\'c},
   Reichart, and Korhonen]{vulic2020}
 Ivan Vuli{\'c}, Simon Baker, Edoardo~Maria Ponti, Anita Peti-Stanti{\'c}, Roi
@@ -242,5 +272,10 @@ Ivan Vuli{\'c}, Simon Baker, Edoardo~Maria Ponti, Anita Peti-Stanti{\'c}, Roi
 \newblock \emph{Computational Linguistics}, 46\penalty0 (4):\penalty0 847--897,
   2020.
 \newblock \doi{10.1162/coli_a_00376}.
+
+\bibitem[Wichmann et~al.(2022)Wichmann, Holman, and Brown]{wichmann2022}
+S{\o}ren Wichmann, Eric~W. Holman, and Cecil~H. Brown.
+\newblock The {ASJP} database (version 20).
+\newblock \url{https://asjp.clld.org}, 2022.
 
 \end{thebibliography}

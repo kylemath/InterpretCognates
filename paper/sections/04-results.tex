@@ -1,244 +1,281 @@
 \section{Results}
 \label{sec:results}
 
-We present our six core experiments alongside descriptive illustrations and validation analyses, organized along a progression from broad distributional patterns through external validation to geometric tests of cognitive hypotheses.
+We present our six core empirical analyses following the progression outlined in the Introduction: from the global decomposition of language and concept geometry across encoder layers (Section~\ref{sec:results-csm}), through the Swadesh convergence hierarchy and methodological controls (Sections~\ref{sec:results-hierarchy}--\ref{sec:results-confounds}), to external typological benchmarks (Sections~\ref{sec:results-phylo}--\ref{sec:results-colex}) and fine-grained domain geometry (Section~\ref{sec:results-domains}).
+Table~\ref{tab:master-summary} summarizes the sample sizes, embedding regimes, test statistics, effect sizes, and primary conclusions across all six experiments; interactive 3D and 2D counterparts of every analysis, organized in matching section order, are available at \url{https://kylemath.github.io/InterpretCognates/}.
 
-\subsection{Illustrative Example: Water}
+\begin{table*}[t]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.15}
+\caption{Summary of primary experiments and control tests probing the shared encoder geometry of \texttt{facebook/nllb-200-distilled-600M}. All statistics are computed deterministically from model activations, linked via automated \LaTeX{} macros (\texttt{output/stats.tex}), and synchronized with the interactive browser companion.}
+\label{tab:master-summary}
+\vspace{0.2em}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.9cm}>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{1.8cm}>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{3.8cm}@{}}
+\toprule
+\textbf{Experiment \& Control} & \textbf{Scope / Sample} & \textbf{Regime} & \textbf{Primary Metric} & \textbf{Statistic \& Effect Size} & \textbf{Principal Finding} \\
+\midrule
+1a.\ Conceptual Store (CSM) & \NumConcepts{} concepts $\times$ \NumLanguages{} langs & Bare word & Between/within distance ratio & $\ConceptualStoreBareRaw{} \to \ConceptualStoreBareCentered{}$ ($\ConceptualStoreBareImprovement{}\times$; null $\CSMPermNull{}$) & Language shift $\hat{\boldsymbol{\ell}}$ ($\CSMSSLangBare{}\%$ SS, $\text{PR}{=}\PRLangBare{}$) removed; cross-script $\CSMCrossScriptBareImprovement{}\times$ \\
+1b.\ Conceptual Store (CSM) & \NumConcepts{} concepts $\times$ \NumLanguages{} langs & Carrier frame & Between/within distance ratio & $\ConceptualStoreRaw{} \to \ConceptualStoreCentered{}$ ($\ConceptualStoreImprovement{}\times$; null $\CSMPermNull{}$) & Frame reduces $\hat{\boldsymbol{\ell}}$ to $\CSMSSLangCtx{}\%$ SS; converges to same store ($\text{PR}{=}\PRConcept{}$) \\
+1c.\ Layer-Wise Trajectory & \NumConcepts{} concepts $\times$ \LayerwiseNumLangs{} langs & Carrier (L0--L11) & Mean convergence \& CSM & L0: $\LayerwiseInputConv{} \to$ L\LayerwisePeakLayer{}: $\LayerwisePeakConv{}$ (L11: $\LayerwiseFinalConv{}$) & Peak $C(c)$ at L\LayerwisePeakLayer{}; CSM inflection at L\LayerwisePhaseTrans{} ($\LayerwiseFinalCSM{}$ at L11) \\
+\addlinespace[2pt]
+2a.\ Swadesh Hierarchy \& ANOVA & \NumConcepts{} concepts $\times$ \NumLanguages{} langs & Carrier (ABTT $k{=}3$) & Pairwise $C(c)$ \& 8-cat.\ ANOVA & $\eta^2 = \CatAnovaEtaPct{}\%$, $F(7,93) = \CatAnovaF{}$ ($p = \CatAnovaP{}$) & Category explains $20\times$ surface form; partial $F = \CatPartialFertF{}$ \\
+2b.\ Isotropy Sensitivity & $k \in \{0, 1, 3, 5, 10\}$ & Carrier frame & Spearman rank corr.\ $\rho_s$ & $\rho_s = \IsotropySpearmanRho{}$ ($p = \IsotropySpearmanP{}$) & Concept ranking invariant to PC removal ($\rho_s \ge \IsotropyMinRho{}$) \\
+2c.\ Carrier vs.\ Bare Word & \NumConcepts{} concepts $\times$ \NumLanguages{} langs & Both regimes & Rank $\rho_s$ \& paired $t$-test & $\rho_s = \CarrierBaselineRho{}$ ($p = \CarrierBaselineP{}$); $\Delta\mu = {+}\CarrierBaselineMeanDiff{}$ & Rank order preserved; frame shifts baseline ($t = \CarrierBaselineTstat{}$) \\
+\addlinespace[2pt]
+3a.\ Surface \& Fertility Controls & \NumConcepts{} concepts $\times$ \DecompNumLatinLangs{} Latin langs & Carrier (ABTT $k{=}3$) & OLS regression $R^2$ & Ortho $R^2 = \DecompRsqOrtho{}$; Phon $R^2 = \DecompRsqPhon{}$; Fert $R^2 = \DecompRsqFert{}$ & Neither surface overlap nor fertility drives Swadesh 101 \\
+3b.\ POS \& Strict Concrete Nouns & \PosNounSwadeshCount{} Swadesh vs.\ \ControlledSwadeshCompNumNonSwadesh{}/\StrictNounCount{} ctrl & Carrier (\LayerwiseNumLangs{} langs) & Mann-Whitney $U$ \& ANCOVA & ABTT $p = \PosNounCorrCompP{}$ ($d = \PosNounCorrCompCohenD{}$); strict $d = \StrictNounCorrCohenD{}$ & Mediated by Zipfian subword compactness ($p = \NounFertAncovaP{}$) \\
+\addlinespace[2pt]
+4a.\ Subfamily Phylogeny & \MantelWithinSubfamilyPairs{} within-subfamily pairs & Carrier \& Bare & Block-perm.\ \& cross-script $\rho_s$ & $\rho_s = \MantelWithinSubfamilyRho{}$ (LDND $\MantelLDNDSubfamilyRho{}$, block $p = \MantelWithinSubfamilyBlockP{}$) & Genealogical signal holds across disjoint scripts ($n = \MantelCrossScriptSubfamilyPairs{}$) \\
+4b.\ Global Mantel Test & $\binom{\MantelNumLangs}{2} = \MantelTotalPairs{}$ lang pairs & Carrier vs.\ Bare & Mantel $\rho_s$ (\MantelPermutations{} perms) & Carrier $\rho_s = \MantelRho{}$ ($p = \MantelP{}$); Bare $\rho_s = \MantelBareRho{}$ ($p = \MantelBareP{}$) & Cross-family ASJP saturation ($\MantelBetweenFamilyPct{}\%$ pairs) attenuates global $\rho_s$ \\
+\addlinespace[2pt]
+5.\ CLICS\textsuperscript{3} Colexification & $\binom{\NumConcepts}{2} = \ColexNumPairs{}$ concept pairs & Carrier \& Bare & String-distinct \& within-cat.\ $U, \rho_s$ & $U = \ColexU{}$, $p = \ColexP{}$, $d = \ColexCohenD{}$; within-cat.\ $\rho_s = \ColexWithinCatRho{}$ & Holds string-distinct ($d = \ColexStringDistinctCohenD{}$) \& on bare words ($d = \ColexBareStringDistinctCohenD{}$) \\
+\addlinespace[2pt]
+6a.\ Berlin \& Kay Colors & \ColorNumColors{} color terms $\times$ \ColorNumLanguages{} langs & Carrier \& Bare & PC1 vs.\ B\&K evolutionary stage & Carrier $\rho_s = \ColorBKRho{}$ ($p = \ColorBKP{}$); Bare $\rho_s = \ColorBareBKRho{}$ ($p = \ColorBareBKP{}$) & PC1 recovers Stage I $\to$ VII; length-controlled $r = \ColorPartialLengthR{}$ ($p = \ColorPartialLengthP{}$) \\
+6b.\ Relational Offsets & \OffsetSemanticCount{} semantic vs.\ \OffsetControlCount{}/\OffsetMatchedCount{} ctrl & Carrier \& Bare & Residual $S_{\text{resid}}$ \& coupling & $U = \OffsetResidU{}$, $p = \OffsetResidP{}$, $d = \OffsetResidCohenD{}$; coupling $p = \OffsetCouplingP{}$ & Exceeds linear/concave \& POS-matched controls ($p = \OffsetMatchedResidP{}$) \\
+\bottomrule
+\end{tabular}%
+}
+\end{table*}
 
-Before presenting the full ranking, we illustrate the geometry of a single concept.
-Figure~\ref{fig:water_manifold} shows the 29-language embedding manifold for ``water'' --- a concept with diverse surface forms across language families (\textit{agua}, \textit{eau}, \textit{Wasser}, \textit{maji}, etc.).
+\subsection{Additive Language-Shift Geometry and Layer-Wise Emergence}
+\label{sec:results-csm}
 
-Despite radically different surface forms and scripts, the embeddings cluster tightly in representation space: same-family languages form sub-clusters, but cross-family similarity remains high, suggesting that the model maps ``water'' to a shared semantic region regardless of its lexical realization.
-This example motivates the systematic analysis that follows.
+We first test our central structural hypothesis (Equation~\ref{eq:intro-decomposition}): that NLLB-200's encoder representations decompose into a shared conceptual centroid $\hat{\boldsymbol{\mu}}_c$ plus an additive per-language shift $\hat{\boldsymbol{\ell}}$.
+Applying the exact two-way sum-of-squares partition (Equation~\ref{eq:ss-partition}) across all $101 \times 135 = 13{,}635$ embeddings reveals how contextual framing redistributes variance between language identity and concept identity.
+In the decontextualized bare-word regime, concept centroids $\hat{\boldsymbol{\mu}}_c$ account for $\CSMSSConceptBare{}\%$ of total centered variance, per-language shifts $\hat{\boldsymbol{\ell}}$ account for $\CSMSSLangBare{}\%$, and the concept-by-language interaction residual $\hat{\boldsymbol{\epsilon}}_{c,\ell}$ accounts for $\CSMSSResidBare{}\%$.
+In the shared carrier-frame regime (\texttt{"I saw a }$\{$\texttt{word}$\}$\texttt{ near the river."}), self-attention with the shared context tokens reduces the per-language shift variance nearly sevenfold to $\CSMSSLangCtx{}\%$, while concept centroids expand to $\CSMSSConceptCtx{}\%$ and the residual remains stable at $\CSMSSResidCtx{}\%$.
+Furthermore, eigendecomposition of the doubly-centered distance matrices reveals a sharp dimensionality asymmetry generalizing \citet{chang2022}: the language-shift subspace $\{\hat{\boldsymbol{\ell}}\}$ is concentrated in a low-dimensional manifold with participation ratio $\text{PR} = (\sum_i \lambda_i)^2 / \sum_i \lambda_i^2 = \PRLangBare{}$ on bare words ($\PRLangBareTopTenPct{}\%$ of variance in the top 10 principal components; $\text{PR} = \PRLangCtx{}$ in the carrier frame), whereas the conceptual manifold $\{\hat{\boldsymbol{\mu}}_c\}$ spans nearly three times the effective dimensionality ($\text{PR} = \PRConcept{}$, with the top 10 components capturing only $\PRConceptTopTenPct{}\%$ of variance).
 
-\subsection{Swadesh Core Vocabulary Convergence}
-
-Across the \NumConcepts{} Swadesh items embedded in \NumLanguages{} languages, the mean cross-lingual convergence score---defined as the average pairwise cosine similarity over all language pairs for a given concept---is \SwadeshMean{} ($\sigma = \SwadeshStd{}$), with individual concepts ranging from \SwadeshMin{} to \SwadeshMax{}.
-Figure~\ref{fig:swadesh} presents the full ranking.
-
-\begin{figure*}[htbp]
-  \centering
-  \includegraphics[width=\textwidth]{figures/fig_swadesh_ranking.pdf}
-  \caption{Swadesh convergence ranking vs.\ surface-form similarity. (a) Orthographic similarity (normalized Levenshtein distance on Latin-script word forms, $R^2 = \DecompRsqOrtho{}$) and (b) phonological similarity (after crude phonetic normalization, $R^2 = \DecompRsqPhon{}$) plotted against embedding convergence (isotropy-corrected). Points are colored by semantic category. Neither measure predicts convergence: over 98\% of the convergence signal is attributable to semantic rather than surface-form factors. Concepts in the upper-left quadrant converge strongly in embedding space \emph{despite} low surface-form similarity---the strongest candidates for genuine conceptual universals.}
-  \label{fig:swadesh}
-\end{figure*}
-
-The highest-ranked concept is \textit{\SwadeshTopConcept{}}, while the lowest is \textit{\SwadeshBottomConcept{}}.
-The distribution reveals a clear pattern: concepts that are concrete, perceptually grounded, and monosemous (e.g., body parts, celestial objects, kinship terms) tend to cluster near the top, whereas concepts that are abstract or polysemous tend to occupy the bottom ranks.
-Several of the lowest-scoring items---such as \textit{bark} (tree covering vs.\ the sound a dog makes) and \textit{lie} (recline vs.\ falsehood)---are well-known cases of systematic polysemy in English that do not transfer to other languages, resulting in dispersed cross-lingual representations.
-This ordering is broadly consistent with the intuition behind the Swadesh list itself: the most culturally stable meanings \citep{swadesh1952} are also those that the model encodes most uniformly.
-
-\subsection{Swadesh vs.\ Non-Swadesh Vocabulary}
-
-To contextualize the Swadesh convergence scores, we compare them against non-Swadesh baselines.
-An initial comparison against \SwadeshCompNumNonSwadesh{} modern and institutional terms (e.g., \textit{telephone}, \textit{university}, \textit{democracy}, \textit{restaurant}) yielded higher convergence for the non-Swadesh set ($\mu = \NonSwadeshCompMean{}$ vs.\ $\mu = \SwadeshCompMean{}$; Mann-Whitney $U = \SwadeshCompU{}$, $p = \SwadeshCompP{}$, Cohen's $d = \SwadeshCompCohenD{}$).
-This comparison is confounded by loanword bias: terms like \textit{democracy}, \textit{telephone}, and \textit{hotel} share surface forms across dozens of languages due to cultural borrowing, and the model's high convergence for these items reflects shared subword tokens rather than semantic universality.
-
-To obtain a properly controlled comparison, we constructed a second non-Swadesh set of frequency-matched, non-loanword concrete nouns with cross-linguistic orthographic diversity comparable to the Swadesh set.
-Under this controlled baseline, Swadesh concepts exhibit convergence commensurate with or exceeding that of the matched controls ($\mu = \ControlledSwadeshCompMean{}$ vs.\ $\mu = \ControlledNonSwadeshCompMean{}$; Mann-Whitney $U = \ControlledSwadeshCompU{}$, $p = \ControlledSwadeshCompP{}$, Cohen's $d = \ControlledSwadeshCompCohenD{}$), consistent with the hypothesis that culturally stable, universally attested concepts develop robust cross-lingual representations.
-The key insight is that Swadesh convergence is meaningful precisely because it emerges despite maximal surface-form diversity across language families.
-Crucially, Figure~\ref{fig:swadesh} demonstrates that surface-form similarity does not drive Swadesh convergence: regressing convergence scores against mean orthographic similarity yields $R^2 = \DecompRsqOrtho{}$ (panel~a), and a parallel regression against mean phonological similarity---after crude phonetic normalization that collapses voiced/voiceless distinctions and removes diacritics---explains only $R^2 = \DecompRsqPhon{}$ (panel~b).
-Both controls explain only a small fraction of variance, supporting the interpretation that the convergence of Swadesh items reflects deeper conceptual structure rather than shared surface forms.
-
-\subsection{Category Summary}
-
-Grouping the \NumConcepts{} Swadesh items by semantic category reveals a clear hierarchy of convergence.
-Nature terms (mean $= \CatNatureMean{} \pm \CatNatureStd{}$) and People terms (mean $= \CatPeopleMean{} \pm \CatPeopleStd{}$) converge most strongly, while Pronouns (mean $= \CatPronounsMean{} \pm \CatPronounsStd{}$) converge least.
-Figure~\ref{fig:category_summary} presents this breakdown.
-
-\begin{figure*}[htbp]
-  \centering
-  \includegraphics[width=\textwidth]{figures/fig_category_summary.pdf}
-  \caption{Convergence by semantic category. Violin plots with individual data points for each Swadesh semantic category (isotropy-corrected). The dashed line marks the overall mean. Nature and People categories converge most strongly; Pronouns converge least, consistent with their high cross-linguistic grammaticalization variability.}
-  \label{fig:category_summary}
-\end{figure*}
-
-The category hierarchy aligns with linguistic intuitions: concrete, perceptually grounded categories (Nature, Animals) converge more than grammatical categories (Pronouns), which exhibit greater cross-linguistic variability in form and function.
-
-Figure~\ref{fig:category_detail} disaggregates this view to the individual concept level, revealing which items drive the category means and which are outliers within their group.
+To evaluate how strongly representations cluster by concept rather than by language, we compute the Conceptual Store Metric (CSM; Equation~\ref{eq:csm}) before and after per-language mean-centering under both extraction regimes, alongside three null and confound controls (Figure~\ref{fig:conceptual_store}).
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=\columnwidth]{figures/fig_category_detail.pdf}
-  \caption{Per-concept convergence scores grouped by semantic category (sorted by category mean, highest at top). Each dot is one Swadesh concept; the dashed line marks the overall mean. Shaded bands delineate category boundaries, enabling identification of within-category outliers such as polysemous items that depress their category's aggregate score.}
-  \label{fig:category_detail}
+  \includegraphics[width=\columnwidth]{figures/fig_conceptual_store.pdf}
+  \caption{Conceptual Store Metric (CSM; ratio of mean between-concept centroid cosine distance to mean within-concept cross-lingual cosine distance) across \NumConcepts{} Swadesh concepts and \NumLanguages{} languages, comparing raw vs.\ language-centered embeddings under both extraction regimes against the concept-permutation null ($\text{CSM}_{\text{null}} = \CSMPermNull{}$, dashed grey line). Error bars denote 95\% bootstrap confidence intervals ($1{,}000$ non-self concept resamples). Decontextualized bare words exhibit strong raw language-identity offsets ($\text{CSM} = \ConceptualStoreBareRaw{}$) that are removed by per-language mean-centering ($\ConceptualStoreBareCentered{}$, a $\ConceptualStoreBareImprovement{}\times$ improvement), converging to nearly the same language-independent conceptual store as the shared carrier frame ($\ConceptualStoreRaw{} \to \ConceptualStoreCentered{}$, $\ConceptualStoreImprovement{}\times$).}
+  \label{fig:conceptual_store}
 \end{figure}
 
-\paragraph{Polysemy confound.}
-Several low-scoring concepts---\textit{bark}, \textit{lie}, \textit{fly}---are systematically polysemous in English, where the Swadesh list was defined.
-Because our carrier sentence does not disambiguate senses, the model may produce a blend representation that averages across senses available in the source language \citep{miller1995}.
-Languages that lack the English polysemy (e.g., separate words for ``bark of a tree'' and ``a dog's bark'') will produce sense-specific embeddings that diverge from this blend, artificially depressing cross-lingual convergence.
-This polysemy confound affects the bottom of the ranking more than the top, reinforcing the conclusion that high-convergence items genuinely reflect universal semantic structure.
-
-\subsection{Isotropy Correction Validation}
-
-Our ABTT isotropy correction rescales similarity values but largely preserves the relative ordering of concepts.
-The Spearman rank correlation between raw and corrected convergence rankings is $\rho = \IsotropySpearmanRho{}$ ($p = \IsotropySpearmanP{}$), indicating near-perfect ordinal agreement.
-
-\begin{figure*}[htbp]
-  \centering
-  \includegraphics[width=\textwidth]{figures/fig_isotropy_validation.pdf}
-  \caption{Isotropy correction validation. (a) Scatter of raw vs.\ corrected convergence scores (Spearman $\rho = \IsotropySpearmanRho{}$), colored by semantic category; points below the diagonal indicate concepts whose convergence decreased after correction. (b) Top-10 and bottom-10 concepts under each regime; the overlap is substantial, with a few concepts reranked. (c) Sensitivity of the convergence ranking to the ABTT hyperparameter $k$: all pairwise Spearman correlations with the reference $k=3$ ranking span \IsotropyKRange{}, confirming robustness.}
-  \label{fig:isotropy_validation}
-\end{figure*}
-
-Figure~\ref{fig:isotropy_validation}(a) shows that the correction compresses the similarity scale (corrected values are generally lower) but preserves the overall ranking structure.
-The few reranked concepts tend to be pronouns and function words whose raw convergence was inflated by the anisotropic bias toward high-frequency tokens.
-Panel~(b) juxtaposes the highest- and lowest-convergence concepts under both raw and corrected regimes, revealing that the top-ranked items (concrete, monosemous concepts) are stable while the bottom-ranked items (polysemous or grammatical concepts) show the largest shifts.
-Panel~(c) verifies that the choice of $k$ does not unduly influence our findings: recomputing the full convergence ranking for $k \in \{0, 1, 3, 5, 10\}$ yields Spearman correlations all exceeding \IsotropyMinRho{}, with the full range spanning \IsotropyKRange{}.
-This confirms that the qualitative structure of the convergence ranking is insensitive to the hyperparameter choice, and supports the use of corrected convergence scores with $k=3$ throughout our analyses.
-
-\subsection{Carrier Sentence Robustness}
-
-To assess whether the carrier sentence drives our main results, we repeat the full embedding extraction and convergence analysis using decontextualized embeddings---target words embedded in isolation without any surrounding context.
-The Spearman rank correlation between contextualized and decontextualized convergence rankings is $\rho = \CarrierBaselineRho{}$ ($p = \CarrierBaselineP{}$), with a mean absolute difference in convergence scores of \CarrierBaselineMeanDiff{}.
-A paired $t$-test confirms that the two conditions do not differ significantly in central tendency ($t = \CarrierBaselineTstat{}$, $p = \CarrierBaselineTp{}$).
-
-Figure~\ref{fig:carrier_baseline} shows that the vast majority of concepts fall near the identity line, indicating that their convergence is insensitive to the presence of the carrier sentence.
-The concepts that shift most between conditions---primarily pronouns and function words---are those whose representations depend on syntactic context, as expected.
-Crucially, the top-ranking concepts (body parts, kinship terms, natural phenomena) remain stable across both conditions, confirming that our main findings reflect genuine semantic convergence rather than carrier-sentence artifacts.
-
-\begin{figure*}[!t]
-  \centering
-  \includegraphics[width=0.95\textwidth]{figures/fig_carrier_baseline.pdf}
-  \caption{Carrier sentence robustness analysis. (a) Scatter of contextualized vs.\ decontextualized convergence scores (Spearman $\rho = \CarrierBaselineRho{}$). Points near the identity line indicate concepts whose convergence is insensitive to the carrier sentence. (b) Slopegraph of the top-20 concepts under each condition, showing minimal reranking.}
-  \label{fig:carrier_baseline}
-\end{figure*}
-
-\subsection{Layer-wise Emergence of Semantic Structure}
-
-All preceding analyses use representations from the final encoder layer.
-To understand how cross-lingual semantic structure develops across the encoder stack, we repeat the convergence analysis at each of the \LayerwiseNumLayers{} encoder layers on a diverse \LayerwiseNumLangs{}-language subset (for computational tractability).
-Figure~\ref{fig:layerwise} shows that semantic convergence increases monotonically from early layers (mean convergence $= \LayerwiseInputConv{}$) to the final layer (mean convergence $= \LayerwiseFinalConv{}$), with a sharp rise around layer~\LayerwiseEmergenceLayer{}.
-
-This trajectory parallels the ``NLP pipeline'' effect documented by \citet{tenney2019}, in which lower Transformer layers encode surface-level features (part-of-speech, morphology) while upper layers encode progressively more abstract semantic information.
-In our setting, this manifests as a gradual factoring-out of language identity: lower layers retain language-specific orthographic and morphological features, while upper layers converge toward a language-universal conceptual representation.
-
-The Conceptual Store Metric exhibits a similar trajectory, with the mean-centered ratio showing a phase transition at layer~\LayerwisePhaseTrans{} (Figure~\ref{fig:layerwise}b).
-The per-concept heatmap (Figure~\ref{fig:layerwise}c) reveals that concrete, perceptually grounded concepts achieve high cross-lingual convergence earlier in the encoder stack than abstract or polysemous concepts, suggesting a hierarchy of representational abstraction.
+In the decontextualized bare-word regime, where native word forms are encoded with zero surrounding English context, the raw CSM is $\ConceptualStoreBareRaw{}$: between-concept distance only slightly exceeds the random concept-permutation null ($\text{CSM}_{\text{null}} = \CSMPermNull{} \pm 0.0004$, obtained by independently permuting concept labels within each language) because each language occupies a distinct subspace offset by $\hat{\boldsymbol{\ell}}$.
+Subtracting each language's centroid $\hat{\boldsymbol{\ell}}$ increases the bare-word CSM to $\ConceptualStoreBareCentered{}$, a $\ConceptualStoreBareImprovement{}\times$ improvement ($+143\%$ above the permutation null, $p < 0.0001$; $95\%$ bootstrap CIs non-overlapping).
+Crucially, this gain cannot be explained by simple global origin shifting (global mean-centering $\mathbf{e}_{c,\ell} - \bar{\mathbf{e}}$ yields a bare-word CSM of $\CSMBareGlobalCentered{}$ because per-language shifts $\hat{\boldsymbol{\ell}}$ continue to inflate within-concept cross-lingual dispersion at $0.574$, whereas per-language centering collapses within-concept dispersion to $0.411$).
+In the shared carrier-frame regime, self-attention with the shared context tokens partially aligns the language centroids prior to post-processing, yielding a higher raw CSM of $\ConceptualStoreRaw{}$ that increases to $\ConceptualStoreCentered{}$ ($\ConceptualStoreImprovement{}\times$) after per-language mean-centering.
+Moreover, when we restrict the CSM denominator exclusively to \textbf{strictly cross-script language pairs} ($\text{script}(\ell) \neq \text{script}(\ell')$, where zero orthographic or subword token overlap is possible), per-language mean-centering increases bare-word CSM by $\CSMCrossScriptBareImprovement{}\times$ (from $\CSMCrossScriptBareRaw{}$ to $\CSMCrossScriptBareCentered{}$) and carrier-frame CSM by $\CSMCrossScriptCtxImprovement{}\times$ (from $\CSMCrossScriptCtxRaw{}$ to $\CSMCrossScriptCtxCentered{}$).
+Thus, across both extraction regimes and even across completely disjoint writing systems, NLLB-200 maps native lexical items onto a shared conceptual manifold obscured primarily by an additive language vector $\hat{\boldsymbol{\ell}}$.
 
 \begin{figure*}[htbp]
   \centering
   \includegraphics[width=\textwidth]{figures/fig_layerwise_trajectory.pdf}
-  \caption{Layer-wise emergence of language-universal semantic structure across \LayerwiseNumLayers{} encoder layers (computed on a \LayerwiseNumLangs{}-language subset). (a) Mean Swadesh convergence increases monotonically, with a sharp rise around layer~\LayerwiseEmergenceLayer{}, paralleling the ``NLP pipeline'' effect. (b) The Conceptual Store Metric (both raw and mean-centered ratios) shows a similar trajectory, with the centered ratio exhibiting a phase transition at layer~\LayerwisePhaseTrans{}. (c) Per-concept convergence heatmap reveals that concrete, perceptually grounded concepts (top rows) achieve high cross-lingual convergence earlier than abstract or polysemous concepts (bottom rows).}
+  \caption{Layer-wise emergence of cross-lingual semantic structure across all \LayerwiseNumLayers{} encoder layers on the \LayerwiseNumLangs{}-language typologically balanced subset. (a) Mean Swadesh convergence rises from $\LayerwiseInputConv{}$ at the first encoder block (Layer~0), exhibits its steepest single-layer gain at Layer~\LayerwiseEmergenceLayer{}, reaches peak cross-lingual alignment at Layer~\LayerwisePeakLayer{} ($\mu = \LayerwisePeakConv{}$), and dips slightly at the final encoder layer (Layer~11, $\mu = \LayerwiseFinalConv{}$) as representations specialize for decoder cross-attention. (b) Raw and language-centered CSM across layers, with the steepest inflection in centered concept separability occurring at Layer~\LayerwisePhaseTrans{} and reaching $\LayerwiseFinalCSM{}$ at Layer~11. (c) Per-concept convergence heatmap across layers for the 17 highest- and 18 lowest-converging Swadesh concepts (sorted from highest to lowest final convergence), showing that concrete nouns and natural phenomena align several layers earlier than abstract or polysemous items.}
   \label{fig:layerwise}
 \end{figure*}
 
-\subsection{Phylogenetic Distance Correlation}
-
-To assess whether the embedding space preserves genealogical signal, we applied the Mantel test to the embedding distance matrix (averaged over all Swadesh concepts) and the ASJP phonetic distance matrix \citep{jaeger2018} across \MantelNumLangs{} languages for which both data sources are available.
-The resulting correlation is $\rho = \MantelRho{}$ ($p = \MantelP{}$, \MantelPermutations{} permutations), indicating a statistically significant but modest association.
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=\columnwidth]{figures/fig_phylogenetic.pdf}
-  \caption{Phylogenetic structure in the NLLB-200 embedding space. Left: heatmap of pairwise embedding coherence (normalized to $[0,1]$; white = $0$, red = $1$) between \MantelNumLangs{} languages, ordered by hierarchical clustering. Right: dendrogram derived from the embedding distance matrix. Major language families (e.g., Indo-European, Austronesian, Niger-Congo) form recognizable clusters.}
-  \label{fig:phylo}
-\end{figure}
-
-Figure~\ref{fig:phylo} presents the hierarchical clustering derived from embedding distances.
-Recognizable family-level groupings emerge: Indo-European languages cluster together, as do Austronesian, Turkic, and Niger-Congo languages.
-However, the modest magnitude of $\rho$ indicates that genealogical relatedness explains only a fraction of the variance in embedding geometry.
-
-Figure~\ref{fig:mantel_scatter} provides a direct visualization of the Mantel correlation by plotting each language pair's ASJP phonetic distance against its embedding distance, stratified by phylogenetic relationship.
-Same-subfamily pairs (e.g., French--Spanish) cluster at low ASJP distance with tight embedding distances; cross-branch Indo-European pairs (e.g., English--Russian) occupy the middle range; and cross-family pairs (e.g., English--Chinese) dominate the high-distance region.
-Separate per-group regression lines reveal that the positive trend is driven primarily by the contrast between these tiers rather than a uniform linear relationship.
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=\columnwidth]{figures/fig_mantel_scatter.pdf}
-  \caption{Mantel test scatter: pairwise embedding distance vs.\ ASJP phonetic distance across \MantelNumLangs{} languages, colored by phylogenetic relationship tier---same subfamily (blue), cross-branch Indo-European (amber), and cross-family (red). Dashed lines show per-group linear fits with Spearman $\rho$ values. The overall Mantel $\rho = \MantelRho{}$ ($p = \MantelP{}$).}
-  \label{fig:mantel_scatter}
-\end{figure}
-
-Complementing the language-level view, Figure~\ref{fig:concept_map} provides a concept-level perspective by projecting the cross-lingual centroids of all \NumConcepts{} Swadesh items into a 2D PCA space, colored by semantic category.
+To trace how this shared manifold is constructed across the depth of the network, we repeat both analyses at every encoder layer $l \in \{0, \dots, 11\}$ across our \LayerwiseNumLangs{}-language diverse subset (Figure~\ref{fig:layerwise}).
+Cross-lingual convergence does not increase strictly monotonically to the final layer; rather, it rises sharply from $\LayerwiseInputConv{}$ at Layer~0 (largest single-step gain at Layer~\LayerwiseEmergenceLayer{}) to a \textbf{peak convergence of $\LayerwisePeakConv{}$ at Layer~\LayerwisePeakLayer{}}, before declining slightly to $\LayerwiseFinalConv{}$ at Layer~11 (Figure~\ref{fig:layerwise}a).
+This late-layer specialization parallels findings in Transformer encoders \citep{voita2019,voita2021,tenney2019}, and decomposing the CSM numerator and denominator reveals its exact geometric mechanism.
+Between Layer~\LayerwisePhaseTrans{} and Layer~\LayerwisePeakLayer{}, raw between-concept centroid cosine distance remains virtually constant ($\LayerSixRawBetween{} \to \LayerTenRawBetween{}$) while within-concept cross-lingual dispersion contracts by $\LayerWithinContractPct{}\%$ ($0.240 \to 0.136$), driving language-centered CSM to $\LayerTenCenteredCSM{}$.
+From Layer~\LayerwisePeakLayer{} to Layer~11, within-concept distance expands by $+\LayerWithinExpandPct{}\%$ ($0.136 \to 0.198$, lowering mean $C(c)$ from $\LayerwisePeakConv{}$ to $\LayerwiseFinalConv{}$), \textbf{but between-concept centroid separation expands even faster by $+\LayerBetweenGainPct{}\%$ ($\LayerTenRawBetween{} \to \LayerElevenRawBetween{}$)} as the final encoder LayerNorm and feedforward block open the anisotropic cone for decoder cross-attention, lifting language-centered CSM from $\LayerTenCenteredCSM{}$ to $\LayerwiseFinalCSM{}$ (Figure~\ref{fig:layerwise}b).
+Moreover, disaggregating the Layer~10 $\to$ Layer~11 transition by grammatical category (Figure~\ref{fig:layerwise}c) shows that concrete nouns fitting the carrier template's nominal slot (\emph{rain, tree, dog, fish, bird, cloud, star}) do not dip at all—peaking at Layer~11 ($C(c) = 0.95$--$0.96$)—whereas the late-layer divergence is driven selectively by grammatical Pronouns ($\Delta = \LayerPronounDip{}$) and Actions/verbs ($\Delta = \LayerActionDip{}$) unpacking target-language morphosyntactic features (person, number, valency) for the decoder.
 
 \begin{figure*}[htbp]
   \centering
   \includegraphics[width=\textwidth]{figures/fig_concept_map.pdf}
-  \caption{2D PCA projection of Swadesh concept embeddings pooled across all 19 language families. Small translucent dots show per-family centroid positions (one per concept per family, ${\sim}1{,}900$ points total); convex hulls delineate each semantic category's spread; large opaque dots mark the overall cross-lingual centroids. Body parts and nature terms occupy distinct regions of the space, while pronouns cluster tightly---confirming that the model's geometry is organized by meaning rather than arbitrary lexical associations.}
+  \caption{Two-dimensional PCA projection of Swadesh concept embeddings pooled across 19 language families (\NumConcepts{} concepts $\times$ \NumLanguages{} languages). Translucent dots represent per-family concept centroids; shaded convex hulls enclose semantic categories; large opaque markers indicate global cross-lingual centroids $\boldsymbol{\mu}_c$. Concept centroids organize by semantic domain (e.g., Pronouns, People, Body Parts, Nature) rather than collapsing by language family.}
   \label{fig:concept_map}
 \end{figure*}
 
-The concept map reveals that semantically related items (e.g., body parts, nature terms) cluster together in the shared embedding space, providing visual evidence that the model's geometry is organized by conceptual content rather than arbitrary lexical associations.
+Projecting the resulting concept centroids $\boldsymbol{\mu}_c$ and per-family sub-centroids into a shared 2D PCA plane (Figure~\ref{fig:concept_map}) confirms visually that NLLB-200 organizes the core lexicon into coherent semantic neighborhoods—separating pronouns, human nouns, body parts, and natural phenomena across all 19 language families.
 
-The model's representations are shaped primarily by translational equivalence rather than surface-level phonological or morphological similarity, which explains the incomplete correspondence with phonetic distance.
-This is consistent with the view that NLLB-200's shared encoder constructs a representation space organized predominantly around meaning, with historical signal as a secondary structuring force.
+\subsection{Swadesh Convergence Hierarchy, Isotropy Robustness, and Carrier-Frame Baseline}
+\label{sec:results-hierarchy}
 
-\subsection{Colexification Proximity}
+Motivated by the single-concept manifold for ``water'' (Figure~\ref{fig:water_manifold}), we evaluate cross-lingual convergence $C(c)$ across all \NumConcepts{} Swadesh concepts and \NumLanguages{} languages after ABTT isotropy correction ($k = 3$).
+Mean convergence across the full Swadesh inventory is $\SwadeshMean{} \pm \SwadeshStd{}$, spanning a wide dynamic range from $\SwadeshMin{}$ (\emph{\SwadeshBottomConcept{}}) to $\SwadeshMax{}$ (\emph{\SwadeshTopConcept{}}).
 
-We assessed whether colexification frequency---the number of language families in CLICS\textsuperscript{3} \citep{list2018,rzymski2020} that express two concepts with the same word form---predicts embedding similarity in the NLLB-200 encoder space.
-Treating colexification as a continuous variable across all \ColexNumPairs{} Swadesh concept pairs yields a significant positive Spearman correlation ($\rho_s = \ColexSpearmanRho{}$, $p = \ColexSpearmanP{}$): the more language families that colexify a pair, the more similar the model's representations.
-A confirmatory Mann-Whitney $U$ test on the binary split (colexified $\geq 3$ families vs.\ non-colexified) corroborates this gradient ($U = \ColexU{}$, $p = \ColexP{}$, Cohen's $d = \ColexCohenD{}$).
+\begin{figure*}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig_category_summary.pdf}
+  \caption{Cross-lingual convergence by semantic category across \NumConcepts{} Swadesh concepts (\NumLanguages{} languages, ABTT-corrected $k=3$). Violins and jittered points show per-concept scores; the vertical dashed line indicates the grand mean ($\SwadeshMean{}$). Perceptually grounded noun categories (People $\mu = \CatPeopleMean{}$, Nature $\mu = \CatNatureMean{}$) converge most strongly, whereas grammatical Pronouns ($\mu = \CatPronounsMean{}$) converge least.}
+  \label{fig:category_summary}
+\end{figure*}
+
+Grouping concepts into eight semantic categories exposes a clear, statistically robust hierarchy that mirrors the cross-lingual concreteness and part-of-speech gradient documented in \emph{Multi-SimLex} \citep{vulic2020} (Figure~\ref{fig:category_summary} and Figure~\ref{fig:category_detail}): People terms ($\CatPeopleMean{} \pm \CatPeopleStd{}$) and Nature terms ($\CatNatureMean{} \pm \CatNatureStd{}$) achieve the tightest cross-lingual alignment, followed by Animals ($\CatAnimalsMean{} \pm \CatAnimalsStd{}$), Properties ($\CatPropertiesMean{} \pm \CatPropertiesStd{}$), Body parts ($\CatBodyMean{} \pm \CatBodyStd{}$), Other ($\CatOtherMean{} \pm \CatOtherStd{}$), and Actions/verbs ($\CatActionsMean{} \pm \CatActionsStd{}$), while grammatical Pronouns/deictics rank lowest ($\CatPronounsMean{} \pm \CatPronounsStd{}$).
+A one-way ANOVA across the eight semantic categories confirms that semantic domain accounts for \textbf{$\eta^2 = \CatAnovaEtaPct{}\%$ of the total variance in cross-lingual convergence} ($F(7, 93) = \CatAnovaF{}$, $p = \CatAnovaP{}$; non-parametric Kruskal-Wallis $H = \CatKWH{}$, $p = \CatKWP{}$)—more than twenty times the variance explained by surface orthography or phonology ($R^2 \le \DecompRsqOrtho{}$; Section~\ref{sec:results-confounds}).
+This category effect replicates on decontextualized native bare words ($\eta^2 = \CatBareAnovaEtaPct{}\%$, $F(7, 93) = \CatBareAnovaF{}$, $p = \CatBareAnovaP{}$) and strengthens further in a partial $F$-test controlling simultaneously for cross-lingual SentencePiece subword fertility and character length ($F(7, 91) = \CatPartialFertF{}$, $p = \CatPartialFertP{}$).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/fig_category_detail.pdf}
+  \caption{Per-concept ABTT-corrected convergence scores for all \NumConcepts{} Swadesh items grouped by semantic category (sorted by category mean). Individual within-category outliers reflect English lexical polysemy (e.g., \emph{bark, lie, fly}) or low-frequency rural/archaic vocabulary (\emph{louse, grease}).}
+  \label{fig:category_detail}
+\end{figure}
+
+Inspection of individual within-category outliers (Figure~\ref{fig:category_detail}) identifies two distinct sources of dispersion at the bottom of the ranking: language-specific grammaticalization in pronouns and demonstratives (\emph{we, this, that, who, what}), which encode clusivity, gender, honorifics, or spatial deixis differently across languages, and English lexical polysemy or low corpus frequency in items such as \emph{bark} (tree cortex vs.\ dog vocalization), \emph{lie} (recline vs.\ falsehood), \emph{fly} (insect vs.\ verb of motion), and \emph{louse} ($\SwadeshMin{}$, which is low-frequency in modern web-crawled parallel corpora).
+
+\begin{figure*}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig_isotropy_validation.pdf}
+  \caption{Validation of All-But-The-Top (ABTT) isotropy correction. (a) Raw vs.\ ABTT-corrected ($k=3$) convergence across all \NumConcepts{} concepts ($\rho_s = \IsotropySpearmanRho{}$, $p = \IsotropySpearmanP{}$). Removing the top 3 principal components eliminates the baseline anisotropic floor ($\sim 0.43$--$0.91 \to \SwadeshMin{}$--$\SwadeshMax{}$) while preserving rank order. (b) Top-10 and bottom-10 concepts before and after correction. (c) Hyperparameter sensitivity across $k \in \{0, 1, 3, 5, 10\}$: all rankings correlate at $\rho_s \in [\IsotropyMinRho{}, \IsotropyMaxRho{}]$ with the $k=3$ reference.}
+  \label{fig:isotropy_validation}
+\end{figure*}
+
+Figure~\ref{fig:isotropy_validation} confirms that this hierarchy is not an artifact of ABTT preprocessing.
+Raw and ABTT-corrected ($k=3$) concept rankings exhibit near-perfect rank agreement ($\rho_s = \IsotropySpearmanRho{}$, $p = \IsotropySpearmanP{}$; Figure~\ref{fig:isotropy_validation}a--b), and varying the number of removed principal components across $k \in \{0, 1, 3, 5, 10\}$ yields Spearman correlations spanning $\IsotropyKRange{}$ across all pairs (Figure~\ref{fig:isotropy_validation}c), with mean convergence exhibiting a sharp knee from $k = 0$ ($\IsotropyKZeroMean{}$) to $k = 1$ ($\IsotropyKOneMean{}$) before plateauing across $k = 3$ ($\IsotropyKThreeMean{}$) to $k = 10$ ($\IsotropyKTenMean{}$).
+
+\begin{figure*}[!t]
+  \centering
+  \includegraphics[width=0.95\textwidth]{figures/fig_carrier_baseline.pdf}
+  \caption{Comparison of Swadesh concept convergence in the shared English carrier frame vs.\ decontextualized native bare words across \NumLanguages{} languages. (a) Concept-level scatter shows strong rank-order invariance ($\rho_s = \CarrierBaselineRho{}$, $p = \CarrierBaselineP{}$) alongside a systematic upward shift in absolute convergence induced by the shared English carrier frame ($\mu_{\text{ctx}} = \CarrierCtxMean{}$ vs.\ $\mu_{\text{bare}} = \CarrierDectxMean{}$, $\Delta\mu = +\CarrierBaselineMeanDiff{}$, paired $t = \CarrierBaselineTstat{}$, $p = \CarrierBaselineTp{}$). (b) Slopegraph of top-ranked concepts confirming stability of concrete universals across both regimes.}
+  \label{fig:carrier_baseline}
+\end{figure*}
+
+Similarly, comparing the shared carrier-frame regime against the decontextualized bare-word baseline across all \NumConcepts{} concepts (Figure~\ref{fig:carrier_baseline}) reveals two complementary effects.
+First, the relative ordering of concepts is highly invariant across regimes ($\rho_s = \CarrierBaselineRho{}$, $p = \CarrierBaselineP{}$), confirming that concrete nouns converge more strongly than abstract or grammatical items even when embedded as isolated native words.
+Second, as expected from self-attention over shared context tokens, the English carrier frame shifts absolute convergence upward by $\Delta\mu = +\CarrierBaselineMeanDiff{}$ (from $\mu_{\text{bare}} = \CarrierDectxMean{}$ to $\mu_{\text{ctx}} = \CarrierCtxMean{}$; paired $t = \CarrierBaselineTstat{}$, $p = \CarrierBaselineTp{}$).
+Thus, the carrier frame acts as an additive baseline shift rather than generating the semantic hierarchy.
+
+\subsection{Ruling Out Surface-Form Confounds and Isolating Zipfian Subword Compactness}
+\label{sec:results-confounds}
+
+A natural concern is that cross-lingual embedding similarity might simply reflect shared orthography, cognate roots, international loanwords, or subword tokenization length rather than conceptual alignment.
+We evaluate these alternative explanations using three targeted tests.
+
+\begin{figure*}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig_swadesh_ranking.pdf}
+  \caption{Swadesh convergence ($y$-axis, ABTT-corrected $k=3$) vs.\ cross-lingual surface-form similarity across all \DecompNumLatinLangs{} Latin-script languages in our sample. (a) Mean orthographic similarity ($1 - \text{NLD}$ on raw word forms) explains $R^2 = \DecompRsqOrtho{}$ ($p = \DecompPOrtho{}$). (b) Mean phonological similarity ($1 - \text{NLD}$ after voicing/diacritic normalization) explains $R^2 = \DecompRsqPhon{}$ ($p = \DecompPPhon{}$). Over $98.7\%$ of the variance in Swadesh convergence is independent of surface-form overlap.}
+  \label{fig:swadesh}
+\end{figure*}
+
+First, across all \DecompNumLatinLangs{} Latin-script languages in our dataset (evaluated across all pairs without truncation), we regress ABTT-corrected concept convergence against mean cross-lingual orthographic similarity ($1 - \text{NLD}$), phonologically normalized similarity, character length, and SentencePiece subword fertility (tokens per word) across the \NumConcepts{} Swadesh concepts (Figure~\ref{fig:swadesh}).
+Neither orthographic overlap ($R^2 = \DecompRsqOrtho{}$, slope $= \DecompSlopeOrtho{}$, $p = \DecompPOrtho{}$), phonological similarity ($R^2 = \DecompRsqPhon{}$, slope $= \DecompSlopePhon{}$, $p = \DecompPPhon{}$), character length ($R^2 = \DecompRsqLen{}$, $p = \DecompPLen{}$), nor subword fertility ($R^2 = \DecompRsqFert{}$, $p = \DecompPFert{}$) significantly predicts convergence across the Swadesh list (in fact, short function words and pronouns have the lowest subword fertility yet the lowest convergence).
+Top-ranked Swadesh concepts such as \emph{night} ($\SwadeshMax{}$) and \emph{water} achieve near-maximal embedding alignment despite low cross-lingual orthographic similarity ($\sim \OrthoSimSwadesh{}$).
+
+\begin{figure*}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig_swadesh_comparison.pdf}
+  \caption{Controlling for loanword and part-of-speech confounds in Swadesh vs.\ non-Swadesh comparisons (\LayerwiseNumLangs{}-language subset). (a) When matched on part of speech and low orthographic overlap, Swadesh core concrete nouns ($n = \PosNounSwadeshCount{}$, $\mu = \PosNounSwadeshMean{}$) achieve significantly higher cross-lingual convergence than controlled non-Swadesh concrete nouns ($n = \ControlledSwadeshCompNumNonSwadesh{}$, $\mu = \PosNounNonSwadeshMean{}$; Mann-Whitney $U = \PosNounCompU{}$, $p = \PosNounCompP{}$, Cohen's $d = \PosNounCompCohenD{}$ raw; $U = \PosNounCorrCompU{}$, $p = \PosNounCorrCompP{}$, $d = \PosNounCorrCompCohenD{}$ after ABTT correction; $d = \StrictNounCorrCohenD{}$ on strictly tangible nouns). (b) Mean cross-lingual orthographic similarity ($1 - \text{NLD}$) confirms that modern international loanwords ($n = \SwadeshCompNumNonSwadesh{}$, e.g., \emph{coffee, radio, internet}) have twice the surface-form overlap ($\OrthoSimLoanword{}$) of both Swadesh core nouns ($\OrthoSimSwadeshNouns{}$) and controlled non-Swadesh nouns ($\OrthoSimControlled{}$).}
+  \label{fig:swadesh_comp}
+\end{figure*}
+
+Second, we compare Swadesh vocabulary against two 60-item non-Swadesh benchmarks across our \LayerwiseNumLangs{}-language subset (Figure~\ref{fig:swadesh_comp}).
+An uncurated non-Swadesh baseline composed of modern international vocabulary (\emph{telephone, radio, coffee, internet, hotel}) exhibits artificially high raw convergence ($\mu = \NonSwadeshCompMean{}$ vs.\ $\mu = \SwadeshCompMean{}$ for all \NumConcepts{} Swadesh items) precisely because recent cultural borrowings share identical or near-identical stems across language families: mean orthographic similarity for the loanword set is $\OrthoSimLoanword{}$, double that of the Swadesh list ($\OrthoSimSwadesh{}$; Figure~\ref{fig:swadesh_comp}b).
+Replacing these loanwords with $\ControlledSwadeshCompNumNonSwadesh{}$ non-loanword nouns (\emph{hammer, basket, axe, spider, needle}) lowers non-Swadesh orthographic overlap to $\OrthoSimControlled{}$.
+Comparing all $\ControlledSwadeshCompNumSwadesh{}$ Swadesh items against these $\ControlledSwadeshCompNumNonSwadesh{}$ nouns yields a modest difference ($\mu = \ControlledSwadeshCompMean{}$ vs.\ $\ControlledNonSwadeshCompMean{}$; Mann-Whitney $U = \ControlledSwadeshCompU{}$, $p = \ControlledSwadeshCompP{}$, $d = \ControlledSwadeshCompCohenD{}$) because the full Swadesh list mixes concrete nouns with low-convergence grammatical pronouns ($\mu = \CatPronounsMean{}$) and verbs ($\mu = \CatActionsMean{}$).
+When we perform an apples-to-apples comparison restricted to \textbf{Swadesh concrete nouns ($n = \PosNounSwadeshCount{}$, orthographic similarity $\OrthoSimSwadeshNouns{}$) versus controlled non-Swadesh nouns ($n = \ControlledSwadeshCompNumNonSwadesh{}$, orthographic similarity $\OrthoSimControlled{}$)} (Figure~\ref{fig:swadesh_comp}a), Swadesh core nouns converge significantly more strongly both in raw embedding space ($\mu = \PosNounSwadeshMean{}$ vs.\ $\PosNounNonSwadeshMean{}$; $U = \PosNounCompU{}$, $p = \PosNounCompP{}$, Cohen's $d = \PosNounCompCohenD{}$) and after ABTT isotropy correction ($\mu = \PosNounCorrSwadeshMean{}$ vs.\ $\PosNounCorrNonSwadeshMean{}$; $U = \PosNounCorrCompU{}$, $p = \PosNounCorrCompP{}$, Cohen's $d = \PosNounCorrCompCohenD{}$).
+Furthermore, excluding the 8 semi-abstract or state nouns (\emph{anger, fear, hunger, thirst, dream, harvest, shadow, well}) from the 60 non-Swadesh nouns to form a \textbf{strictly concrete $52$-vs.-$52$ tangible noun comparison} widens the Swadesh advantage even further (raw $\mu = \PosNounSwadeshMean{}$ vs.\ $\StrictNounRawNonSwadeshMean{}$, $U = \StrictNounRawU{}$, $p = \StrictNounRawP{}$, $d = \StrictNounRawCohenD{}$; ABTT $\mu = \PosNounCorrSwadeshMean{}$ vs.\ $\StrictNounCorrNonSwadeshMean{}$, $U = \StrictNounCorrU{}$, $p = \StrictNounCorrP{}$, $d = \StrictNounCorrCohenD{}$).
+
+Third, we probe the \emph{mechanistic source} of this Swadesh noun advantage.
+By Zipf's law of abbreviation and cross-linguistic morphological simplexity, culturally universal core nouns are predominantly unanalyzable monomorphemic roots and are significantly shorter across world languages ($\SwadeshNounMeanLen{}$ vs.\ $\NonSwadeshNounMeanLen{}$ characters across our \LayerwiseNumLangs{} languages, $p = \NounLenDiffP{}$), whereas peripheral concrete artifacts (\emph{hammer, basket, spider, needle}) more frequently involve polymorphemic derivation or compounding and are therefore segmented into significantly more SentencePiece subword tokens per word (mean fertility $\SwadeshNounMeanFert{}$ vs.\ $\NonSwadeshNounMeanFert{}$ tokens/word).
+In an ANCOVA regressing ABTT convergence across the pooled concrete nouns on the Swadesh indicator, subword fertility, and orthographic overlap, subword fertility strongly predicts cross-lingual convergence ($t = \NounFertAncovaT{}$, $p = \NounFertAncovaP{}$) and fully mediates the direct Swadesh indicator ($p = \NounSwadeshAncovaP{}$).
+This reveals a precise mechanistic link between human lexical evolution and neural representation geometry: Zipfian brevity in universal core nouns yields more compact subword representations (closer to single-token atomic lexical entries rather than averaged multi-piece compositions), which NLLB-200 aligns more tightly across languages—whereas \emph{within} the Swadesh core vocabulary, semantic category differences operate independently of subword fertility ($F(7, 91) = \CatPartialFertF{}$, $p = \CatPartialFertP{}$).
+
+\subsection{Genealogical Structure in Language-Pair Distances}
+\label{sec:results-phylo}
+
+Having examined concept-level geometry after removing language offsets, we next ask whether the language-pair distances $D_{\text{emb}}(\ell, \ell')$ themselves preserve historical phylogenetic relationships—and whether this signal survives controls for dyadic non-independence and shared writing systems.
+Figure~\ref{fig:phylo} displays the pairwise embedding coherence matrix and hierarchical clustering dendrogram across all \PhyloNumLanguages{} languages, revealing cohesive clades for major language families (Indo-European, Austronesian, Niger-Congo, Afro-Asiatic, Turkic, Sino-Tibetan).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/fig_phylogenetic.pdf}
+  \caption{Hierarchical clustering of \PhyloNumLanguages{} languages derived from pairwise NLLB-200 embedding distances averaged across the \NumConcepts{} Swadesh concepts. Major genealogical families and subfamilies (e.g., Romance, Germanic, Slavic, Bantu, Austronesian, Turkic) form contiguous clusters.}
+  \label{fig:phylo}
+\end{figure}
+
+To quantify this genealogical correspondence against an external historical benchmark, we compare pairwise embedding distances against ASJP phonetic distances \citep{wichmann2022,jaeger2018} across the \MantelNumLangs{} languages shared by both datasets ($\binom{\MantelNumLangs}{2} = \MantelTotalPairs{}$ pairs; Figure~\ref{fig:mantel_scatter}).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/fig_mantel_scatter.pdf}
+  \caption{Pairwise NLLB-200 embedding distance vs.\ ASJP lexical phonetic distance across \MantelNumLangs{} languages ($\MantelTotalPairs{}$ pairs), stratified by genealogical relationship tier. Within language subfamilies (blue, $n = \MantelWithinSubfamilyPairs{}$ pairs), embedding distance correlates strongly with phonetic distance ($\rho_s = \MantelWithinSubfamilyRho{}$, block-permutation $p = \MantelWithinSubfamilyBlockP{}$, dyadic $p = \MantelWithinSubfamilyP{}$). Across Indo-European branches (amber, $n = \MantelCrossBranchIEPairs{}$), correlation weakens ($\rho_s = \MantelCrossBranchIERho{}$), and across unrelated language families (red, $n = \MantelBetweenFamilyPairs{}$), ASJP distance saturates near ceiling ($\rho_s = \MantelBetweenFamilyRho{}$). Pooled carrier-frame Mantel $\rho_s = \MantelRho{}$ ($p = \MantelP{}$); decontextualized bare-word Mantel $\rho_s = \MantelBareRho{}$ ($p = \MantelBareP{}$).}
+  \label{fig:mantel_scatter}
+\end{figure}
+
+Stratifying language pairs by genealogical depth (Figure~\ref{fig:mantel_scatter}) explains both why NLLB-200 captures local phylogeny and why pooled global Mantel correlations appear modest.
+Within language subfamilies ($n = \MantelWithinSubfamilyPairs{}$ pairs across Romance, Germanic, Slavic, Indo-Iranian, Bantu, and Turkic), embedding distance on borrow-resistant Swadesh vocabulary tracks ASJP phonetic divergence with high fidelity ($\rho_s = \MantelWithinSubfamilyRho{}$ with NLD and $\rho_s = \MantelLDNDSubfamilyRho{}$ with \citeauthor{jaeger2018}'s \citeyear{jaeger2018} off-diagonal normalized LDND in the carrier frame; $\rho_s = \MantelBareWithinSubfamilyRho{}$ on bare words).
+Because pairwise distances share nodes, we supplement the standard dyadic test ($p = \MantelWithinSubfamilyP{}$) with a within-subfamily block-permutation Mantel test ($9{,}999$ permutations permuting language rows and columns strictly within each subfamily), confirming that the within-subfamily correlation is highly significant ($p = \MantelWithinSubfamilyBlockP{}$ in the carrier frame; $p = \MantelBareWithinSubfamilyBlockP{}$ on bare words).
+To rule out the possibility that within-subfamily alignment merely reflects shared orthography or SentencePiece subword overlap, we further isolate the $\MantelCrossScriptSubfamilyPairs{}$ within-subfamily language pairs written in completely different scripts (such as Cyrillic versus Latin Slavic in Russian--Polish and Serbian--Croatian, Devanagari versus Arabic/Persian Indo-Iranian in Hindi--Urdu, and Cyrillic versus Latin Turkic in Kazakh--Turkish).
+Across these strictly cross-script subfamily pairs, embedding distance continues to track ASJP phonetic distance strongly both in the carrier frame ($\rho_s = \MantelCrossScriptSubfamilyRho{}$, $p = \MantelCrossScriptSubfamilyP{}$) and on decontextualized bare words ($\rho_s = \MantelBareCrossScriptSubfamilyRho{}$, $p = \MantelBareCrossScriptSubfamilyP{}$), and a partial Spearman Mantel test controlling for shared script across all $\MantelWithinSubfamilyPairs{}$ within-subfamily pairs yields $\rho_{\text{partial}} = \MantelWithinSubfamilyPartialRho{}$.
+At deeper Indo-European time depths ($n = \MantelCrossBranchIEPairs{}$ cross-branch pairs, $\sim 4{,}000$--$6{,}000$ years), phonetic erosion reduces the correlation to $\rho_s = \MantelCrossBranchIERho{}$, while across unrelated language families ($n = \MantelBetweenFamilyPairs{}$ pairs, representing $\MantelBetweenFamilyPct{}\%$ of all pairs), ASJP normalized edit distance saturates in a narrow band near $0.90$--$1.00$ ($\rho_s = \MantelBetweenFamilyRho{}$).
+Because $\MantelBetweenFamilyPct{}\%$ of all pairs lie in this saturated cross-family regime—and because the shared English carrier template homogenizes language centroids—the pooled Mantel correlation in the carrier frame is $\rho_s = \MantelRho{}$ ($p = \MantelP{}$, \MantelPermutations{} permutations).
+When we remove the shared English carrier frame and evaluate language-pair distances on decontextualized native bare words, the global Mantel correlation nearly doubles to $\rho_s = \MantelBareRho{}$ ($p = \MantelBareP{}$), confirming that native lexical embeddings retain substantial genealogical signal.
+At the same time, examining each language's mean cosine distance to the rest of the language pool reveals a striking computational parallel to the proficiency/exposure asymmetry of the Revised Hierarchical Model \citep{kroll1994,kroll2010}: high-resource national languages ($n = \RHMHighResCount{}$) cluster significantly closer to the shared cross-lingual conceptual store than lower-resource languages ($n = \RHMLowResCount{}$; mean cosine distance $\mu = \RHMHighResDist{}$ vs.\ $\RHMLowResDist{}$, Mann-Whitney $U = \RHMResourceU{}$, $p = \RHMResourceP{}$).
+
+\subsection{Universal Colexification Structure}
+\label{sec:results-colex}
+
+While Section~\ref{sec:results-phylo} tests relationships between languages, our fifth experiment tests whether the fine-grained distances between \emph{concepts} reflect universal human conceptual associations.
+We compare pairwise concept cosine similarities against cross-linguistic colexification frequency across all $\binom{\NumConcepts}{2} = \ColexNumPairs{}$ Swadesh concept pairs mapped to CLICS\textsuperscript{3} \citep{list2018,rzymski2020} (Figure~\ref{fig:colex}).
 
 \begin{figure*}[htbp]
   \centering
   \includegraphics[width=\textwidth]{figures/fig_colexification.pdf}
-  \caption{Cosine similarity as a function of colexification frequency for \ColexNumPairs{} Swadesh concept pairs. Each red point is a pair attested by at least one CLICS\textsuperscript{3} language family; grey points are non-colexified controls. The dashed line is a linear fit. Spearman $\rho_s = \ColexSpearmanRho{}$ ($p = \ColexSpearmanP{}$). Selected pairs are labelled to illustrate the semantic content at different frequency levels.}
+  \caption{Cross-linguistic colexification structure across all $\binom{\NumConcepts}{2} = \ColexNumPairs{}$ Swadesh concept pairs mapped to CLICS\textsuperscript{3} \citep{list2018,rzymski2020}. (a) Mean within-language concept cosine similarity as a function of colexification frequency (number of distinct language families expressing both concepts with a single word form), stratified by semantic domain: within-category colexified pairs ($n = \ColexWithinCatColexCount{}$) are colored by domain, cross-category colexified pairs ($n = \ColexCrossCatColexCount{}$, e.g., \emph{bark--skin, big--many, ear--hear}) are shown as slate diamonds, and never-colexified pairs ($n = \ColexNonColCount{}$) as grey points. Restricting to within-category pairs ($n = \ColexWithinCatPairs{}$, solid red fit) nearly triples the continuous rank correlation ($\rho_s = \ColexWithinCatRho{}$, $p = \ColexWithinCatRhoP{}$) relative to the unstratified fit ($\rho_s = \ColexSpearmanRho{}$, $p = \ColexSpearmanP{}$, dashed grey fit). (b) Mean cosine similarity ($\pm$SEM) across colexification tiers ($\ge 3$, $1$--$2$, and $0$ families) and semantic domains, showing consistent monotonic ordering within every category.}
   \label{fig:colex}
 \end{figure*}
 
-The continuous relationship visible in Figure~\ref{fig:colex} indicates that the model's geometry tracks the \emph{strength} of cross-linguistic semantic association, not merely its presence or absence.
-Colexification patterns arise from shared cognitive and experiential structure across human populations \citep{list2018}, and the monotonic increase in embedding similarity with colexification frequency provides evidence that NLLB-200's shared encoder has internalized a graded scale of conceptual relatedness through translational equivalence alone.
+Concept pairs that are frequently colexified across human languages ($\ge 3$ distinct language families, $n = \ColexColCount{}$, such as \emph{bark--skin}, \emph{lie--sleep}, \emph{man--person}, \emph{drink--eat}, \emph{earth--mountain}, \emph{big--many}, and \emph{that--this}) exhibit a mean within-language cosine similarity of $\ColexColMean{}$, compared to $\ColexNonColMean{}$ for concept pairs never colexified in CLICS\textsuperscript{3} ($0$ families, $n = \ColexNonColCount{}$).
+A one-sided Mann-Whitney $U$ test confirms a highly significant separation ($U = \ColexU{}$, $p = \ColexP{}$) with a large sample-size-weighted effect size (Cohen's $d = \ColexCohenD{}$), and treating colexification frequency as a continuous variable across all \ColexNumPairs{} pairs yields a positive rank correlation ($\rho_s = \ColexSpearmanRho{}$, $p = \ColexSpearmanP{}$).
+Notably, disaggregating across intermediate CLICS\textsuperscript{3} family tiers validates the typological distinction between single-family accidental homophony and recurrent cross-family polysemy \citep{list2018}: pairs attested in only $1$ language family ($n = \ColexOneFamCount{}$, $\mu = \ColexOneFamMean{}$) show virtually no excess similarity over never-colexified pairs ($0$ families, $\mu = \ColexNonColMean{}$), whereas similarity jumps sharply at the CLICS\textsuperscript{3} threshold of $\ge 3$ families ($\mu = \ColexColMean{}$) and climbs monotonically across $\ge 5$ families ($n = \ColexFiveFamCount{}$, $\mu = \ColexFiveFamMean{}$) and $\ge 10$ families ($n = \ColexTenFamCount{}$, $\mu = \ColexTenFamMean{}$).
 
-\subsection{Conceptual Store Metric}
+To ensure that this colexification signal is not a trivial byproduct of identical word strings within our corpus, broad domain or part-of-speech clustering, or the English carrier frame, we subject the comparison to a series of stringent controls.
+First, recomputing each concept pair's similarity exclusively across languages where the two concepts are translated by strictly distinct strings ($w_{a,\ell} \neq w_{b,\ell}$) leaves the separation virtually unchanged ($\mu = \ColexStringDistinctColMean{}$ vs.\ $\ColexStringDistinctNonColMean{}$; $U = \ColexStringDistinctU{}$, $p = \ColexStringDistinctP{}$, $d = \ColexStringDistinctCohenD{}$; continuous $\rho_s = \ColexStringDistinctRho{}$, $p = \ColexStringDistinctRhoP{}$), and additionally excluding any language where the two translations are phonetically similar ($\text{NLD}(w_{a,\ell}, w_{b,\ell}) < 0.2$) yields identical results ($U = \ColexCognateExclU{}$, $p = \ColexCognateExclP{}$, $d = \ColexCognateExclCohenD{}$).
+Thus, even in languages that lexicalize a concept pair with two completely unrelated words (e.g., English \emph{tree} versus \emph{bark}), NLLB-200 places those concepts significantly closer together if other world languages colexify them.
+Second, restricting the string-distinct test strictly to concept pairs within the same semantic category ($n = \ColexWithinCatPairs{}$ pairs) yields an even stronger continuous correlation ($\rho_s = \ColexWithinCatRho{}$, $p = \ColexWithinCatRhoP{}$, nearly tripling the unstratified rank correlation; $\mu = \ColexWithinCatColMean{}$ vs.\ $\ColexWithinCatNonColMean{}$, $U = \ColexWithinCatU{}$, $p = \ColexWithinCatP{}$, $d = \ColexWithinCatCohenD{}$), and restricting to pairs sharing the same part of speech ($n = \ColexSamePOSPairs{}$ pairs) similarly preserves a large effect ($\mu = \ColexSamePOSColMean{}$ vs.\ $\ColexSamePOSNonColMean{}$, $U = \ColexSamePOSU{}$, $p = \ColexSamePOSP{}$, $d = \ColexSamePOSCohenD{}$, $\rho_s = \ColexSamePOSRho{}$).
+Third, on language-centered native bare words (excluding identical strings $w_{a,\ell} \neq w_{b,\ell}$), the colexification effect is even stronger than in the carrier frame ($U = \ColexBareStringDistinctU{}$, $p = \ColexBareStringDistinctP{}$, Cohen's $d = \ColexBareStringDistinctCohenD{}$; continuous $\rho_s = \ColexBareStringDistinctRho{}$, $p = \ColexBareStringDistinctRhoP{}$), and evaluating cosine similarity directly between cross-lingual concept centroids $\cos(\hat{\boldsymbol{\mu}}_a, \hat{\boldsymbol{\mu}}_b)$ confirms the same separation in both regimes (carrier $d = \ColexCentroidCohenD{}$, $\rho_s = \ColexCentroidRho{}$, $p = \ColexCentroidRhoP{}$; bare words $d = \ColexBareCentroidCohenD{}$, $\rho_s = \ColexBareCentroidRho{}$, $p = \ColexBareCentroidRhoP{}$).
 
-To quantify the degree to which NLLB-200's representation space is organized by concept rather than by language, we compute the ratio of mean between-concept cosine distance to mean within-concept cosine distance.
-On raw embeddings, this ratio is \ConceptualStoreRaw{}, indicating that even before correction, translation-equivalent words are closer to each other than to words denoting different concepts.
+\subsection{Domain-Level Geometry: Berlin \& Kay Color Hierarchy and Relational Offsets}
+\label{sec:results-domains}
 
-After per-language mean-centering---which removes each language's systematic offset in the shared space---the ratio increases to \ConceptualStoreCentered{}, an improvement factor of \ConceptualStoreImprovement{}$\times$ (95\% bootstrap confidence intervals non-overlapping).
-This improvement confirms that a substantial component of the raw embedding geometry reflects language identity rather than semantics, and that subtracting language centroids exposes a cleaner conceptual structure.
+In our final set of analyses, we zoom in from the global lexicon to test whether NLLB-200 recovers internal structure within specific semantic domains.
 
-This result resonates with neuroscientific findings of language-independent conceptual stores in anterior temporal cortex \citep{correia2014}.
-Just as bilingual speakers access shared semantic representations across their languages, NLLB-200's encoder appears to construct a representational substrate where meaning is partially factored from language identity---a property that emerges from the translational training objective without explicit encouragement.
-
-\subsection{Color Circle}
-
-We project the cross-lingual centroids of the \ColorNumColors{} basic color terms identified by \citet{berlin1969} into a two-dimensional PCA space using embeddings from \ColorNumLanguages{} languages.
-Figure~\ref{fig:color} shows the resulting arrangement.
+\paragraph{Berlin \& Kay Evolutionary Color Hierarchy.}
+We extract representations for the \ColorNumColors{} basic color terms of \citet{berlin1969} across \ColorNumLanguages{} languages and apply PCA to their cross-lingual centroids (Figure~\ref{fig:color}).
+The top three principal components account for $\ColorTotalVar{}\%$ of the cross-lingual centroid variance ($\text{PC1} = \ColorPConeVar{}\%$, $\text{PC2} = \ColorPCtwoVar{}\%$, $\text{PC3} = \ColorPCthreeVar{}\%$).
 
 \begin{figure*}[htbp]
   \centering
   \includegraphics[width=\textwidth]{figures/fig_color_circle.pdf}
-  \caption{PCA projection of \ColorNumColors{} Berlin \& Kay basic color terms across \ColorNumLanguages{} languages. (a) 2D chromatic plane: small translucent dots show per-language embeddings; convex hulls delineate spread; large circles mark cross-lingual centroids. Warm and cool colors occupy opposing regions, recovering the circular topology of perceptual color space. (b) 3D view: the third principal component separates achromatic terms (white, black, grey; square markers) from the chromatic plane, revealing a luminance axis orthogonal to the hue circle---consistent with the achromatic--chromatic distinction in the Berlin \& Kay hierarchy.}
+  \caption{Cross-lingual geometry of the \ColorNumColors{} \citet{berlin1969} basic color terms across \ColorNumLanguages{} languages. (a) Projection onto the PC1--PC2 plane ($\ColorPConeVar{}\% + \ColorPCtwoVar{}\% = \ColorPConeTwoVar{}\%$ of centroid variance): small translucent points denote per-language embeddings, shaded hulls denote cross-lingual dispersion, and large prominent markers denote cross-lingual centroids. PC2 separates warm hues (\emph{red, yellow, orange}) from cool hues (\emph{blue, green}). (b) PC1 coordinate vs.\ \citet{berlin1969} evolutionary stage (Stage~I: \emph{white, black}; Stage~II: \emph{red}; Stages~III--IV: \emph{yellow, green}; Stage~V: \emph{blue}; Stage~VI: \emph{brown}; Stage~VII: \emph{purple, pink, orange}; with \emph{grey} shown as an open diamond at its midpoint stage~$5.0$ representing its wildcard Stage~III--VII status). PC1 directly recovers the typological lexicalization hierarchy ($\rho_s = \ColorBKRho{}$, $p = \ColorBKP{}$; Pearson $r = \ColorBKR{}$, $p = \ColorBKRp{}$).}
   \label{fig:color}
 \end{figure*}
 
-The projection reveals a striking arrangement: warm colors (red, orange, yellow) and cool colors (blue, green) occupy opposing regions of the plane, and adjacent colors in perceptual space (e.g., red--orange, blue--green) are adjacent in the PCA projection.
-The overall layout approximates the circular topology of perceptual color wheels, despite the model never having received explicit perceptual training.
-This finding suggests that the co-occurrence and translation statistics across \ColorNumLanguages{} languages implicitly encode perceptual similarity---languages that partition the color spectrum differently nonetheless exert a collective pressure that shapes the encoder's geometry toward a perceptually coherent arrangement.
-The 3D projection (Figure~\ref{fig:color}b) reveals that the achromatic terms---white, black, and grey---separate cleanly along the third principal component, forming a luminance axis orthogonal to the chromatic plane.
-This mirrors the perceptual distinction between hue and brightness and is consistent with the achromatic terms' special status in the Berlin and Kay evolutionary hierarchy.
+Inspection of the principal axes reveals a striking typological regularity.
+Rather than encoding a simple physical luminance axis on PC3 (in fact, \emph{black} and \emph{white} share nearly identical coordinates on both PC1 and PC3), \textbf{the primary axis of variance (PC1, $\ColorPConeVar{}\%$) directly orders color terms along the \citet{berlin1969} evolutionary lexicalization hierarchy} (Figure~\ref{fig:color}b): from universally attested Stage~I terms (\emph{white, black}) and Stage~II (\emph{red}), through intermediate Stages~III--VI (\emph{yellow, green, blue, brown}), to late-emerging Stage~VII terms (\emph{purple, pink, orange}).
+Across the 10 stage-ordered terms, PC1 correlates with Berlin \& Kay evolutionary stage at Spearman $\rho_s = \ColorBKRho{}$ ($p = \ColorBKP{}$), and across all \ColorNumColors{} terms (assigning \emph{grey} its midpoint stage~$5.0$) at Pearson $r = \ColorBKR{}$ ($p = \ColorBKRp{}$, Spearman $\rho_s = \ColorBKRhoAll{}$, $p = \ColorBKPAll{}$; assigning \emph{grey} Stage~$7.0$ similarly yields $r = \ColorBKRSeven{}$, $p = \ColorBKRSevenP{}$).
+Simultaneously, PC2 ($\ColorPCtwoVar{}\%$) separates warm hues (\emph{red, orange, yellow}) from cool hues (\emph{green, blue}) (Figure~\ref{fig:color}a).
+Crucially, this evolutionary ordering is not an artifact of the English carrier frame or Zipfian word length: on \textbf{decontextualized native bare-word color embeddings} across all \ColorNumLanguages{} languages, PC1 ($\ColorBarePConeVar{}\%$ of variance) independently recovers the exact same Berlin \& Kay hierarchy ($\rho_s = \ColorBareBKRho{}$, $p = \ColorBareBKP{}$ across the 10 canonical terms; Pearson $r = \ColorBareBKR{}$, $p = \ColorBareBKRp{}$ across all 11 terms), and the partial correlation between PC1 and Berlin \& Kay stage controlling for cross-lingual mean character length remains statistically significant in both the carrier frame ($r_{\text{partial}} = \ColorPartialLengthR{}$, $p = \ColorPartialLengthP{}$) and bare-word regimes ($r_{\text{partial}} = \ColorBarePartialLengthR{}$, $p = \ColorBarePartialLengthP{}$).
+Tracing this color manifold across all 12 encoder blocks shows that PC1 stage alignment is already present at Layer~0 ($|\rho_s| = \ColorLayerZeroRho{}$, $p = \ColorLayerZeroP{}$), sharpens to $|\rho_s| = \ColorLayerSevenRho{}$ ($p = \ColorLayerSevenP{}$) by Layer~7, and stabilizes at $\ColorBKRho{}$ at Layer~11, with high-resource languages clustering significantly closer to the cross-lingual color centroids than lower-resource languages ($\mu = \RHMHighResColorDist{}$ vs.\ $\RHMLowResColorDist{}$, $p = \RHMColorP{}$).
 
-\subsection{Semantic Offset Invariance}
-
-We evaluate whether semantic relationships are encoded as consistent vector offsets across languages by examining \OffsetNumPairs{} concept pairs.
-For each pair, we compute the offset vector in each language and measure its cosine similarity to the centroid offset (averaged over all languages).
-The mean cross-lingual consistency across all pairs is \OffsetMeanConsistency{}, with individual pairs ranging from \OffsetMinConsistency{} to \OffsetMaxConsistency{}.
+\paragraph{Semantic Offset Invariance and Distance-Controlled Residuals.}
+Finally, we test whether directional difference vectors $\mathbf{d}_\ell(a,b) = \mathbf{e}_{b,\ell} - \mathbf{e}_{a,\ell}$ remain consistent across \NumLanguages{} languages (Equation~\ref{eq:offset}).
+Across all \OffsetNumPairs{} primary pairs (\OffsetSemanticCount{} semantically related antonym/gender/kinship pairs and \OffsetControlCount{} unrelated cross-domain negative controls), raw cross-lingual offset consistency $S(a,b)$ is high ($\mu = \OffsetMeanConsistency{}$, range $\OffsetMinConsistency{}$ to $\OffsetMaxConsistency{}$, led by \emph{\OffsetBestPair{}} at $\OffsetBestSemanticVal{}$; Figure~\ref{fig:offset}a and Figure~\ref{fig:offset_vector_demo}).
 
 \begin{figure*}[htbp]
   \centering
   \includegraphics[width=\textwidth]{figures/fig_offset_combined.pdf}
-  \caption{Semantic offset invariance across languages. (a) Each bar shows the mean cosine similarity between per-language offset vectors and the centroid offset for a given concept pair; the best-performing pair is \textit{\OffsetBestPair{}}. (b) Per-family disaggregation: each cell shows the mean consistency averaged over languages within each family. Rows are concept pairs (sorted by overall consistency); columns are language families. Warmer colors indicate higher consistency.}
+  \caption{Cross-lingual semantic offset invariance and baseline distance control across \NumLanguages{} languages. (a) Raw offset consistency $S(a,b)$ across \OffsetSemanticCount{} semantic pairs (blue bars, led by \emph{\OffsetBestPair{}} at $\OffsetBestSemanticVal{}$) and \OffsetControlCount{} unrelated cross-domain negative controls (red bars, e.g., \emph{tree--red, stone--sleep, seed--night}). (b) Raw offset consistency correlates strongly with baseline centroid separation $\|\hat{\boldsymbol{\mu}}_b - \hat{\boldsymbol{\mu}}_a\|_2$ ($r = \OffsetNormCorrR{}$, $p = \OffsetNormCorrP{}$) because subtracting two embeddings cancels the shared language vector $\hat{\boldsymbol{\ell}}$. Relative to the OLS regression line, semantic pairs exhibit significantly positive residual consistency ($\mu_{\text{resid}} = +\OffsetResidSemanticMean{}$, led by \emph{\OffsetBestResidPair{}}, \emph{big--small}, and \emph{fire--water}) whereas negative controls fall consistently below the trend ($\mu_{\text{resid}} = \OffsetResidControlMean{}$; Mann-Whitney $U = \OffsetResidU{}$, $p = \OffsetResidP{}$, Cohen's $d = \OffsetResidCohenD{}$).}
   \label{fig:offset}
 \end{figure*}
 
-The best-performing pair is \textit{\OffsetBestPair{}}, achieving a consistency score of \OffsetMaxConsistency{}.
-As shown in Figure~\ref{fig:offset}(a), the high overall consistency (mean = \OffsetMeanConsistency{}) indicates that the directional relationships between concepts are largely preserved across languages in the shared encoder space.
-This extends the classical word2vec analogy finding \citep{mikolov2013} to a massively multilingual setting: not only do semantic offsets exist within a single language's embedding space, but they are approximately invariant across \NumLanguages{} typologically diverse languages.
-The result provides evidence for a shared relational geometry in the NLLB-200 encoder that goes beyond point-wise translational equivalence to encode structured semantic relationships in a language-general manner \citep{chang2022}.
-
-The variation across pairs is itself informative.
-Pairs involving concrete, perceptually grounded oppositions (e.g., \textit{\OffsetBestPair{}}) tend to exhibit higher consistency than those involving more abstract or culturally variable relationships.
-This gradient mirrors the convergence hierarchy observed in the Swadesh ranking (Section~\ref{sec:results}), reinforcing the conclusion that NLLB-200's cross-lingual alignment is strongest for meanings that are universally experienced and least ambiguous.
-
-Figure~\ref{fig:offset}(b) disaggregates offset consistency by language family, revealing that Indo-European and Turkic families tend to show high consistency across most concept pairs, while more typologically distant families (e.g., Niger-Congo, Tai-Kadai) show greater variability.
-
-Finally, Figure~\ref{fig:offset_vector_demo} provides a geometric illustration of the top four concept pairs, visualizing how per-language offset vectors align with the centroid direction across the shared PCA space.
+However, our additive model (Equation~\ref{eq:intro-decomposition}) exposes a critical geometric baseline that must be controlled in any cross-lingual analogy test.
+Because both words in language $\ell$ share the same language shift $\hat{\boldsymbol{\ell}}$, their difference vector $\mathbf{d}_\ell(a,b) = (\hat{\boldsymbol{\mu}}_b - \hat{\boldsymbol{\mu}}_a) + (\hat{\boldsymbol{\epsilon}}_{b,\ell} - \hat{\boldsymbol{\epsilon}}_{a,\ell})$ automatically cancels $\hat{\boldsymbol{\ell}}$.
+Whenever the centroid separation $D = \|\hat{\boldsymbol{\mu}}_b - \hat{\boldsymbol{\mu}}_a\|_2$ is large relative to the language-specific perturbations $\hat{\boldsymbol{\epsilon}}$, $\mathbf{d}_\ell(a,b)$ is dominated by the fixed vector $\hat{\boldsymbol{\mu}}_b - \hat{\boldsymbol{\mu}}_a$ even if $\hat{\boldsymbol{\epsilon}}_{a,\ell}$ and $\hat{\boldsymbol{\epsilon}}_{b,\ell}$ are independent.
+Indeed, across all \OffsetNumPairs{} pairs, raw consistency $S(a,b)$ correlates strongly with centroid separation $\|\hat{\boldsymbol{\mu}}_b - \hat{\boldsymbol{\mu}}_a\|_2$ ($r = \OffsetNormCorrR{}$, $p = \OffsetNormCorrP{}$; Figure~\ref{fig:offset}b).
+Because unrelated cross-domain pairs (\emph{tree--red, stone--sleep, seed--night}) connect distant semantic clusters with large $\|\hat{\boldsymbol{\mu}}_b - \hat{\boldsymbol{\mu}}_a\|_2$, their raw consistency ($\mu = \OffsetControlMean{}$) is mechanically inflated above that of tightly clustered within-domain pairs ($\mu = \OffsetSemanticMean{}$, e.g., \emph{I--we} or \emph{come--give}).
 
 \begin{figure*}[htbp]
   \centering
   \includegraphics[width=\textwidth]{figures/fig_offset_vector_demo.pdf}
-  \caption{Offset vector demonstration for the top-4 concept pairs. (a) Joint PCA projection showing per-language embeddings (translucent), centroid positions (white markers), and offset arrows for each pair (colored). Thin arrows show individual per-language offsets; bold arrows show centroid offsets. (b) All offset vectors plotted from a common origin, revealing directional consistency: per-language offsets cluster tightly around their centroid direction for each pair, confirming language-invariant relational structure.}
+  \caption{Geometric visualization of cross-lingual offset vectors across all \OffsetSemanticCount{} semantic pairs ($29$ unique concepts) and \NumLanguages{} languages. (a) Joint PCA projection showing per-language embeddings (translucent points), cross-lingual concept centroids (white markers), per-language difference vectors (thin colored arrows), and centroid offset vectors $\hat{\boldsymbol{\mu}}_b - \hat{\boldsymbol{\mu}}_a$ (bold arrows), revealing macro-level clustering into nature, animal, body/person, action, and property/pronoun regions alongside local relational offsets. (b) Per-language and centroid offset vectors translated to a common origin, illustrating directional bundling around each pair's relational axis.}
   \label{fig:offset_vector_demo}
 \end{figure*}
+
+Controlling for centroid separation isolates genuine relational alignment across multiple complementary tests.
+Relative to the linear regression trend on $D = \|\hat{\boldsymbol{\mu}}_b - \hat{\boldsymbol{\mu}}_a\|_2$ (Figure~\ref{fig:offset}b), negative control pairs fall systematically below the trend ($\mu_{\text{resid}} = \OffsetResidControlMean{}$), whereas semantically coupled pairs sit above the trend ($\mu_{\text{resid}} = +\OffsetResidSemanticMean{}$, led by \emph{\OffsetBestResidPair{}}, \emph{big--small}, \emph{fire--water}, \emph{sun--moon}, and \emph{one--two}; one-sided Mann-Whitney $U = \OffsetResidU{}$, $p = \OffsetResidP{}$, Cohen's $d = \OffsetResidCohenD{}$).
+Using leave-one-language-out centroid scoring ($\cos(\mathbf{d}_\ell, \bar{\mathbf{d}}_{-\ell})$) yields identical separation ($U = \OffsetLOOU{}$, $p = \OffsetLOOP{}$), and fitting the theoretical nonlinear concave baseline $S(a,b) \approx D / \sqrt{D^2 + c}$ likewise confirms significant excess alignment both in the carrier frame ($U = \OffsetConcaveU{}$, $p = \OffsetConcaveP{}$) and on decontextualized bare words ($U = \OffsetBareConcaveU{}$, $p = \OffsetBareConcaveP{}$).
+Directly measuring the cosine correlation of the doubly-centered language-specific perturbations $\cos(\hat{\boldsymbol{\epsilon}}_{a,\ell}, \hat{\boldsymbol{\epsilon}}_{b,\ell})$—after subtracting both per-language shifts $\hat{\boldsymbol{\ell}}$ and concept centroids $\hat{\boldsymbol{\mu}}_c$—achieves complete $100\%$ separation between the \OffsetSemanticCount{} semantic pairs and \OffsetControlCount{} negative controls in both the carrier frame ($\mu = +\OffsetCouplingSemanticMean{}$ vs.\ $\OffsetCouplingControlMean{}$, $U = \OffsetCouplingU{}/105$, $p = \OffsetCouplingP{}$, led by \emph{man--woman} $+0.35$, \emph{I--we} $+0.34$, \emph{die--kill} $+0.24$, and \emph{eat--drink} $+0.21$) and the bare-word regime ($\mu = +\OffsetBareCouplingSemMean{}$ vs.\ $\OffsetBareCouplingCtrlMean{}$, $U = \OffsetBareCouplingU{}/105$, $p = \OffsetBareCouplingP{}$): when a language perturbs one member of a semantic pair (e.g., \emph{man} or \emph{hot}), it co-rotates the paired concept (\emph{woman} or \emph{cold}), whereas unrelated concepts vary independently ($\approx 0$).
+Finally, comparing the \OffsetSemanticCount{} semantic pairs against \OffsetMatchedCount{} never-colexified negative controls matched on both part of speech and centroid separation ($\|\hat{\boldsymbol{\mu}}_b - \hat{\boldsymbol{\mu}}_a\|_2 = \OffsetMatchedSemNormMean{}$ vs.\ $\OffsetMatchedCtrlNormMean{}$, $p = \OffsetMatchedNormP{}$) shows that semantic pairs achieve significantly higher raw consistency ($\mu = \OffsetMatchedSemMean{}$ vs.\ $\OffsetMatchedCtrlMean{}$, $U = \OffsetMatchedRawU{}$, $p = \OffsetMatchedRawP{}$), residual consistency ($U = \OffsetMatchedResidU{}$, $p = \OffsetMatchedResidP{}$), and perturbation coupling ($U = \OffsetMatchedCouplingU{}/225$, $p = \OffsetMatchedCouplingP{}$), while across languages high-resource languages align more tightly with the cross-lingual centroid offsets than lower-resource languages ($\mu = \RHMHighResOffset{}$ vs.\ $\RHMLowResOffset{}$, $U = \RHMOffsetU{}$, $p = \RHMOffsetP{}$).

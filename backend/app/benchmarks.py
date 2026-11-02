@@ -217,10 +217,10 @@ def mantel_test(
 
 def cosine_distance_matrix(vectors: list[np.ndarray]) -> np.ndarray:
     """Compute pairwise cosine distance (1 - cosine_similarity) matrix."""
-    array = np.array(vectors)
+    array = np.array(vectors, dtype=np.float64)
     norms = np.linalg.norm(array, axis=1, keepdims=True)
     normalized = array / np.clip(norms, 1e-8, None)
-    similarity = normalized @ normalized.T
+    similarity = np.clip(normalized @ normalized.T, -1.0, 1.0)
     return 1.0 - similarity
 
 
@@ -409,13 +409,20 @@ def load_color_terms() -> dict[str, Any]:
     with open(path) as f:
         data = json.load(f)
 
-    data["languages"] = [
-        lang for lang in data["languages"]
-        if lang["code"] not in EXCLUDED_LANGUAGES
-    ]
-    for concept, translations in data.get("concepts", {}).items():
+    for _color, translations in data.get("colors", {}).items():
         for code in EXCLUDED_LANGUAGES:
             translations.pop(code, None)
+
+    active_codes = {
+        code
+        for translations in data.get("colors", {}).values()
+        for code, word in translations.items()
+        if word
+    }
+    data["languages"] = [
+        lang for lang in data["languages"]
+        if lang["code"] not in EXCLUDED_LANGUAGES and lang["code"] in active_codes
+    ]
 
     return data
 
@@ -435,10 +442,10 @@ def swadesh_convergence_ranking(
         if len(available) < 2:
             continue
         vecs = [lang_vecs[lang] for lang in available]
-        array = np.array(vecs)
+        array = np.array(vecs, dtype=np.float64)
         norms = np.linalg.norm(array, axis=1, keepdims=True)
         normalized = array / np.clip(norms, 1e-8, None)
-        sim = normalized @ normalized.T
+        sim = np.clip(normalized @ normalized.T, -1.0, 1.0)
         upper = [sim[i, j] for i in range(len(available)) for j in range(i + 1, len(available))]
         results.append({
             "concept": concept,
@@ -456,27 +463,47 @@ def swadesh_convergence_ranking(
 # ---------------------------------------------------------------------------
 
 # Mapping from CLICS³ Concepticon glosses to our lowercase Swadesh concept names.
-# Handles exact matches (case-folded) and disambiguated CLICS glosses.
+# Covers all 101 Swadesh concepts in swadesh_100.json plus additional color/body terms.
 _CLICS_GLOSS_TO_SWADESH: Dict[str, str] = {
-    "HAND": "hand", "ARM": "arm", "FOOT": "foot", "LEG": "leg",
-    "SKIN": "skin", "BARK": "bark", "TREE": "tree", "EYE": "eye",
-    "SEE": "see", "MOUTH": "mouth", "SUN": "sun", "MOON": "moon",
-    "WATER": "water", "FIRE": "fire", "EARTH (SOIL)": "earth",
-    "STONE": "stone", "SEED": "seed", "LEAF": "leaf", "ROOT": "root",
-    "BONE": "bone", "BLOOD": "blood", "TONGUE": "tongue", "NOSE": "nose",
-    "TOOTH": "tooth", "KNEE": "knee", "HORN (ANATOMY)": "horn",
-    "TAIL": "tail", "EGG": "egg", "LIVER": "liver", "HEART": "heart",
-    "NECK": "neck", "BELLY": "belly", "BREAST": "breast", "FLESH": "flesh",
-    "HAIR": "hair", "CLAW": "claw", "RAIN (PRECIPITATION)": "rain",
-    "CLOUD": "cloud",
-    "SMOKE (EXHAUST)": "smoke", "SMOKE (EMIT SMOKE)": "smoke",
-    "SMOKE (INHALE)": "smoke",
-    "PATH": "path", "BIG": "big", "LONG": "long", "SMALL": "small",
-    "NEW": "new", "GOOD": "good", "NIGHT": "night", "DIE": "die",
-    "EAT": "eat", "DRINK": "drink", "SLEEP": "sleep", "COME": "come",
+    # Pronouns, interrogatives, demonstratives, quantifiers
+    "I": "I", "THOU": "you", "YOU": "you", "HE": "he", "WE": "we",
+    "THIS": "this", "THAT": "that", "WHO": "who", "WHAT": "what",
+    "NOT": "not", "ALL": "all", "MANY": "many", "ONE": "one", "TWO": "two",
+    # Size, shape, properties
+    "BIG": "big", "LONG": "long", "SMALL": "small", "ROUND": "round",
+    "DRY": "dry", "FULL": "full", "NEW": "new", "GOOD": "good",
+    "HOT": "hot", "COLD": "cold",
+    # Humans, animals, plants
+    "WOMAN": "woman", "MAN": "man", "PERSON": "person",
+    "FISH": "fish", "BIRD": "bird", "DOG": "dog", "LOUSE": "louse",
+    "TREE": "tree", "SEED": "seed", "LEAF": "leaf", "ROOT": "root", "BARK": "bark",
+    # Body parts & substances
+    "SKIN": "skin", "FLESH": "flesh", "BLOOD": "blood", "BONE": "bone",
+    "FAT (ORGANIC SUBSTANCE)": "grease",
+    "EGG": "egg", "HORN (ANATOMY)": "horn", "TAIL": "tail", "FEATHER": "feather",
+    "HAIR": "hair", "HEAD": "head", "EAR": "ear", "EYE": "eye", "NOSE": "nose",
+    "MOUTH": "mouth", "TOOTH": "tooth", "TONGUE": "tongue", "CLAW": "claw",
+    "FOOT": "foot", "KNEE": "knee", "HAND": "hand", "BELLY": "belly",
+    "NECK": "neck", "BREAST": "breast", "HEART": "heart", "LIVER": "liver",
+    "ARM": "arm", "LEG": "leg",
+    # Actions & cognition
+    "DRINK": "drink", "EAT": "eat", "BITE": "bite", "SEE": "see", "HEAR": "hear",
+    "KNOW (SOMETHING)": "know", "KNOW (SOMEBODY)": "know", "KNOW OR BE ABLE": "know",
+    "SLEEP": "sleep", "DIE": "die", "KILL": "kill", "SWIM": "swim",
+    "FLY (MOVE THROUGH AIR)": "fly", "WALK": "walk", "COME": "come",
+    "LIE (REST)": "lie", "LIE DOWN": "lie", "SIT": "sit", "STAND": "stand",
+    "GIVE": "give", "SAY": "say", "BURN": "burn",
+    # Nature, cosmos, landscape
+    "SUN": "sun", "MOON": "moon", "STAR": "star", "WATER": "water",
+    "RAIN (PRECIPITATION)": "rain", "RAIN (RAINING)": "rain", "RAINING OR RAIN": "rain",
+    "STONE": "stone", "SAND": "sand", "EARTH (SOIL)": "earth", "CLOUD": "cloud",
+    "SMOKE (EXHAUST)": "smoke", "SMOKE (EMIT SMOKE)": "smoke", "SMOKE (INHALE)": "smoke",
+    "FIRE": "fire", "ASH": "ash", "PATH": "path", "MOUNTAIN": "mountain",
+    "NIGHT": "night", "NAME": "name",
+    # Colors
     "RED": "red", "GREEN": "green", "YELLOW": "yellow", "WHITE": "white",
     "BLACK": "black", "BLUE": "blue", "BROWN": "brown", "PURPLE": "purple",
-    "ORANGE (COLOR)": "orange", "GREY": "grey",
+    "ORANGE (COLOR)": "orange", "GREY": "grey", "PINK": "pink",
 }
 
 _SWADESH_CONCEPTS = sorted(set(_CLICS_GLOSS_TO_SWADESH.values()))
@@ -830,7 +857,8 @@ def conceptual_store_metric(
         within = [d for i in idx for d in per_concept_within[i]]
         centroids = [concept_centroids[i] for i in idx]
         between = [float(cosine_dist(centroids[a], centroids[b]))
-                   for a in range(n) for b in range(a + 1, n)]
+                   for a in range(n) for b in range(a + 1, n)
+                   if idx[a] != idx[b]]
         mw = float(np.mean(within)) if within else 0.0
         mb = float(np.mean(between)) if between else 0.0
         return mb / mw if mw > 1e-12 else 0.0
@@ -908,8 +936,18 @@ DEFAULT_OFFSET_PAIRS: List[Tuple[str, str]] = [
     ("cloud", "bone"),     # weather vs body part
     ("path", "tongue"),    # location vs body part
     ("seed", "night"),     # plant part vs time
-    ("smoke", "leg"),      # substance vs body part
 ]
+
+
+SEMANTIC_OFFSET_CONTROL_PAIRS = {
+    ("stone", "sleep"),
+    ("rain", "tooth"),
+    ("tree", "red"),
+    ("leaf", "come"),
+    ("cloud", "bone"),
+    ("path", "tongue"),
+    ("seed", "night"),
+}
 
 
 def semantic_offset_invariance(
@@ -922,25 +960,85 @@ def semantic_offset_invariance(
     For each (concept_a, concept_b) pair, computes the offset vector
     embed(concept_b) - embed(concept_a) in every language, then measures
     how well each language's offset aligns with the centroid offset via
-    cosine similarity.
+    cosine similarity. Also records whether the pair is an unrelated
+    negative control, the doubly-centered cross-concept perturbation
+    coupling cos(eps_a, eps_b) after removing both concept centroids and
+    per-language shifts, leave-one-language-out offset consistency, and
+    both linear and theoretical concave distance-controlled residuals.
     """
     results: List[Dict[str, Any]] = []
+
+    # Precompute per-language mean vectors across all available concepts
+    lang_vecs_all: Dict[str, List[np.ndarray]] = {}
+    for _c, lmap in concept_embeddings.items():
+        for l in languages:
+            if l in lmap:
+                lang_vecs_all.setdefault(l, []).append(np.asarray(lmap[l], dtype=np.float64))
+    lang_means: Dict[str, np.ndarray] = {
+        l: np.mean(vs, axis=0) for l, vs in lang_vecs_all.items() if vs
+    }
 
     for concept_a, concept_b in concept_pairs:
         vecs_a = concept_embeddings.get(concept_a, {})
         vecs_b = concept_embeddings.get(concept_b, {})
 
-        offsets: Dict[str, np.ndarray] = {}
-        for lang in languages:
-            if lang in vecs_a and lang in vecs_b:
-                offsets[lang] = vecs_b[lang] - vecs_a[lang]
-
-        if len(offsets) < 2:
+        common_langs = [l for l in languages if l in vecs_a and l in vecs_b]
+        if len(common_langs) < 2:
             continue
 
-        offset_matrix = np.array(list(offsets.values()))
+        # Subtract per-language mean vector first so eps_a, eps_b are true doubly-centered residuals
+        mat_a_cen = np.array(
+            [np.asarray(vecs_a[l], dtype=np.float64) - lang_means.get(l, 0.0) for l in common_langs],
+            dtype=np.float64,
+        )
+        mat_b_cen = np.array(
+            [np.asarray(vecs_b[l], dtype=np.float64) - lang_means.get(l, 0.0) for l in common_langs],
+            dtype=np.float64,
+        )
+        mu_a = np.mean(mat_a_cen, axis=0)
+        mu_b = np.mean(mat_b_cen, axis=0)
+        eps_a = mat_a_cen - mu_a
+        eps_b = mat_b_cen - mu_b
+
+        # Mean cosine similarity between doubly-centered perturbations eps_a and eps_b
+        norms_ea = np.linalg.norm(eps_a, axis=1)
+        norms_eb = np.linalg.norm(eps_b, axis=1)
+        valid_e = (norms_ea > 1e-8) & (norms_eb > 1e-8)
+        if np.any(valid_e):
+            perturbation_coupling = float(
+                np.mean(
+                    np.sum(eps_a[valid_e] * eps_b[valid_e], axis=1)
+                    / (norms_ea[valid_e] * norms_eb[valid_e])
+                )
+            )
+        else:
+            perturbation_coupling = 0.0
+
+        offsets: Dict[str, np.ndarray] = {
+            l: vecs_b[l] - vecs_a[l] for l in common_langs
+        }
+
+        offset_matrix = np.array(list(offsets.values()), dtype=np.float64)
         centroid = np.mean(offset_matrix, axis=0)
         centroid_norm = float(np.linalg.norm(centroid))
+
+        # Leave-one-language-out centroid consistency
+        n_l = len(common_langs)
+        sum_offsets = np.sum(offset_matrix, axis=0, keepdims=True)
+        loo_centroids = (sum_offsets - offset_matrix) / max(n_l - 1, 1)
+        off_norms = np.linalg.norm(offset_matrix, axis=1)
+        loo_norms = np.linalg.norm(loo_centroids, axis=1)
+        valid_loo = (off_norms > 1e-8) & (loo_norms > 1e-8)
+        loo_mean_consistency = (
+            float(
+                np.mean(
+                    np.sum(offset_matrix[valid_loo] * loo_centroids[valid_loo], axis=1)
+                    / (off_norms[valid_loo] * loo_norms[valid_loo])
+                )
+            )
+            if np.any(valid_loo)
+            else 0.0
+        )
 
         per_language: List[Dict[str, Any]] = []
         consistencies: List[float] = []
@@ -963,16 +1061,46 @@ def semantic_offset_invariance(
             for fam, vals in sorted(family_groups.items())
         ]
 
+        is_control = (concept_a, concept_b) in SEMANTIC_OFFSET_CONTROL_PAIRS or (
+            concept_b,
+            concept_a,
+        ) in SEMANTIC_OFFSET_CONTROL_PAIRS
+
         results.append({
             "concept_a": concept_a,
             "concept_b": concept_b,
+            "is_control": is_control,
             "centroid_offset_norm": centroid_norm,
             "mean_consistency": float(np.mean(consistencies)),
+            "loo_mean_consistency": loo_mean_consistency,
             "std_consistency": float(np.std(consistencies)),
+            "perturbation_coupling": perturbation_coupling,
             "n_languages": len(offsets),
             "per_language": per_language,
             "per_family": per_family,
         })
+
+    if len(results) >= 3:
+        norms = np.array([r["centroid_offset_norm"] for r in results], dtype=np.float64)
+        cons = np.array([r["mean_consistency"] for r in results], dtype=np.float64)
+        slope, intercept = np.polyfit(norms, cons, 1)
+        residuals = cons - (slope * norms + intercept)
+        # Also fit theoretical concave saturation curve E[S] = D / sqrt(D^2 + c)
+        from scipy.optimize import minimize_scalar
+        res_opt = minimize_scalar(
+            lambda c_par: float(np.sum((cons - norms / np.sqrt(norms ** 2 + max(c_par, 1e-4))) ** 2)),
+            bounds=(0.1, 500.0),
+            method="bounded",
+        )
+        c_best = float(res_opt.x)
+        concave_res = cons - norms / np.sqrt(norms ** 2 + c_best)
+        for r, res, cres in zip(results, residuals, concave_res):
+            r["residual_consistency"] = float(res)
+            r["concave_residual_consistency"] = float(cres)
+    else:
+        for r in results:
+            r["residual_consistency"] = 0.0
+            r["concave_residual_consistency"] = 0.0
 
     return results
 
@@ -1126,6 +1254,14 @@ def _levenshtein(s: str, t: str) -> int:
             curr[j] = min(curr[j - 1] + 1, prev[j] + 1, prev[j - 1] + cost)
         prev, curr = curr, prev
     return prev[m]
+
+
+def _normalized_edit_distance(s: str, t: str) -> float:
+    """Normalized Levenshtein edit distance in [0, 1]."""
+    ml = max(len(s), len(t))
+    if ml == 0:
+        return 0.0
+    return _levenshtein(s, t) / ml
 
 
 def compute_asjp_distance_matrix(

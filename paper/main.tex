@@ -14,8 +14,29 @@
 \section*{Acknowledgments}
 The author thanks Claire Scavuzzo and Alona Fyshe for helpful discussions.
 
-\section*{Data, Code, Interactive Companion, and Programmatic Reproducibility}
-To ensure deterministic auditability and eliminate manual transcription errors across all six studies, the complete empirical workflow of \textsc{InterpretCognates} is implemented as an automated, end-to-end pipeline available at \url{https://github.com/kylemath/InterpretCognates}, paired with a synchronized interactive 3D browser companion at \url{https://kylemath.github.io/InterpretCognates/} that follows the exact section and figure progression of this manuscript.
+\clearpage
+\section*{Declarations}
+
+\paragraph{Funding.}
+Not applicable. The author declares that no external funds, grants, or other financial support were received during the preparation of this manuscript.
+
+\paragraph{Conflicts of interest/Competing interests.}
+The author has no financial or non-financial competing interests to declare that are relevant to the content of this article.
+
+\paragraph{Ethics approval.}
+Not applicable. This study is a purely computational and typological investigation of publicly available pretrained neural network weights and open linguistic databases, and did not involve human participants, human tissue, or animal subjects.
+
+\paragraph{Consent to participate.}
+Not applicable. No human participants were recruited or tested in this study.
+
+\paragraph{Consent for publication.}
+Not applicable. This manuscript contains no individual person's data, images, or identifying information in any form.
+
+\paragraph{Availability of data and materials.}
+All datasets generated and analyzed during the current study---including the pre-computed 135-language Swadesh and non-Swadesh NLLB-200 encoder embedding representations, layer-wise emergence matrices, phylogenetic distance matrices, CLICS\textsuperscript{3} colexification benchmarks, Berlin and Kay color subspaces, semantic offset datasets, and all 321 exported statistical macros (\texttt{output/stats.tex})---are publicly and permanently available in the Zenodo repository at \url{https://doi.org/10.5281/zenodo.23898624}, in the GitHub repository data directory at \url{https://github.com/kylemath/InterpretCognates/tree/main/docs/data}, and via the interactive 3D web companion at \url{https://kylemath.github.io/InterpretCognates/} (source code repository: \url{https://github.com/kylemath/InterpretCognates}).
+
+\paragraph{Code availability.}
+The complete open-source software suite for \textsc{InterpretCognates} is publicly available under the MIT License at \url{https://github.com/kylemath/InterpretCognates} and permanently archived on Zenodo at \url{https://doi.org/10.5281/zenodo.23898624}.
 All embeddings are extracted deterministically from the publicly available \texttt{facebook/\allowbreak nllb-200-\allowbreak distilled-600M} checkpoint via Hugging Face \texttt{transformers}, cross-referenced against public typological databases (Swadesh core vocabulary, ASJP v20, and CLICS\textsuperscript{3}), and evaluated through version-controlled Python scripts that automatically generate all 16 publication figures and export all 321 statistical values reported in the text and tables directly as \LaTeX{} macros (\texttt{output/stats.tex}) with zero hardcoded numbers.
 In accordance with publisher guidelines on transparent research workflows, the author discloses that AI-assisted coding and editorial tools were utilized under direct human specification to engineer the interactive visualization platform, automate the \LaTeX{} statistical macro verification pipeline, and implement the non-parametric permutation and cross-script control suites; all experimental designs, mathematical formulations, statistical verifications, and scientific interpretations are the sole responsibility of the author.
 
